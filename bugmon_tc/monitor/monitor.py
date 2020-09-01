@@ -3,13 +3,14 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
+import json
 import logging
 import os
 import tempfile
 import uuid
 
 from bugsy import Bugsy
-from bugmon import BugException, BugMonitor, json
+from bugmon import BugException, BugMonitor
 from bugmon.bug import EnhancedBug
 
 from .tasks import ProcessorTask, ReporterTask
