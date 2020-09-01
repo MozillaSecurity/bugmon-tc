@@ -90,13 +90,13 @@ class BugMonitorTask(object):
 
                 if bugmon.is_supported():
                     if bugmon.needs_verify():
-                        LOG.info(f"Queing bug {bug.id} for verification")
+                        LOG.info(f"Queuing bug {bug.id} for verification")
                         return True
                     if bugmon.needs_confirm():
-                        LOG.info(f"Queing bug {bug.id} for confirmation")
+                        LOG.info(f"Queuing bug {bug.id} for confirmation")
                         return True
                     if bugmon.needs_bisect():
-                        LOG.info(f"Queing bug {bug.id} for bisection")
+                        LOG.info(f"Queuing bug {bug.id} for bisection")
                         return True
 
             except BugException as e:
