@@ -175,8 +175,8 @@ def processor_task():
         "payload": {
             "artifacts": {
                 "project/fuzzing/bugmon": {
-                    "path": "/bugmon-artifacts/process-123.json",
-                    "type": "file",
+                    "path": "/bugmon-artifacts/",
+                    "type": "directory",
                 }
             },
             "cache": {},
@@ -220,8 +220,8 @@ def reporter_task():
         "payload": {
             "artifacts": {
                 "project/fuzzing/bugmon": {
-                    "path": "/bugmon-artifacts/reporter-123.json",
-                    "type": "file",
+                    "path": "/bugmon-artifacts/",
+                    "type": "directory",
                 }
             },
             "cache": {},
