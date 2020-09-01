@@ -71,7 +71,3 @@ def main(args=None):
     logging.basicConfig(level=args.log_level)
 
     report(args.api_key, args.api_root, args.artifact, args.dry_run)
-
-
-if __name__ == "__main__":
-    main()

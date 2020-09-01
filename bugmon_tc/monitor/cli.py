@@ -40,7 +40,3 @@ def main(args=None):
 
     monitor = BugMonitorTask(args.api_key, args.api_root, args.output, args.dry_run)
     monitor.create_tasks()
-
-
-if __name__ == "__main__":
-    main()

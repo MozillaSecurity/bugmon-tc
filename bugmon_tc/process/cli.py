@@ -34,7 +34,3 @@ def main(args=None):
 
     with open(args.output, "w") as file:
         json.dump(results, file, indent=2)
-
-
-if __name__ == "__main__":
-    main()
