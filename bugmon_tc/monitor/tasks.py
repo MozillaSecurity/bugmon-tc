@@ -28,7 +28,7 @@ class ProcessorTask(object):
         self.deps = [parent_id]
         if deps is not None:
             self.deps.extend(deps)
-        self.scope = [f"queue:get-artifact:project/fuzzing/bugmon/{self.src}"]
+        self.scopes = [f"queue:get-artifact:project/fuzzing/bugmon/{self.src}"]
         self.worker = "bugmon-processor"
 
     @property
@@ -77,7 +77,7 @@ class ProcessorTask(object):
             "retries": 5,
             "routes": [],
             "schedulerId": "-",
-            "scopes": self.scope,
+            "scopes": self.scopes,
             "tags": {},
         }
 
@@ -90,7 +90,7 @@ class ReporterTask(ProcessorTask):
     def __init__(self, parent_id, src, dest=None, deps=None):
         super().__init__(parent_id, src, dest, deps)
 
-        self.scope.append("secrets:get:project/fuzzing/bz-api-key")
+        self.scopes.append("secrets:get:project/fuzzing/bz-api-key")
         self.worker = "bugmon-processor"
 
     @property
