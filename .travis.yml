@@ -3,6 +3,9 @@ os: linux
 group: travis_latest
 language: python
 cache: pip
+env:
+  global:
+    - TASKCLUSTER_ROOT_URL="https://community-tc.services.mozilla.com"
 jobs:
   fast_finish: true
   include:
