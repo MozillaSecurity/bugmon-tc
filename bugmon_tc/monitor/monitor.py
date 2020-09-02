@@ -123,17 +123,9 @@ class BugMonitorTask(object):
             parent_id = os.getenv("TASK_ID", "0")
 
             process_path = f"process-{bug_uuid}.json"
-            report_path = f"reporter-{bug_uuid}.json"
             processor = ProcessorTask(parent_id, monitor_path, process_path)
-            reporter = ReporterTask(
-                parent_id, process_path, report_path, [processor.id]
-            )
+            reporter = ReporterTask(parent_id, process_path, deps=[processor.id])
 
             if self.in_taskcluster:
                 queue.createTask(processor.id, processor.task)
                 queue.createTask(reporter.id, reporter.task)
-            else:
-                for task in [processor, reporter]:
-                    full_path = os.path.join(self.artifact_dir, task.dest)
-                    with open(full_path, "w") as file:
-                        json.dump(task.task, file, indent=2)

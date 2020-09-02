@@ -60,9 +60,7 @@ def test_monitor_in_taskcluster(monkeypatch, is_enabled):
     assert monitor.in_taskcluster is is_enabled
 
 
-def test_monitor_create_tasks_local(
-    mocker, tmp_path, bug_response, processor_task, reporter_task
-):
+def test_monitor_create_tasks_local(mocker, tmp_path, bug_response):
     """ Test task creation """
     mocker.patch("bugsy.Bugsy.request", return_value=bug_response)
     mocker.patch("bugmon.BugMonitor.is_supported", return_value=True)
@@ -77,21 +75,10 @@ def test_monitor_create_tasks_local(
 
     monitor = BugMonitorTask("key", "root", tmp_path, dry_run=True)
     monitor.create_tasks()
+    monitor_artifact = tmp_path / "monitor-123.json"
 
-    files = list(tmp_path.glob("*"))
-    assert len(files) == 3
-    for prefix in ["monitor", "process", "reporter"]:
-        assert f"{prefix}-123.json" in [file.name for file in files]
-
-    for file in files:
-        with file.open() as f:
-            data = json.load(f)
-            if file.name.startswith("monitor"):
-                assert data == bug_response["bugs"][0]
-            elif file.name.startswith("process"):
-                assert data == processor_task
-            elif file.name.startswith("report"):
-                assert data == reporter_task
+    with monitor_artifact.open() as f:
+        assert json.load(f) == bug_response["bugs"][0]
 
 
 def test_monitor_create_tasks_taskcluster(mocker, tmp_path, bug_response):
