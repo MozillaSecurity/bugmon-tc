@@ -1,0 +1,69 @@
+# -*- coding: utf-8 -*-
+
+# This Source Code Form is subject to the terms of the Mozilla Public License,
+# v. 2.0. If a copy of the MPL was not distributed with this file, You can
+# obtain one at http://mozilla.org/MPL/2.0/.
+import json
+import logging
+import os
+import tempfile
+
+from bugmon import BugMonitor
+from bugmon.bug import EnhancedBug
+
+from ..common import queue
+
+LOG = logging.getLogger(__name__)
+
+
+class ProcessorError(Exception):
+    """ Exception for processor issues """
+
+
+class TaskProcessor(object):
+    """
+    Class for processing monitor tasks
+    """
+
+    def __init__(self, artifact_path):
+        self.artifact_path = artifact_path
+
+    @property
+    def in_taskcluster(self):
+        """
+        Helper to determine if we're in a taskcluster worker
+
+        :return: bool
+        """
+        return "TASK_ID" in os.environ and "TASKCLUSTER_ROOT_URL" in os.environ
+
+    def fetch_artifact(self):
+        """
+        Retrieve artifact for processing
+
+        :return: EnhancedBug
+        """
+        if self.in_taskcluster:
+            task = queue.task(os.getenv("TASK_ID"))
+            parent_id = task.get("taskGroupId")
+            data = queue.getLatestArtifact(parent_id, self.artifact_path)
+        else:
+            with open(self.artifact_path, "r") as file:
+                data = json.load(file)
+
+        if data is None:
+            raise ProcessorError("Failed to retrieve artifact")
+
+        return EnhancedBug(bugsy=None, **data)
+
+    def process(self):
+        """
+        Process monitor artifact and write the results to disk
+        """
+        with tempfile.TemporaryDirectory() as temp_dir:
+            bug = self.fetch_artifact()
+            bugmon = BugMonitor(None, bug, temp_dir, True)
+            LOG.info(f"Processing bug {bug.id} (Status: {bug.status})")
+            bugmon.process()
+
+            return {"bug_number": bug.id, "diff": bug.diff()}
