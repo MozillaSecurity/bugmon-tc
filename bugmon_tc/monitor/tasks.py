@@ -3,8 +3,11 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
+from datetime import datetime, timedelta
 
-from taskcluster import slugId
+from taskcluster.utils import fromNow
+from taskcluster.utils import slugId
+from taskcluster.utils import stringDate
 
 
 class ProcessorTask(object):
@@ -43,11 +46,14 @@ class ProcessorTask(object):
     @property
     def task(self):
         """ Task definition """
+        now = datetime.utcnow()
+
         return {
             "taskGroupId": self.parent_id,
             "dependencies": self.deps,
-            "deadline": {"$fromNow": "1 hour"},
-            "expires": {"$fromNow": "1 week"},
+            "created": stringDate(now),
+            "deadline": stringDate(now + timedelta(hours=2)),
+            "expires": stringDate(fromNow("1 week", now)),
             "provisionerId": "proj-fuzzing",
             "metadata": {
                 "description": "",
