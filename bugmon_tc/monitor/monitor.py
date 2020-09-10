@@ -124,7 +124,7 @@ class BugMonitorTask(object):
 
             process_path = f"process-{bug_uuid}.json"
             processor = ProcessorTask(parent_id, monitor_path, process_path)
-            reporter = ReporterTask(parent_id, process_path, deps=[processor.id])
+            reporter = ReporterTask(parent_id, process_path, dep=processor.id)
 
             if self.in_taskcluster:
                 queue.createTask(processor.id, processor.task)

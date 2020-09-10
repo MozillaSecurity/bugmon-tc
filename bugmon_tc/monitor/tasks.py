@@ -17,7 +17,7 @@ class ProcessorTask(object):
 
     TASK_NAME = "Bugmon Processor Task"
 
-    def __init__(self, parent_id, src, dest=None, deps=None):
+    def __init__(self, parent_id, src, dest=None, dep=None):
         """
 
         :param parent_id: ID of parent task
@@ -30,9 +30,7 @@ class ProcessorTask(object):
         self.src = src
         self.dest = dest
 
-        self.deps = [parent_id]
-        if deps is not None:
-            self.deps.extend(deps)
+        self.dependency = dep
         self.worker = "bugmon-processor"
 
     @property
@@ -60,16 +58,22 @@ class ProcessorTask(object):
         """ Task definition """
         now = datetime.utcnow()
 
+        name = self.id
+        dependencies = [self.parent_id]
+        if self.dependency is not None:
+            name = self.dependency
+            dependencies.append(self.dependency)
+
         return {
             "taskGroupId": self.parent_id,
-            "dependencies": self.deps,
+            "dependencies": dependencies,
             "created": stringDate(now),
             "deadline": stringDate(now + timedelta(hours=2)),
             "expires": stringDate(fromNow("1 week", now)),
             "provisionerId": "proj-fuzzing",
             "metadata": {
                 "description": "",
-                "name": f"{self.TASK_NAME} ([{', '.join(self.deps)}])",
+                "name": f"{self.TASK_NAME} ({name})",
                 "owner": "jkratzer@mozilla.com",
                 "source": "https://github.com/MozillaSecurity/bugmon",
             },
@@ -106,8 +110,8 @@ class ReporterTask(ProcessorTask):
 
     TASK_NAME = "Bugmon Reporter Task"
 
-    def __init__(self, parent_id, src, dest=None, deps=None):
-        super().__init__(parent_id, src, dest, deps)
+    def __init__(self, parent_id, src, dest=None, dep=None):
+        super().__init__(parent_id, src, dest, dep)
 
         self.worker = "bugmon-monitor"
 
