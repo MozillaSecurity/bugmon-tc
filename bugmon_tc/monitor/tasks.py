@@ -33,10 +33,6 @@ class ProcessorTask(object):
         self.deps = [parent_id]
         if deps is not None:
             self.deps.extend(deps)
-        self.scopes = [
-            "queue:scheduler-id:-",
-            f"queue:get-artifact:project/fuzzing/bugmon/{self.src}",
-        ]
         self.worker = "bugmon-processor"
 
     @property
@@ -47,6 +43,17 @@ class ProcessorTask(object):
             "MONITOR_ARTIFACT": self.src,
             "PROCESSOR_ARTIFACT": self.dest,
         }
+
+    @property
+    def scopes(self):
+        """ Scopes applied to the task """
+        return [
+            "docker-worker:capability:device:hostSharedMemory",
+            "docker-worker:capability:device:loopbackAudio"
+            "docker-worker:capability:privileged"
+            "queue:scheduler-id:-",
+            f"queue:get-artifact:project/fuzzing/bugmon/{self.src}",
+        ]
 
     @property
     def task(self):
@@ -102,7 +109,6 @@ class ReporterTask(ProcessorTask):
     def __init__(self, parent_id, src, dest=None, deps=None):
         super().__init__(parent_id, src, dest, deps)
 
-        self.scopes.append("secrets:get:project/fuzzing/bz-api-key")
         self.worker = "bugmon-processor"
 
     @property
@@ -112,3 +118,12 @@ class ReporterTask(ProcessorTask):
             "BUGMON_ACTION": "REPORT",
             "PROCESSOR_ARTIFACT": self.src,
         }
+
+    @property
+    def scopes(self):
+        """ Scopes applied to the task """
+        return [
+            "queue:scheduler-id:-",
+            f"queue:get-artifact:project/fuzzing/bugmon/{self.src}",
+            "secrets:get:project/fuzzing/bz-api-key",
+        ]
