@@ -49,8 +49,8 @@ class ProcessorTask(object):
         """ Scopes applied to the task """
         return [
             "docker-worker:capability:device:hostSharedMemory",
-            "docker-worker:capability:device:loopbackAudio"
-            "docker-worker:capability:privileged"
+            "docker-worker:capability:device:loopbackAudio",
+            "docker-worker:capability:privileged",
             "queue:scheduler-id:-",
             f"queue:get-artifact:project/fuzzing/bugmon/{self.src}",
         ]
