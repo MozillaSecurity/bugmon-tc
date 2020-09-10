@@ -43,7 +43,7 @@ def report(api_key, api_root, artifact_path, dry_run=False):
             LOG.info(f">{line}")
 
 
-def main(args=None):
+def main(argv=None):
     """
     Report processed results
     """
@@ -62,7 +62,7 @@ def main(args=None):
         default=os.environ.get("BZ_API_KEY"),
     )
 
-    args = parser.parse_args(args=args)
+    args = parser.parse_args(args=argv)
     if not os.path.isfile(args.artifact):
         raise parser.error("Cannot find artifact!")
 

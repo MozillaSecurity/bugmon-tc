@@ -14,7 +14,7 @@ from .process import TaskProcessor
 LOG = logging.getLogger(__name__)
 
 
-def main(args=None):
+def main(argv=None):
     """
     Process bug
     """
@@ -23,7 +23,7 @@ def main(args=None):
     parser.add_argument("artifact", type=str, help="Path to artifact")
     parser.add_argument("output", type=Path, help="Path to store result")
 
-    args = parser.parse_args(args=args)
+    args = parser.parse_args(args=argv)
     logging.basicConfig(level=args.log_level)
 
     if not os.path.isfile(args.output):

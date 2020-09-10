@@ -11,7 +11,7 @@ from .monitor import BugMonitorTask
 from ..common.cli import base_parser
 
 
-def main(args=None):
+def main(argv=None):
     """
     Generate bugmon tasks
     """
@@ -31,7 +31,7 @@ def main(args=None):
     )
     parser.add_argument("output", type=Path, help="Path to store artifacts")
 
-    args = parser.parse_args(args=args)
+    args = parser.parse_args(args=argv)
 
     logging.basicConfig(level=args.log_level)
 
