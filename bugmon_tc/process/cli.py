@@ -23,11 +23,11 @@ def main(args=None):
     parser.add_argument("artifact", type=str, help="Path to artifact")
     parser.add_argument("output", type=Path, help="Path to store result")
 
-    if not os.path.isfile(args.output):
-        raise parser.error("Output path does notexist")
-
     args = parser.parse_args(args=args)
     logging.basicConfig(level=args.log_level)
+
+    if not os.path.isfile(args.output):
+        raise parser.error("Output path does notexist")
 
     processor = TaskProcessor(args.dry_run, args.src)
     results = processor.process()
