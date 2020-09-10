@@ -15,7 +15,7 @@ from bugmon_tc.process.process import TaskProcessor
 @pytest.mark.parametrize("is_enabled", [True, False])
 def test_processor_in_taskcluster(monkeypatch, is_enabled):
     """ Test that TaskProcessor.in_taskcluster matches env state """
-    monitor = TaskProcessor(None)
+    monitor = TaskProcessor(True, None)
     if is_enabled:
         monkeypatch.setenv("TASK_ID", "1")
         monkeypatch.setenv("TASKCLUSTER_ROOT_URL", "1")
@@ -44,14 +44,14 @@ def test_processor_fetch_artifact(
             return_value=True,
         )
 
-        processor = TaskProcessor(None)
+        processor = TaskProcessor(True, None)
         bug = processor.fetch_artifact()
     else:
         artifact_path = os.path.join(tmp_path, "artifact.json")
         with open(artifact_path, "w") as file:
             json.dump(bug_fixture, file, indent=2)
 
-        processor = TaskProcessor(artifact_path)
+        processor = TaskProcessor(True, artifact_path)
         bug = processor.fetch_artifact()
 
     assert isinstance(bug, EnhancedBug)

@@ -25,7 +25,8 @@ class TaskProcessor(object):
     Class for processing monitor tasks
     """
 
-    def __init__(self, artifact_path):
+    def __init__(self, dry_run, artifact_path):
+        self.dry_run = dry_run
         self.artifact_path = artifact_path
 
     @property
@@ -62,7 +63,7 @@ class TaskProcessor(object):
         """
         with tempfile.TemporaryDirectory() as temp_dir:
             bug = self.fetch_artifact()
-            bugmon = BugMonitor(None, bug, temp_dir, True)
+            bugmon = BugMonitor(None, bug, temp_dir, self.dry_run)
             LOG.info(f"Processing bug {bug.id} (Status: {bug.status})")
             bugmon.process()
 

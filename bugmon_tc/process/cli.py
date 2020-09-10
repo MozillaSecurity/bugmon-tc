@@ -29,7 +29,7 @@ def main(args=None):
     args = parser.parse_args(args=args)
     logging.basicConfig(level=args.log_level)
 
-    processor = TaskProcessor(args.src)
+    processor = TaskProcessor(args.dry_run, args.src)
     results = processor.process()
 
     with open(args.output, "w") as file:
