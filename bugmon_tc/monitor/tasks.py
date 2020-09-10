@@ -31,7 +31,10 @@ class ProcessorTask(object):
         self.deps = [parent_id]
         if deps is not None:
             self.deps.extend(deps)
-        self.scopes = [f"queue:get-artifact:project/fuzzing/bugmon/{self.src}"]
+        self.scopes = [
+            "queue:scheduler-id:-",
+            f"queue:get-artifact:project/fuzzing/bugmon/{self.src}",
+        ]
         self.worker = "bugmon-processor"
 
     @property
