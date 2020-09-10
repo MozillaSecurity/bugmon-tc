@@ -74,7 +74,7 @@ class BugMonitorTask(object):
                 if bug.comments is None:
                     bug.get_comments()
 
-            yield bug
+                yield bug
 
     def is_actionable(self, bug):
         """
