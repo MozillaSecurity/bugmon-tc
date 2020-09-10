@@ -39,7 +39,7 @@ class ProcessorTask(object):
     def env(self):
         """ Environment variables for the task """
         return {
-            "BUGMON_ACTION": "PROCESS",
+            "BUG_ACTION": "PROCESS",
             "MONITOR_ARTIFACT": self.src,
             "PROCESSOR_ARTIFACT": self.dest,
         }
@@ -69,7 +69,7 @@ class ProcessorTask(object):
             "provisionerId": "proj-fuzzing",
             "metadata": {
                 "description": "",
-                "name": self.TASK_NAME,
+                "name": f"{self.TASK_NAME} ([{', '.join(self.deps)}])",
                 "owner": "fuzzing+taskcluster@mozilla.com",
                 "source": "https://github.com/MozillaSecurity/bugmon",
             },
