@@ -15,6 +15,8 @@ class ProcessorTask(object):
     Helper class for generating processor tasks
     """
 
+    TASK_NAME = "Bugmon Processor Task"
+
     def __init__(self, parent_id, src, dest=None, deps=None):
         """
 
@@ -60,7 +62,7 @@ class ProcessorTask(object):
             "provisionerId": "proj-fuzzing",
             "metadata": {
                 "description": "",
-                "name": "Bugmon hook",
+                "name": self.TASK_NAME,
                 "owner": "fuzzing+taskcluster@mozilla.com",
                 "source": "https://github.com/MozillaSecurity/bugmon",
             },
@@ -94,6 +96,8 @@ class ReporterTask(ProcessorTask):
     """
     Helper class for generating reporter tasks
     """
+
+    TASK_NAME = "Bugmon Reporter Task"
 
     def __init__(self, parent_id, src, dest=None, deps=None):
         super().__init__(parent_id, src, dest, deps)
