@@ -33,13 +33,14 @@ def report(api_key, api_root, artifact_path, dry_run=False):
     if not dry_run:
         bugsy = Bugsy(api_key=api_key, bugzilla_url=api_root)
         bugsy.request(f"bug/{bug_number}", "PUT", json=diff)
-    else:
-        comment = diff.pop("comment", None)
-        LOG.info(f"Commit changes ({bug_number}): {json.dumps(diff)}")
 
-        if comment is not None:
-            for line in comment.splitlines():
-                LOG.info(f">{line}")
+    # Log changes
+    comment = diff.pop("comment", None)
+    LOG.info(f"Commit changes ({bug_number}): {json.dumps(diff)}")
+
+    if comment is not None:
+        for line in comment.splitlines():
+            LOG.info(f">{line}")
 
 
 def main(args=None):
