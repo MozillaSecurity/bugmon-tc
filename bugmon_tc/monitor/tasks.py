@@ -37,7 +37,7 @@ class ProcessorTask(object):
     def env(self):
         """ Environment variables for the task """
         return {
-            "BUG_ACTION": "PROCESS",
+            "BUG_ACTION": "process",
             "MONITOR_ARTIFACT": self.src,
             "PROCESSOR_ARTIFACT": self.dest,
         }
@@ -119,7 +119,7 @@ class ReporterTask(ProcessorTask):
     def env(self):
         """ Environment variables for the task """
         return {
-            "BUGMON_ACTION": "REPORT",
+            "BUG_ACTION": "report",
             "PROCESSOR_ARTIFACT": self.src,
         }
 
