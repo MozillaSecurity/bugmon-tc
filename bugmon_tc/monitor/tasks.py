@@ -109,7 +109,7 @@ class ReporterTask(ProcessorTask):
     def __init__(self, parent_id, src, dest=None, deps=None):
         super().__init__(parent_id, src, dest, deps)
 
-        self.worker = "bugmon-processor"
+        self.worker = "bugmon-monitor"
 
     @property
     def env(self):
