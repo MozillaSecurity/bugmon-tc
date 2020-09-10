@@ -70,7 +70,7 @@ class ProcessorTask(object):
             "metadata": {
                 "description": "",
                 "name": f"{self.TASK_NAME} ([{', '.join(self.deps)}])",
-                "owner": "fuzzing+taskcluster@mozilla.com",
+                "owner": "jkratzer@mozilla.com",
                 "source": "https://github.com/MozillaSecurity/bugmon",
             },
             "payload": {
