@@ -29,7 +29,7 @@ def main(argv=None):
     if os.path.isfile(args.output):
         raise parser.error("Output path exists")
 
-    processor = TaskProcessor(args.dry_run, args.src)
+    processor = TaskProcessor(args.dry_run, args.artifact)
     results = processor.process()
 
     with open(args.output, "w") as file:
