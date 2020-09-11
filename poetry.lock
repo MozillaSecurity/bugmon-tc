@@ -120,7 +120,7 @@ fuzzfetch = "~1.0.4"
 toml = "^0.9"
 
 [package.source]
-reference = "02224c31b8eb9cf11feb8a98b09341dafe364309"
+reference = "d951578751b64fd73b4e92995bd8c8d5610ee42c"
 type = "git"
 url = "https://github.com/MozillaSecurity/bugmon.git"
 [[package]]
@@ -138,6 +138,7 @@ requests = ">=1.1.0"
 reference = "468c98eab2c93e9fb3c0c93be61ebd1fda5059f6"
 type = "git"
 url = "https://github.com/AutomatedTester/Bugsy.git"
+
 [[package]]
 category = "main"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -173,7 +174,7 @@ version = "7.1.2"
 [[package]]
 category = "dev"
 description = "Cross-platform colored terminal text."
-marker = "sys_platform == \"win32\" or platform_system == \"Windows\""
+marker = "platform_system == \"Windows\" or sys_platform == \"win32\""
 name = "colorama"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
