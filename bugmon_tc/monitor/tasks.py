@@ -127,6 +127,8 @@ class ReporterTask(ProcessorTask):
     def scopes(self):
         """ Scopes applied to the task """
         return [
+            "docker-worker:capability:device:hostSharedMemory",
+            "docker-worker:capability:device:loopbackAudio",
             "queue:scheduler-id:-",
             f"queue:get-artifact:project/fuzzing/bugmon/{self.src}",
             "secrets:get:project/fuzzing/bz-api-key",
