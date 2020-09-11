@@ -26,7 +26,7 @@ def main(argv=None):
     args = parser.parse_args(args=argv)
     logging.basicConfig(level=args.log_level)
 
-    if os.path.isfile(args.output):
+    if os.path.exists(args.output):
         raise parser.error("Output path exists")
 
     processor = TaskProcessor(args.dry_run, args.artifact)
