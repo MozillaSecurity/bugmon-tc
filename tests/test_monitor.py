@@ -18,10 +18,15 @@ def test_monitor_cli_missing_args():
         monitor_cli(None)
 
 
-def test_monitor_fetch_bug(mocker, tmp_path, bug_response):
+def test_monitor_fetch_bug(mocker, tmp_path, bug_fixture):
     """ Test bug retrieval and iteration """
+    bug_response = {"bugs": [bug_fixture]}
     mocker.patch("bugsy.Bugsy.request", return_value=bug_response)
     mocker.patch("bugmon.BugMonitor.is_supported", return_value=True)
+
+    cached_bug = EnhancedBug(None, **bug_fixture)
+    mocker.patch("bugmon.bug.EnhancedBug.cache_bug", return_value=cached_bug)
+
     monitor = BugMonitorTask("key", "root", tmp_path, dry_run=True)
     result = list(monitor.fetch_bugs())
     assert len(result) == 1
@@ -60,8 +65,9 @@ def test_monitor_in_taskcluster(monkeypatch, is_enabled):
     assert monitor.in_taskcluster is is_enabled
 
 
-def test_monitor_create_tasks_local(mocker, tmp_path, bug_response):
+def test_monitor_create_tasks_local(mocker, tmp_path, bug_fixture):
     """ Test task creation """
+    bug_response = {"bugs": [bug_fixture]}
     mocker.patch("bugsy.Bugsy.request", return_value=bug_response)
     mocker.patch("bugmon.BugMonitor.is_supported", return_value=True)
     mocker.patch("bugmon_tc.monitor.tasks.slugId", return_value="1")
@@ -71,6 +77,9 @@ def test_monitor_create_tasks_local(mocker, tmp_path, bug_response):
         return_value=False,
     )
 
+    cached_bug = EnhancedBug(None, **bug_fixture)
+    mocker.patch("bugmon.bug.EnhancedBug.cache_bug", return_value=cached_bug)
+
     mocker.patch("uuid.uuid1", return_value=123)
 
     monitor = BugMonitorTask("key", "root", tmp_path, dry_run=True)
@@ -78,11 +87,12 @@ def test_monitor_create_tasks_local(mocker, tmp_path, bug_response):
     monitor_artifact = tmp_path / "monitor-123.json"
 
     with monitor_artifact.open() as f:
-        assert json.load(f) == bug_response["bugs"][0]
+        assert json.load(f) == bug_fixture
 
 
-def test_monitor_create_tasks_taskcluster(mocker, tmp_path, bug_response):
+def test_monitor_create_tasks_taskcluster(mocker, tmp_path, bug_fixture):
     """ Test task creation in simulated TC environment """
+    bug_response = {"bugs": [bug_fixture]}
     mocker.patch("bugsy.Bugsy.request", return_value=bug_response)
     mocker.patch("bugmon.BugMonitor.is_supported", return_value=True)
     mocker.patch(
@@ -90,6 +100,9 @@ def test_monitor_create_tasks_taskcluster(mocker, tmp_path, bug_response):
         new_callable=mocker.PropertyMock,
         return_value=True,
     )
+
+    cached_bug = EnhancedBug(None, **bug_fixture)
+    mocker.patch("bugmon.bug.EnhancedBug.cache_bug", return_value=cached_bug)
 
     monitor = BugMonitorTask("key", "root", tmp_path, dry_run=True)
 

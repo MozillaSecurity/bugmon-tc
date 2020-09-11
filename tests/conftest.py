@@ -149,15 +149,6 @@ def bug_fixture():
 
 
 @pytest.fixture(scope="module")
-def bug_response():
-    """ Bug response from bugzilla """
-    bug_data = copy.deepcopy(BUG)
-    bug_data["attachments"] = [ATTACHMENT]
-    bug_data["comments"] = [COMMENT]
-    return {"bugs": [bug_data]}
-
-
-@pytest.fixture(scope="module")
 def processor_task():
     """ Processor task """
     return {
