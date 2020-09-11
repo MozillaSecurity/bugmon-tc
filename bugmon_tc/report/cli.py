@@ -63,7 +63,7 @@ def main(argv=None):
     Report processed results
     """
     parser = base_parser(prog="BugmonReporter")
-    parser.add_argument("artifact", type=Path, help="Path to artifact")
+    parser.add_argument("artifact", type=str, help="Path to artifact")
     parser.add_argument(
         "--api-root",
         type=str,
