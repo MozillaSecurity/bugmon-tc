@@ -68,13 +68,7 @@ class BugMonitorTask(object):
         bugs = [EnhancedBug(self.bugsy, **bug) for bug in response["bugs"]]
         for bug in sorted(bugs, key=lambda bug: bug.id):
             if self.is_actionable(bug):
-                # Ensure that attachments and comments have been retrieved
-                if bug.attachments is None:
-                    bug.get_attachments()
-                if bug.comments is None:
-                    bug.get_comments()
-
-                yield bug
+                yield EnhancedBug.cache_bug(bug)
 
     def is_actionable(self, bug):
         """
