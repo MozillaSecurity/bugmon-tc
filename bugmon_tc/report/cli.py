@@ -36,8 +36,8 @@ def report(api_key, api_root, artifact_path, dry_run=False):
     """
     if in_taskcluster():
         task = queue.task(os.getenv("TASK_ID"))
-        parent_id = task.get("taskGroupId")
-        data = queue.getLatestArtifact(parent_id, artifact_path)
+        dependencies = task.get("dependencies")
+        data = queue.getLatestArtifact(dependencies[-1], artifact_path)
     else:
         with open(artifact_path, "r") as file:
             data = json.load(file)
