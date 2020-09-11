@@ -10,9 +10,19 @@ from pathlib import Path
 
 from bugsy import Bugsy
 
+from ..common import queue
 from ..common.cli import base_parser
 
 LOG = logging.getLogger(__name__)
+
+
+def in_taskcluster():
+    """
+    Helper to determine if we're in a taskcluster worker
+
+    :return: bool
+    """
+    return "TASK_ID" in os.environ and "TASKCLUSTER_ROOT_URL" in os.environ
 
 
 def report(api_key, api_root, artifact_path, dry_run=False):
@@ -24,11 +34,16 @@ def report(api_key, api_root, artifact_path, dry_run=False):
     :param artifact_path: Path to processor artifact
     :param dry_run: Boolean indicating if bugs should be updated
     """
-    with open(artifact_path, "r") as file:
-        artifact = json.load(file)
+    if in_taskcluster():
+        task = queue.task(os.getenv("TASK_ID"))
+        parent_id = task.get("taskGroupId")
+        data = queue.getLatestArtifact(parent_id, artifact_path)
+    else:
+        with open(artifact_path, "r") as file:
+            data = json.load(file)
 
-    bug_number = artifact["bug_number"]
-    diff = artifact["diff"]
+    bug_number = data["bug_number"]
+    diff = data["diff"]
 
     if not dry_run:
         bugsy = Bugsy(api_key=api_key, bugzilla_url=api_root)
@@ -63,9 +78,6 @@ def main(argv=None):
     )
 
     args = parser.parse_args(args=argv)
-    if not os.path.isfile(args.artifact):
-        raise parser.error("Cannot find artifact!")
-
     if args.api_root is None or args.api_key is None:
         raise parser.error("BZ_API_ROOT and BZ_API_KEY must be set!")
 
