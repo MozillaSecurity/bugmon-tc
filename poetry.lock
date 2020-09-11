@@ -75,11 +75,11 @@ description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 name = "autobisect"
 optional = false
 python-versions = ">=3.6,<4.0"
-version = "0.7.10"
+version = "0.7.11"
 
 [package.dependencies]
 black = ">=19.10b0,<20.0"
-fuzzfetch = ">=1.0.3,<2.0.0"
+fuzzfetch = ">=1.0.4,<2.0.0"
 grizzly-framework = ">=0.9.5,<0.10.0"
 lithium-reducer = ">=0.3.3,<0.4.0"
 toml = ">=0.9,<0.10"
@@ -113,14 +113,14 @@ python-versions = "^3.6"
 version = "0.8.1"
 
 [package.dependencies]
-autobisect = "^0.7.10"
+autobisect = "^0.7.11"
 black = "^19.10b0"
 bugsy = "branch master"
-fuzzfetch = "^1.0.3"
+fuzzfetch = "~1.0.4"
 toml = "^0.9"
 
 [package.source]
-reference = "91fb92183b7b9c059942434cf59c1f29fc7943c6"
+reference = "02224c31b8eb9cf11feb8a98b09341dafe364309"
 type = "git"
 url = "https://github.com/MozillaSecurity/bugmon.git"
 [[package]]
@@ -138,7 +138,6 @@ requests = ">=1.1.0"
 reference = "468c98eab2c93e9fb3c0c93be61ebd1fda5059f6"
 type = "git"
 url = "https://github.com/AutomatedTester/Bugsy.git"
-
 [[package]]
 category = "main"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -296,7 +295,7 @@ description = "Downloader for firefox/jsshell builds."
 name = "fuzzfetch"
 optional = false
 python-versions = ">=2.7"
-version = "1.0.3"
+version = "1.0.4"
 
 [package.dependencies]
 configparser = ">=3.5.0"
@@ -1005,8 +1004,8 @@ attrs = [
     {file = "attrs-20.2.0.tar.gz", hash = "sha256:26b54ddbbb9ee1d34d5d3668dd37d6cf74990ab23c828c2888dccdceee395594"},
 ]
 autobisect = [
-    {file = "autobisect-0.7.10-py3-none-any.whl", hash = "sha256:aa23b6d83aeaf996a8ac7c53c0e6d627554e5964b02fcad32717c198347fb8ea"},
-    {file = "autobisect-0.7.10.tar.gz", hash = "sha256:0fd2a3c54f3c35a8009d474eb0b74c69023dfb349c4d192e5ce1c0b5cba5d5da"},
+    {file = "autobisect-0.7.11-py3-none-any.whl", hash = "sha256:ee426b245abd154f3ebca6b023884cbc3dad366f4f1da6bcab413175bca10b0b"},
+    {file = "autobisect-0.7.11.tar.gz", hash = "sha256:7d36098da6aa75e076f93fb59ccb9be5ec71ba1539f7b2305999cf6f6a5d29e5"},
 ]
 black = [
     {file = "black-19.10b0-py36-none-any.whl", hash = "sha256:1b30e59be925fafc1ee4565e5e08abef6b03fe455102883820fe5ee2e4734e0b"},
@@ -1102,8 +1101,8 @@ flake8-quotes = [
     {file = "flake8-quotes-3.2.0.tar.gz", hash = "sha256:3f1116e985ef437c130431ac92f9b3155f8f652fda7405ac22ffdfd7a9d1055e"},
 ]
 fuzzfetch = [
-    {file = "fuzzfetch-1.0.3-py2.py3-none-any.whl", hash = "sha256:7346d26ed2f08507e395727226e6b053aee424641f5f982ceaaa8c447c287b7a"},
-    {file = "fuzzfetch-1.0.3.tar.gz", hash = "sha256:aed5f9d86811f8422c4eeaeb07c8147a291a878da1b8c6ab5c643bc1a058e20e"},
+    {file = "fuzzfetch-1.0.4-py2.py3-none-any.whl", hash = "sha256:32e1285d70ac7b79319718fb820c2fdb53db33b3a96540005b2752a99412d535"},
+    {file = "fuzzfetch-1.0.4.tar.gz", hash = "sha256:c550dc99919eda3f34280d229a12778fa5e0f174336dde236f4447fa203499b8"},
 ]
 fuzzmanager = [
     {file = "FuzzManager-0.4.0-py2.py3-none-any.whl", hash = "sha256:cd8780bf4b45d768d21cfe00d0297afde3ef1c5ff6d403aba147526b034d2e97"},
