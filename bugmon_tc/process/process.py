@@ -47,6 +47,7 @@ class TaskProcessor(object):
         if self.in_taskcluster:
             task = queue.task(os.getenv("TASK_ID"))
             parent_id = task.get("taskGroupId")
+            LOG.info(f"Fetching artifact: {parent_id} {self.artifact_path}")
             data = queue.getLatestArtifact(parent_id, self.artifact_path)
         else:
             with open(self.artifact_path, "r") as file:
