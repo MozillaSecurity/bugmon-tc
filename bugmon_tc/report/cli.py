@@ -53,7 +53,7 @@ def report(api_key, api_root, artifact_path, dry_run=False):
     LOG.info(f"Commit changes ({bug_number}): {json.dumps(diff)}")
 
     if comment is not None:
-        for line in comment.splitlines():
+        for line in comment["body"].splitlines():
             LOG.info(f">{line}")
 
 
