@@ -120,7 +120,7 @@ fuzzfetch = "~1.0.4"
 toml = "^0.9"
 
 [package.source]
-reference = "d951578751b64fd73b4e92995bd8c8d5610ee42c"
+reference = "f8a778d2237cd2d971533a78f2d31af5410a90a8"
 type = "git"
 url = "https://github.com/MozillaSecurity/bugmon.git"
 [[package]]
