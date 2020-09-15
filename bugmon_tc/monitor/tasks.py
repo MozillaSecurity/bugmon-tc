@@ -96,7 +96,7 @@ class ProcessorTask(object):
             "priority": "high",
             "workerType": self.worker,
             "retries": 5,
-            "routes": ["notify.email.<jkratzer@mozilla.com>.on-failed"],
+            "routes": ["notify.email.jkratzer@mozilla.com.on-failed"],
             "schedulerId": "-",
             "scopes": self.scopes,
             "tags": {},
