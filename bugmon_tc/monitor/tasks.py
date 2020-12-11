@@ -91,7 +91,7 @@ class ProcessorTask(object):
                 "env": self.env,
                 "features": {"taskclusterProxy": True},
                 "image": "mozillasecurity/bugmon:latest",
-                "maxRunTime": 3600,
+                "maxRunTime": 14400,
             },
             "priority": "high",
             "workerType": self.worker,
