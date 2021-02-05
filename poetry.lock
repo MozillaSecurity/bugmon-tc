@@ -743,7 +743,7 @@ python-versions = "*"
 
 [[package]]
 name = "taskcluster"
-version = "24.2.0"
+version = "30.0.5"
 description = "Python client for Taskcluster"
 category = "main"
 optional = false
@@ -754,7 +754,7 @@ mohawk = ">=0.3.4"
 requests = ">=2.4.3"
 six = ">=1.10.0"
 slugid = ">=2"
-taskcluster-urls = ">=10.1.0"
+taskcluster-urls = ">=12.1.0"
 
 [package.extras]
 test = ["pytest", "pytest-cov", "pytest-mock", "httmock", "mock", "setuptools-lint", "flake8", "psutil", "hypothesis", "tox", "coverage", "python-dateutil", "subprocess32"]
@@ -912,7 +912,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6.2"
-content-hash = "b92189d89e7bb9fc8e0c9b2a1429a277e86be2459d59c4cd3f3219f3a6db2881"
+content-hash = "cf862d41f1b3b72f94906111657ae74aaabf0ca75efe1de480ae59db219cc74b"
 
 [metadata.files]
 aiohttp = [
@@ -1337,9 +1337,9 @@ slugid = [
     {file = "slugid-2.0.0.tar.gz", hash = "sha256:a950d98b72691178bdd4d6c52743c4a2aa039207cf7a97d71060a111ff9ba297"},
 ]
 taskcluster = [
-    {file = "taskcluster-24.2.0-py2-none-any.whl", hash = "sha256:685bfd2eee98f5336cfbefeff1ccc4a8bcf074ca5695b90306dc75a937fa77a1"},
-    {file = "taskcluster-24.2.0-py3-none-any.whl", hash = "sha256:8c65a5aeeb7d151f33fe0c70616c72b04622034332ccf66869cac1348986d04d"},
-    {file = "taskcluster-24.2.0.tar.gz", hash = "sha256:dc8588f8d1cce008de74ba3f13bbcae8621ab453af594ce99f657797720fda66"},
+    {file = "taskcluster-30.0.5-py2-none-any.whl", hash = "sha256:3379168faedd456fd6b61a09411611de9df89b847151eb4e1c9241ee89b33e07"},
+    {file = "taskcluster-30.0.5-py3-none-any.whl", hash = "sha256:e6ee2991a06519184d94cc26f6455ea5756ac0b9f331b481375b25ce0dfd514d"},
+    {file = "taskcluster-30.0.5.tar.gz", hash = "sha256:331d3d5098b49c9e699822a188b23c32c250c8059f88afdee5576b3fdbba39bc"},
 ]
 taskcluster-urls = [
     {file = "taskcluster-urls-13.0.1.tar.gz", hash = "sha256:b25e122ecec249c4299ac7b20b08db76e3e2025bdaeb699a9d444556de5fd367"},
