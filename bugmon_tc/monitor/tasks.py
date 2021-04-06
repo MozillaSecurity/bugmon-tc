@@ -9,6 +9,8 @@ from taskcluster.utils import fromNow
 from taskcluster.utils import slugId
 from taskcluster.utils import stringDate
 
+MAX_RUNTIME = 14400
+
 
 class ProcessorTask(object):
     """
@@ -68,7 +70,7 @@ class ProcessorTask(object):
             "taskGroupId": self.parent_id,
             "dependencies": dependencies,
             "created": stringDate(now),
-            "deadline": stringDate(now + timedelta(hours=2)),
+            "deadline": stringDate(now + timedelta(seconds=MAX_RUNTIME)),
             "expires": stringDate(fromNow("1 week", now)),
             "provisionerId": "proj-fuzzing",
             "metadata": {
@@ -91,7 +93,7 @@ class ProcessorTask(object):
                 "env": self.env,
                 "features": {"taskclusterProxy": True},
                 "image": "mozillasecurity/bugmon:latest",
-                "maxRunTime": 14400,
+                "maxRunTime": MAX_RUNTIME,
             },
             "priority": "high",
             "workerType": self.worker,
