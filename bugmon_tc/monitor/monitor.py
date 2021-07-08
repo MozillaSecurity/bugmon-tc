@@ -117,7 +117,10 @@ class BugMonitorTask(object):
             parent_id = os.getenv("TASK_ID", "0")
 
             process_path = f"process-{bug_uuid}.json"
-            processor = ProcessorTask(parent_id, monitor_path, process_path)
+            force_confirm = "FORCE_CONFIRM" in os.environ
+            processor = ProcessorTask(
+                parent_id, monitor_path, process_path, force_confirm=force_confirm
+            )
             reporter = ReporterTask(parent_id, process_path, dep=processor.id)
 
             if self.in_taskcluster:
