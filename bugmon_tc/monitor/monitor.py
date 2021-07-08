@@ -8,6 +8,7 @@ import logging
 import os
 import tempfile
 import uuid
+from pathlib import Path
 
 from bugsy import Bugsy
 from bugmon import BugMonitor, BugmonException
@@ -79,7 +80,7 @@ class BugMonitorTask(object):
         """
         with tempfile.TemporaryDirectory() as temp_dir:
             try:
-                bugmon = BugMonitor(self.bugsy, bug, temp_dir, self.dry_run)
+                bugmon = BugMonitor(self.bugsy, bug, Path(temp_dir), self.dry_run)
                 LOG.info(f"Analyzing bug {bug.id} (Status: {bug.status})")
 
                 if bugmon.is_supported():

@@ -7,6 +7,7 @@ import json
 import logging
 import os
 import tempfile
+from pathlib import Path
 
 from bugmon import BugMonitor
 from bugmon.bug import EnhancedBug
@@ -66,7 +67,7 @@ class TaskProcessor(object):
         """
         with tempfile.TemporaryDirectory() as temp_dir:
             bug = self.fetch_artifact()
-            bugmon = BugMonitor(None, bug, temp_dir, self.dry_run)
+            bugmon = BugMonitor(None, bug, Path(temp_dir), self.dry_run)
             LOG.info(f"Processing bug {bug.id} (Status: {bug.status})")
             bugmon.process(force_confirm=force_confirm)
 
