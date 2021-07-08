@@ -35,7 +35,7 @@ def main(argv=None):
         raise parser.error("Output path exists")
 
     processor = TaskProcessor(args.dry_run, args.artifact)
-    results = processor.process(force_confirm=args.force_reconfirm)
+    results = processor.process(force_confirm=args.force_confirm)
 
     with open(args.output, "w") as file:
         json.dump(results, file, indent=2)
