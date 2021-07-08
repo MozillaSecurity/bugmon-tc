@@ -29,7 +29,7 @@ QUERY = {
 
 
 class MonitorError(Exception):
-    """ Exception for monitor issues """
+    """Exception for monitor issues"""
 
 
 class BugMonitorTask(object):

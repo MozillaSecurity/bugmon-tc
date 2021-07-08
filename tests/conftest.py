@@ -140,7 +140,7 @@ BUG = {
 
 @pytest.fixture(scope="module")
 def bug_fixture():
-    """ Simple bug including attachment and comment data """
+    """Simple bug including attachment and comment data"""
     bug_data = copy.deepcopy(BUG)
     bug_data["attachments"] = [ATTACHMENT]
     bug_data["comments"] = [COMMENT]
@@ -150,7 +150,7 @@ def bug_fixture():
 
 @pytest.fixture(scope="module")
 def processor_task():
-    """ Processor task """
+    """Processor task"""
     return {
         "taskGroupId": "0",
         "dependencies": ["0"],
@@ -195,7 +195,7 @@ def processor_task():
 
 @pytest.fixture(scope="module")
 def reporter_task():
-    """ Reporter task """
+    """Reporter task"""
     return {
         "taskGroupId": "0",
         "dependencies": ["0", "1"],

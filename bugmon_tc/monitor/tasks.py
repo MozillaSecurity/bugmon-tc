@@ -32,14 +32,13 @@ class ProcessorTask(object):
         self.parent_id = parent_id
         self.src = src
         self.dest = dest
-
         self.dependency = dep
         self.force_confirm = force_confirm
         self.worker = "bugmon-processor"
 
     @property
     def env(self):
-        """ Environment variables for the task """
+        """Environment variables for the task"""
         env_object = {
             "BUG_ACTION": "process",
             "MONITOR_ARTIFACT": self.src,
@@ -53,7 +52,7 @@ class ProcessorTask(object):
 
     @property
     def scopes(self):
-        """ Scopes applied to the task """
+        """Scopes applied to the task"""
         return [
             "docker-worker:capability:device:hostSharedMemory",
             "docker-worker:capability:device:loopbackAudio",
@@ -64,7 +63,7 @@ class ProcessorTask(object):
 
     @property
     def task(self):
-        """ Task definition """
+        """Task definition"""
         now = datetime.utcnow()
 
         name = self.id
@@ -126,7 +125,7 @@ class ReporterTask(ProcessorTask):
 
     @property
     def env(self):
-        """ Environment variables for the task """
+        """Environment variables for the task"""
         return {
             "BUG_ACTION": "report",
             "PROCESSOR_ARTIFACT": self.src,
@@ -134,7 +133,7 @@ class ReporterTask(ProcessorTask):
 
     @property
     def scopes(self):
-        """ Scopes applied to the task """
+        """Scopes applied to the task"""
         return [
             "docker-worker:capability:device:hostSharedMemory",
             "docker-worker:capability:device:loopbackAudio",

@@ -13,13 +13,13 @@ from bugmon_tc.monitor.monitor import BugMonitorTask
 
 
 def test_monitor_cli_missing_args():
-    """ Test that monitor CLI raises when missing BZ_* args """
+    """Test that monitor CLI raises when missing BZ_* args"""
     with pytest.raises(SystemExit):
         monitor_cli(None)
 
 
 def test_monitor_fetch_bug(mocker, tmp_path, bug_fixture):
-    """ Test bug retrieval and iteration """
+    """Test bug retrieval and iteration"""
     bug_response = {"bugs": [bug_fixture]}
     mocker.patch("bugsy.Bugsy.request", return_value=bug_response)
     mocker.patch("bugmon.BugMonitor.is_supported", return_value=True)
@@ -35,7 +35,7 @@ def test_monitor_fetch_bug(mocker, tmp_path, bug_fixture):
 
 @pytest.mark.parametrize("command", ["verify", "confirm", "bisect", None])
 def test_monitor_is_actionable(mocker, tmp_path, bug_fixture, command):
-    """ Test that BugMonitorTask.is_actionable matches expected state """
+    """Test that BugMonitorTask.is_actionable matches expected state"""
     mocker.patch("bugmon.BugMonitor.is_supported", return_value=True)
     monitor = BugMonitorTask("key", "root", tmp_path, dry_run=True)
     bug_fixture["whiteboard"] = f"[bugmon:{command}"
@@ -52,7 +52,7 @@ def test_monitor_is_actionable(mocker, tmp_path, bug_fixture, command):
 
 @pytest.mark.parametrize("is_enabled", [True, False])
 def test_monitor_in_taskcluster(monkeypatch, is_enabled):
-    """ Test that BugMonitorTask.in_taskcluster matches env state """
+    """Test that BugMonitorTask.in_taskcluster matches env state"""
     monitor = BugMonitorTask("key", "root", None)
     if is_enabled:
         monkeypatch.setenv("TASK_ID", "1")
@@ -66,7 +66,7 @@ def test_monitor_in_taskcluster(monkeypatch, is_enabled):
 
 
 def test_monitor_create_tasks_local(mocker, tmp_path, bug_fixture):
-    """ Test task creation """
+    """Test task creation"""
     bug_response = {"bugs": [bug_fixture]}
     mocker.patch("bugsy.Bugsy.request", return_value=bug_response)
     mocker.patch("bugmon.BugMonitor.is_supported", return_value=True)
@@ -91,7 +91,7 @@ def test_monitor_create_tasks_local(mocker, tmp_path, bug_fixture):
 
 
 def test_monitor_create_tasks_taskcluster(mocker, tmp_path, bug_fixture):
-    """ Test task creation in simulated TC environment """
+    """Test task creation in simulated TC environment"""
     bug_response = {"bugs": [bug_fixture]}
     mocker.patch("bugsy.Bugsy.request", return_value=bug_response)
     mocker.patch("bugmon.BugMonitor.is_supported", return_value=True)

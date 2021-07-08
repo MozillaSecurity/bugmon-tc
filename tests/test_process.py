@@ -14,7 +14,7 @@ from bugmon_tc.process.process import TaskProcessor
 
 @pytest.mark.parametrize("is_enabled", [True, False])
 def test_processor_in_taskcluster(monkeypatch, is_enabled):
-    """ Test that TaskProcessor.in_taskcluster matches env state """
+    """Test that TaskProcessor.in_taskcluster matches env state"""
     monitor = TaskProcessor(True, None)
     if is_enabled:
         monkeypatch.setenv("TASK_ID", "1")
@@ -31,7 +31,7 @@ def test_processor_in_taskcluster(monkeypatch, is_enabled):
 def test_processor_fetch_artifact(
     monkeypatch, mocker, tmp_path, in_taskcluster, bug_fixture
 ):
-    """ Test fetching of artifact retrieval """
+    """Test fetching of artifact retrieval"""
     if in_taskcluster:
         monkeypatch.setenv("TASK_ID", "0")
         mocker.patch("bugmon_tc.common.queue.task", return_value={"taskGroupId": 0})
