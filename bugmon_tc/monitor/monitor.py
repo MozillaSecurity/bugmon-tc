@@ -10,7 +10,7 @@ import tempfile
 import uuid
 
 from bugsy import Bugsy
-from bugmon import BugException, BugMonitor
+from bugmon import BugMonitor, BugmonException
 from bugmon.bug import EnhancedBug
 
 from .tasks import ProcessorTask, ReporterTask
@@ -93,7 +93,7 @@ class BugMonitorTask(object):
                         LOG.info(f"Queuing bug {bug.id} for bisection")
                         return True
 
-            except BugException as e:
+            except BugmonException as e:
                 LOG.error(f"Error processing bug {bug.id}: {e}")
 
         return False
