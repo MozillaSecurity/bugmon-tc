@@ -17,7 +17,7 @@ LOG = logging.getLogger(__name__)
 
 
 class ProcessorError(Exception):
-    """ Exception for processor issues """
+    """Exception for processor issues"""
 
 
 class TaskProcessor(object):
@@ -58,14 +58,16 @@ class TaskProcessor(object):
 
         return EnhancedBug(bugsy=None, **data)
 
-    def process(self):
+    def process(self, force_confirm=False):
         """
         Process monitor artifact and write the results to disk
+
+        :param force_confirm: Boolean indicating if bug should be confirmed regardless of state
         """
         with tempfile.TemporaryDirectory() as temp_dir:
             bug = self.fetch_artifact()
             bugmon = BugMonitor(None, bug, temp_dir, self.dry_run)
             LOG.info(f"Processing bug {bug.id} (Status: {bug.status})")
-            bugmon.process()
+            bugmon.process(force_confirm=force_confirm)
 
             return {"bug_number": bug.id, "diff": bug.diff()}

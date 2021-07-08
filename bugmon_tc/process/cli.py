@@ -22,6 +22,11 @@ def main(argv=None):
     parser = base_parser(prog="BugmonProcessor")
     parser.add_argument("artifact", type=str, help="Path to artifact")
     parser.add_argument("output", type=Path, help="Path to store result")
+    parser.add_argument(
+        "--force-confirm",
+        action="store_true",
+        help="Force bug confirmation regardless of state",
+    )
 
     args = parser.parse_args(args=argv)
     logging.basicConfig(level=args.log_level)
@@ -30,7 +35,7 @@ def main(argv=None):
         raise parser.error("Output path exists")
 
     processor = TaskProcessor(args.dry_run, args.artifact)
-    results = processor.process()
+    results = processor.process(force_confirm=args.force_reconfirm)
 
     with open(args.output, "w") as file:
         json.dump(results, file, indent=2)
