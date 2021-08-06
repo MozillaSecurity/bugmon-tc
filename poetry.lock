@@ -71,7 +71,7 @@ tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>
 
 [[package]]
 name = "autobisect"
-version = "3.0.3"
+version = "3.1.0"
 description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 category = "main"
 optional = false
@@ -119,7 +119,7 @@ d = ["aiohttp (>=3.3.2)", "aiohttp-cors"]
 
 [[package]]
 name = "bugmon"
-version = "1.0.0"
+version = "1.0.1"
 description = "A python module for analyzing SpiderMonkey and Firefox bugs"
 category = "main"
 optional = false
@@ -127,9 +127,9 @@ python-versions = "^3.6.1"
 develop = false
 
 [package.dependencies]
-autobisect = "^3.0.3"
+autobisect = "^3.1.0"
 black = "^19.10b0"
-bugsy = "branch master"
+bugsy = {git = "https://github.com/AutomatedTester/Bugsy.git", branch = "master"}
 fuzzfetch = "1.3.3"
 toml = "^0.10.2"
 
@@ -137,7 +137,7 @@ toml = "^0.10.2"
 type = "git"
 url = "https://github.com/MozillaSecurity/bugmon.git"
 reference = "master"
-resolved_reference = "71f5fed273a49451005ee6d5b4ade609dbc336d0"
+resolved_reference = "751f917f34cf69a3276fb599cc46e423a2bca9bc"
 
 [[package]]
 name = "bugsy"
@@ -155,7 +155,7 @@ requests = ">=1.1.0"
 type = "git"
 url = "https://github.com/AutomatedTester/Bugsy.git"
 reference = "master"
-resolved_reference = "468c98eab2c93e9fb3c0c93be61ebd1fda5059f6"
+resolved_reference = "e4f276e2c275f4d0b6f1e1eafd57562189250861"
 
 [[package]]
 name = "certifi"
@@ -384,7 +384,7 @@ s3 = ["boto3"]
 
 [[package]]
 name = "identify"
-version = "2.2.12"
+version = "2.2.13"
 description = "File identification library for Python"
 category = "dev"
 optional = false
@@ -1056,8 +1056,8 @@ attrs = [
     {file = "attrs-21.2.0.tar.gz", hash = "sha256:ef6aaac3ca6cd92904cdd0d83f629a15f18053ec84e6432106f7a4d04ae4f5fb"},
 ]
 autobisect = [
-    {file = "autobisect-3.0.3-py3-none-any.whl", hash = "sha256:8437783b2443ebe3fffc53afcaa222925338bdebe5811e4d9694e40c937bebbb"},
-    {file = "autobisect-3.0.3.tar.gz", hash = "sha256:efa80f0133d6a84573299c32f740c0ed77a3ddea4f575a18ddd37a12f1f1e28b"},
+    {file = "autobisect-3.1.0-py3-none-any.whl", hash = "sha256:fa0a56e8cdc1f45fb696b6a0e5deec884d946a475d042eb7458d12f45496fda4"},
+    {file = "autobisect-3.1.0.tar.gz", hash = "sha256:a9ff9c1e7a5492a4e6c2e5447f1110bbc5e35892fead82209a653e80e70bb1ce"},
 ]
 "backports.entry-points-selectable" = [
     {file = "backports.entry_points_selectable-1.1.0-py2.py3-none-any.whl", hash = "sha256:a6d9a871cde5e15b4c4a53e3d43ba890cc6861ec1332c9c2428c92f977192acc"},
@@ -1194,8 +1194,8 @@ grizzly-framework = [
     {file = "grizzly_framework-0.13.4-py3-none-any.whl", hash = "sha256:02637835eb2ae19053e934d310f2db8feb0ff8e6d0b2bbc69a53b1591324e5a5"},
 ]
 identify = [
-    {file = "identify-2.2.12-py2.py3-none-any.whl", hash = "sha256:a510cbe155f39665625c8a4c4b4f9360cbce539f51f23f47836ab7dd852db541"},
-    {file = "identify-2.2.12.tar.gz", hash = "sha256:242332b3bdd45a8af1752d5d5a3afb12bee26f8e67c4be06e394f82d05ef1a4d"},
+    {file = "identify-2.2.13-py2.py3-none-any.whl", hash = "sha256:7199679b5be13a6b40e6e19ea473e789b11b4e3b60986499b1f589ffb03c217c"},
+    {file = "identify-2.2.13.tar.gz", hash = "sha256:7bc6e829392bd017236531963d2d937d66fc27cadc643ac0aba2ce9f26157c79"},
 ]
 idna = [
     {file = "idna-3.2-py3-none-any.whl", hash = "sha256:14475042e284991034cb48e06f6851428fb14c4dc953acd9be9a5e95c7b6dd7a"},
