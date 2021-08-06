@@ -32,7 +32,7 @@ def main(argv=None):
     logging.basicConfig(level=args.log_level)
 
     if os.path.exists(args.output):
-        raise parser.error("Output path exists")
+        parser.error("Output path exists")
 
     processor = TaskProcessor(args.dry_run, args.artifact)
     results = processor.process(force_confirm=args.force_confirm)
