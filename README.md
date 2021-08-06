@@ -1,6 +1,7 @@
 # Bugmon Taskcluster Runner
-[![Build Status](https://travis-ci.org/MozillaSecurity/bugmon-tc.svg?branch=master)](https://travis-ci.org/MozillaSecurity/bugmon-tc)
+[![Task Status](https://community-tc.services.mozilla.com/api/github/v1/repository/MozillaSecurity/bugmon_tc/master/badge.svg)](https://community-tc.services.mozilla.com/api/github/v1/repository/MozillaSecurity/bugmon_tc/master/latest)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![codecov](https://codecov.io/gh/MozillaSecurity/bugmon_tc/branch/master/graph/badge.svg)](https://codecov.io/gh/MozillaSecurity/bugmon_tc)
 
 Bugmon TC is a series of tools for running bugmon processes as isolated tasks in Taskcluster
 
@@ -18,7 +19,7 @@ Bugmon-TC includes 3 console entry-points which represent the 3 phases of bugmon
 The monitor phase is responsible for querying bugzilla, identifying bugs that need to be analysed, and storing the bug contents as an artifact.  Monitor is responsible for creating two additional tasks; process and report.
 
 ### bugmon-process
-The process phase is reponsible for analysing the bug artifact produced by the monitor task.  The results of this process will also be stored as an artifact for later consumption by the report task.  
+The process phase is responsible for analysing the bug artifact produced by the monitor task.  The results of this process will also be stored as an artifact for later consumption by the report task.  
 
 This task is considered untrusted and does not have access to the Bugzilla API key.
 
