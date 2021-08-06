@@ -29,6 +29,11 @@ def main(argv=None):
         help="The bugzilla API key",
         default=os.environ.get("BZ_API_KEY"),
     )
+    parser.add_argument(
+        "--force-confirm",
+        action="store_true",
+        help="Force bug confirmation regardless of state",
+    )
     parser.add_argument("output", type=Path, help="Path to store artifacts")
 
     args = parser.parse_args(args=argv)
@@ -38,5 +43,11 @@ def main(argv=None):
     if args.api_root is None or args.api_key is None:
         raise parser.error("BZ_API_ROOT and BZ_API_KEY must be set!")
 
-    monitor = BugMonitorTask(args.api_key, args.api_root, args.output, args.dry_run)
+    monitor = BugMonitorTask(
+        args.api_key,
+        args.api_root,
+        args.output,
+        force_confirm=args.force_confirm,
+        dry_run=args.dry_run,
+    )
     monitor.create_tasks()

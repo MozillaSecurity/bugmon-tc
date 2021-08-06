@@ -38,7 +38,7 @@ class BugMonitorTask(object):
     Class for generating bugmon taskgraph
     """
 
-    def __init__(self, api_key, api_root, artifact_dir, dry_run=False):
+    def __init__(self, api_key, api_root, artifact_dir, **kwargs):
         """
 
         :param api_key: BZ_API_KEY
@@ -48,7 +48,8 @@ class BugMonitorTask(object):
         """
         self.bugsy = Bugsy(api_key=api_key, bugzilla_url=api_root)
         self.artifact_dir = artifact_dir
-        self.dry_run = dry_run
+        self.force_confirm = kwargs.get("force_confirm", False)
+        self.dry_run = kwargs.get("dry_run", False)
 
     @property
     def in_taskcluster(self):
@@ -93,6 +94,13 @@ class BugMonitorTask(object):
                     if bugmon.needs_bisect():
                         LOG.info(f"Queuing bug {bug.id} for bisection")
                         return True
+                    if self.force_confirm and bug.status in [
+                        "ASSIGNED",
+                        "NEW",
+                        "UNCONFIRMED",
+                        "REOPENED",
+                    ]:
+                        return True
 
             except BugmonException as e:
                 LOG.error(f"Error processing bug {bug.id}: {e}")
@@ -118,9 +126,8 @@ class BugMonitorTask(object):
             parent_id = os.getenv("TASK_ID", "0")
 
             process_path = f"process-{bug_uuid}.json"
-            force_confirm = "FORCE_CONFIRM" in os.environ
             processor = ProcessorTask(
-                parent_id, monitor_path, process_path, force_confirm=force_confirm
+                parent_id, monitor_path, process_path, force_confirm=self.force_confirm
             )
             reporter = ReporterTask(parent_id, process_path, dep=processor.id)
 

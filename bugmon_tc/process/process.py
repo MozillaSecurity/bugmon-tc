@@ -69,6 +69,6 @@ class TaskProcessor(object):
             bug = self.fetch_artifact()
             bugmon = BugMonitor(None, bug, Path(temp_dir), self.dry_run)
             LOG.info(f"Processing bug {bug.id} (Status: {bug.status})")
-            bugmon.process(force_confirm=force_confirm)
+            bugmon.process(force_confirm)
 
             return {"bug_number": bug.id, "diff": bug.diff()}
