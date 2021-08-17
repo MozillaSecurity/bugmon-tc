@@ -78,7 +78,7 @@ def main(argv=None):
 
     args = parser.parse_args(args=argv)
     if args.api_root is None or args.api_key is None:
-        raise parser.error("BZ_API_ROOT and BZ_API_KEY must be set!")
+        parser.error("BZ_API_ROOT and BZ_API_KEY must be set!")
 
     logging.basicConfig(level=args.log_level)
 
