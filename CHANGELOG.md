@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v1.0.0 (2021-08-18)
+### Feature
+* Include bug ID in task name and artifacts ([#4](https://github.com/MozillaSecurity/bugmon-tc/issues/4)) ([`f282dff`](https://github.com/MozillaSecurity/bugmon-tc/commit/f282dff6f8ed8dc69e5bd1b010da23672dc833db))
+
+### Breaking
+* Makes changes to the Task init arguments ([`f282dff`](https://github.com/MozillaSecurity/bugmon-tc/commit/f282dff6f8ed8dc69e5bd1b010da23672dc833db))
+
 ## v0.1.0 (2021-08-17)
 ### Feature
 * Add support for bugmom --force-confirm ([`38cc550`](https://github.com/MozillaSecurity/bugmon-tc/commit/38cc5503c88b034ab55f10ce377eaaa5318a8ba8))
