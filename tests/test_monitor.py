@@ -79,12 +79,11 @@ def test_monitor_create_tasks_local(mocker, tmp_path, bug_fixture):
 
     cached_bug = EnhancedBug(None, **bug_fixture)
     mocker.patch("bugmon.bug.EnhancedBug.cache_bug", return_value=cached_bug)
-
-    mocker.patch("uuid.uuid1", return_value=123)
+    mocker.patch("bugmon_tc.monitor.monitor.slugId", return_value=123)
 
     monitor = BugMonitorTask("key", "root", tmp_path, dry_run=True)
     monitor.create_tasks()
-    monitor_artifact = tmp_path / "monitor-123.json"
+    monitor_artifact = tmp_path / f"monitor-{bug_fixture['id']}-123.json"
 
     with monitor_artifact.open() as f:
         assert json.load(f) == bug_fixture
