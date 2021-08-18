@@ -7,12 +7,12 @@ import json
 import logging
 import os
 import tempfile
-import uuid
 from pathlib import Path
 
 from bugsy import Bugsy
 from bugmon import BugMonitor, BugmonException
 from bugmon.bug import EnhancedBug
+from taskcluster import slugId
 
 from .tasks import ProcessorTask, ReporterTask
 from ..common import queue
@@ -114,22 +114,21 @@ class BugMonitorTask(object):
         """
 
         for bug in self.fetch_bugs():
-            bug_uuid = uuid.uuid1()
-            monitor_path = f"monitor-{bug_uuid}.json"
+            parent_id = os.getenv("TASK_ID") if self.in_taskcluster else slugId()
+            monitor_path = f"monitor-{bug.id}-{parent_id}.json"
 
             # Write monitor artifact
             with open(os.path.join(self.artifact_dir, monitor_path), "w") as file:
                 bug_data = bug.to_json()
                 json.dump(json.loads(bug_data), file, indent=2)
 
-            # This will only be set if we're running in taskcluster
-            parent_id = os.getenv("TASK_ID", "0")
-
-            process_path = f"process-{bug_uuid}.json"
             processor = ProcessorTask(
-                parent_id, monitor_path, process_path, force_confirm=self.force_confirm
+                parent_id,
+                monitor_path,
+                bug.id,
+                force_confirm=self.force_confirm,
             )
-            reporter = ReporterTask(parent_id, process_path, dep=processor.id)
+            reporter = ReporterTask(parent_id, processor.dest, bug.id, dep=processor.id)
 
             if self.in_taskcluster:
                 queue.createTask(processor.id, processor.task)
