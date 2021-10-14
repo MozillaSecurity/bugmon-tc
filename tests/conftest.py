@@ -7,6 +7,7 @@ import copy
 
 import pytest
 
+# pylint: disable=line-too-long
 
 ATTACHMENT = {
     "flags": [],
