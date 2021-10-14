@@ -63,7 +63,7 @@ class TaskProcessor:
         """
         Process monitor artifact and write the results to disk
 
-        :param force_confirm: Boolean indicating if bug should be confirmed regardless of state
+        :param force_confirm: Confirm bug regardless of state
         """
         with tempfile.TemporaryDirectory() as temp_dir:
             bug = self.fetch_artifact()
