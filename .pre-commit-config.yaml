@@ -30,6 +30,6 @@ repos:
     hooks:
       - id: pylint
         name: pylint
-        entry: poetry run pylint -j 0 bugmon_tc
+        entry: poetry run pylint src/bugmon_tc
         pass_filenames: false
         language: system

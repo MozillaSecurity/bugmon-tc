@@ -13,13 +13,12 @@ omit = [
     "*/tests/*",
     "*/build/*",
     "*/dist/*",
-    "*/.tox/*",
     "*/.egg/*",
 ]
 
 [tool.isort]
 force_sort_within_sections = false
-known_first_party = "bugmon"
+known_first_party = "bugmon_tc"
 profile = "black"
 
 [tool.poetry]
@@ -64,6 +63,7 @@ max-line-length = 88
 [tool.pylint.messages_control]
 disable = [
     "bad-continuation",
+    "duplicate-code",
     "fixme",
     "invalid-name",
     "line-too-long",
