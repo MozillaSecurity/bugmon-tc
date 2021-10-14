@@ -21,7 +21,7 @@ class ProcessorError(Exception):
     """Exception for processor issues"""
 
 
-class TaskProcessor(object):
+class TaskProcessor:
     """
     Class for processing monitor tasks
     """

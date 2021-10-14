@@ -12,7 +12,7 @@ from taskcluster.utils import stringDate
 MAX_RUNTIME = 14400
 
 
-class ProcessorTask(object):
+class ProcessorTask:
     """
     Helper class for generating processor tasks
     """

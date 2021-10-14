@@ -33,7 +33,7 @@ class MonitorError(Exception):
     """Exception for monitor issues"""
 
 
-class BugMonitorTask(object):
+class BugMonitorTask:
     """
     Class for generating bugmon taskgraph
     """
