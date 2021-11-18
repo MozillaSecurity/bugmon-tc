@@ -24,7 +24,7 @@ QUERY = {
     "keywords": "bugmon",
     "keywords_type": "anywords",
     "chfield": "[Bug creation]",
-    "chfieldfrom": "2020-08-19",
+    "chfieldfrom": "2020-03-01",
     "include_fields": "_default",
 }
 
