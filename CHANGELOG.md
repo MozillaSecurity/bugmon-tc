@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v1.0.1 (2021-11-18)
+### Fix
+* Expand search range to 2020-03-01 ([`5bb3427`](https://github.com/MozillaSecurity/bugmon-tc/commit/5bb3427e0e2b1585fd90b93c1c5d02b4bf569fe2))
+
+### Documentation
+* Fix path to taskcluster badge ([`86d479a`](https://github.com/MozillaSecurity/bugmon-tc/commit/86d479a404f35e94b391f78b7d87666ae7e5fb3f))
+
 ## v1.0.0 (2021-08-18)
 ### Feature
 * Include bug ID in task name and artifacts ([#4](https://github.com/MozillaSecurity/bugmon-tc/issues/4)) ([`f282dff`](https://github.com/MozillaSecurity/bugmon-tc/commit/f282dff6f8ed8dc69e5bd1b010da23672dc833db))
