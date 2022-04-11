@@ -123,10 +123,7 @@ class BugMonitorTask(object):
                 json.dump(json.loads(bug_data), file, indent=2)
 
             processor = ProcessorTask(
-                parent_id,
-                monitor_path,
-                bug.id,
-                force_confirm=self.force_confirm,
+                parent_id, monitor_path, bug.id, force_confirm=self.force_confirm,
             )
             reporter = ReporterTask(parent_id, processor.dest, bug.id, dep=processor.id)
 
