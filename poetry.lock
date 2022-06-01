@@ -108,7 +108,7 @@ tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>
 
 [[package]]
 name = "autobisect"
-version = "5.0.1"
+version = "5.0.2"
 description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 category = "main"
 optional = false
@@ -141,7 +141,7 @@ d = ["aiohttp (>=3.3.2)", "aiohttp-cors"]
 
 [[package]]
 name = "bugmon"
-version = "1.2.3"
+version = "1.2.4"
 description = "A python module for analyzing SpiderMonkey and Firefox bugs"
 category = "main"
 optional = false
@@ -157,7 +157,7 @@ fuzzfetch = "^2.0.1"
 type = "git"
 url = "https://github.com/MozillaSecurity/bugmon.git"
 reference = "master"
-resolved_reference = "244ec605140fd4061b87953b6e1084b176677736"
+resolved_reference = "1d66692038b645a4cb07d8a488dca85b58ca9304"
 
 [[package]]
 name = "bugsy"
@@ -311,7 +311,7 @@ dev = ["pre-commit", "tox"]
 
 [[package]]
 name = "filelock"
-version = "3.7.0"
+version = "3.7.1"
 description = "A platform independent file lock."
 category = "dev"
 optional = false
@@ -870,7 +870,7 @@ python-versions = "*"
 
 [[package]]
 name = "taskcluster"
-version = "44.14.0"
+version = "44.15.2"
 description = "Python client for Taskcluster"
 category = "main"
 optional = false
@@ -1177,8 +1177,8 @@ attrs = [
     {file = "attrs-21.4.0.tar.gz", hash = "sha256:626ba8234211db98e869df76230a137c4c40a12d72445c45d5f5b716f076e2fd"},
 ]
 autobisect = [
-    {file = "autobisect-5.0.1-py3-none-any.whl", hash = "sha256:05c92174c3ec7c2004c25576330a0653840dd4640189005268467aa2cbd9662e"},
-    {file = "autobisect-5.0.1.tar.gz", hash = "sha256:09a0fb6ffa60393123da426498b89d614949e5062fe4849fa623d25b7118b8da"},
+    {file = "autobisect-5.0.2-py3-none-any.whl", hash = "sha256:0b899ea753984456ad3e426eb3917b2a4793b321570546b024ecbde6b3ccd6d2"},
+    {file = "autobisect-5.0.2.tar.gz", hash = "sha256:382036c960c1e4b8675bd4ab01d21754427b2eab7e6954e9aaddb7ff9568925b"},
 ]
 black = [
     {file = "black-19.10b0-py36-none-any.whl", hash = "sha256:1b30e59be925fafc1ee4565e5e08abef6b03fe455102883820fe5ee2e4734e0b"},
@@ -1289,8 +1289,8 @@ ffpuppet = [
     {file = "ffpuppet-0.9.0.tar.gz", hash = "sha256:1912031210ccc61665f7b6636a8df4e562e93fb7483bd2dd978280dec446bb98"},
 ]
 filelock = [
-    {file = "filelock-3.7.0-py3-none-any.whl", hash = "sha256:c7b5fdb219b398a5b28c8e4c1893ef5f98ece6a38c6ab2c22e26ec161556fed6"},
-    {file = "filelock-3.7.0.tar.gz", hash = "sha256:b795f1b42a61bbf8ec7113c341dad679d772567b936fbd1bf43c9a238e673e20"},
+    {file = "filelock-3.7.1-py3-none-any.whl", hash = "sha256:37def7b658813cda163b56fc564cdc75e86d338246458c4c28ae84cabefa2404"},
+    {file = "filelock-3.7.1.tar.gz", hash = "sha256:3a0fd85166ad9dbab54c9aec96737b744106dc5f15c0b09a6744a445299fcf04"},
 ]
 flake8 = [
     {file = "flake8-3.9.2-py2.py3-none-any.whl", hash = "sha256:bf8fd333346d844f616e8d47905ef3a3384edae6b4e9beb0c5101e25e3110907"},
@@ -1756,8 +1756,8 @@ slugid = [
     {file = "slugid-2.0.0.tar.gz", hash = "sha256:a950d98b72691178bdd4d6c52743c4a2aa039207cf7a97d71060a111ff9ba297"},
 ]
 taskcluster = [
-    {file = "taskcluster-44.14.0-py3-none-any.whl", hash = "sha256:c1bef0b6735558698a57d7222a2a88ab12686a70d972f2f87dca7c51716daf35"},
-    {file = "taskcluster-44.14.0.tar.gz", hash = "sha256:e02a560d7aafd412928addfacfcd35ad2593cf17891ef89569b5e7f3b9545a4e"},
+    {file = "taskcluster-44.15.2-py3-none-any.whl", hash = "sha256:09fb9d5dd4513954f655957cf320d8c32de28d145c6582d1851c9bc49c8a04fc"},
+    {file = "taskcluster-44.15.2.tar.gz", hash = "sha256:8e6b7951a3efdc7d53a71b44028d507d7373c4f14cc53214acae3306469fe12a"},
 ]
 taskcluster-urls = [
     {file = "taskcluster-urls-13.0.1.tar.gz", hash = "sha256:b25e122ecec249c4299ac7b20b08db76e3e2025bdaeb699a9d444556de5fd367"},
