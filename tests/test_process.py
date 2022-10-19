@@ -1,57 +1,40 @@
-# -*- coding: utf-8 -*-
-
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-import json
-import os
-
 import pytest
-from bugmon.bug import EnhancedBug
 
-from bugmon_tc.process.process import TaskProcessor
-
-
-@pytest.mark.parametrize("is_enabled", [True, False])
-def test_processor_in_taskcluster(monkeypatch, is_enabled):
-    """Test that TaskProcessor.in_taskcluster matches env state"""
-    monitor = TaskProcessor(True, None)
-    if is_enabled:
-        monkeypatch.setenv("TASK_ID", "1")
-        monkeypatch.setenv("TASKCLUSTER_ROOT_URL", "1")
-    else:
-        # Ensure neither env variable is set
-        monkeypatch.delenv("TASK_ID", False)
-        monkeypatch.delenv("TASKCLUSTER_ROOT_URL", False)
-
-    assert monitor.in_taskcluster is is_enabled
+from bugmon_tc.common import BugmonTaskError
+from bugmon_tc.process.cli import process_bug
 
 
-@pytest.mark.parametrize("in_taskcluster", [True, False])
-def test_processor_fetch_artifact(
-    monkeypatch, mocker, tmp_path, in_taskcluster, bug_fixture
-):
-    """Test fetching of artifact retrieval"""
-    if in_taskcluster:
-        monkeypatch.setenv("TASK_ID", "0")
-        mocker.patch("bugmon_tc.common.queue.task", return_value={"taskGroupId": 0})
-        mocker.patch(
-            "bugmon_tc.common.queue.getLatestArtifact", return_value=bug_fixture
-        )
-        mocker.patch(
-            "bugmon_tc.process.process.TaskProcessor.in_taskcluster",
-            new_callable=mocker.PropertyMock,
-            return_value=True,
-        )
+@pytest.mark.parametrize("with_trace", [True, False])
+def test_process_bug(mocker, tmp_path, bug_data, with_trace):
+    """Test bug processing"""
+    mocker.patch("bugmon_tc.process.cli.BugMonitor.process", return_value=None)
+    dest = tmp_path / "results.json"
 
-        processor = TaskProcessor(True, None)
-        bug = processor.fetch_artifact()
-    else:
-        artifact_path = os.path.join(tmp_path, "artifact.json")
-        with open(artifact_path, "w") as file:
-            json.dump(bug_fixture, file, indent=2)
+    trace_dest = None
+    if with_trace:
+        trace_dest = tmp_path / "trace.tar.gz"
+        raw_trace = tmp_path / "latest-trace"
+        raw_trace.mkdir()
+        mocker.patch("bugmon_tc.process.cli.get_pernosco_trace", return_value=raw_trace)
 
-        processor = TaskProcessor(True, artifact_path)
-        bug = processor.fetch_artifact()
+    process_bug(bug_data, dest, trace_dest=trace_dest)
 
-    assert isinstance(bug, EnhancedBug)
+    assert dest.exists() is True
+    assert dest.read_text() == '{\n  "bug_number": 123456,\n  "diff": {}\n}'
+
+    if with_trace:
+        assert trace_dest.exists() is True
+
+
+def test_process_bug_raises_no_trace(mocker, tmp_path, bug_data):
+    """Test that process raises when no trace_path is discovered"""
+    mocker.patch("bugmon_tc.process.cli.BugMonitor.process", return_value=None)
+    dest = tmp_path / "results.json"
+    trace_dest = tmp_path / "trace.tar.gz"
+    with pytest.raises(BugmonTaskError) as e_info:
+        process_bug(bug_data, dest, trace_dest=trace_dest)
+
+    assert str(e_info.value) == "Unable to identify a pernosco trace!"
