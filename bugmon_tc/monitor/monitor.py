@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
@@ -15,7 +13,7 @@ from bugmon.bug import EnhancedBug
 from taskcluster import slugId
 
 from .tasks import ProcessorTask, ReporterTask
-from ..common import queue
+from ..common import queue, in_taskcluster
 
 LOG = logging.getLogger(__name__)
 
@@ -24,13 +22,29 @@ QUERY = {
     "keywords": "bugmon",
     "keywords_type": "anywords",
     "chfield": "[Bug creation]",
-    "chfieldfrom": "2020-03-01",
+    "chfieldfrom": "2022-10-01",
     "include_fields": "_default",
 }
+
+CONFIRMABLE = [
+    "ASSIGNED",
+    "NEW",
+    "UNCONFIRMED",
+    "REOPENED",
+]
 
 
 class MonitorError(Exception):
     """Exception for monitor issues"""
+
+
+def needs_force_confirmed(force_confirm, bug):
+    return force_confirm and bug.status in [
+        "ASSIGNED",
+        "NEW",
+        "UNCONFIRMED",
+        "REOPENED",
+    ]
 
 
 class BugMonitorTask(object):
@@ -38,27 +52,15 @@ class BugMonitorTask(object):
     Class for generating bugmon taskgraph
     """
 
-    def __init__(self, api_key, api_root, artifact_dir, **kwargs):
+    def __init__(self, api_key, api_root, force_confirm=False):
         """
 
         :param api_key: BZ_API_KEY
         :param api_root: BZ_API_ROOT
-        :param artifact_dir: Path to store artifacts
-        :param dry_run: Boolean indicating if bugs should be updated
+        :param force_confirm: Boolean indicating if bugs should be confirmed regardless of whiteboard
         """
         self.bugsy = Bugsy(api_key=api_key, bugzilla_url=api_root)
-        self.artifact_dir = artifact_dir
-        self.force_confirm = kwargs.get("force_confirm", False)
-        self.dry_run = kwargs.get("dry_run", False)
-
-    @property
-    def in_taskcluster(self):
-        """
-        Helper to determine if we're in a taskcluster worker
-
-        :return: bool
-        """
-        return "TASK_ID" in os.environ and "TASKCLUSTER_ROOT_URL" in os.environ
+        self.force_confirm = force_confirm
 
     def fetch_bugs(self):
         """
@@ -69,7 +71,7 @@ class BugMonitorTask(object):
         response = self.bugsy.request("bug", params=QUERY)
         bugs = [EnhancedBug(self.bugsy, **bug) for bug in response["bugs"]]
         for bug in sorted(bugs, key=lambda bug: bug.id):
-            if self.is_actionable(bug):
+            if self.is_actionable(bug) is not None:
                 yield EnhancedBug.cache_bug(bug)
 
     def is_actionable(self, bug):
@@ -81,25 +83,20 @@ class BugMonitorTask(object):
         """
         with tempfile.TemporaryDirectory() as temp_dir:
             try:
-                bugmon = BugMonitor(self.bugsy, bug, Path(temp_dir), self.dry_run)
+                bugmon = BugMonitor(self.bugsy, bug, Path(temp_dir))
                 LOG.info(f"Analyzing bug {bug.id} (Status: {bug.status})")
 
                 if bugmon.is_supported():
-                    if bugmon.needs_verify():
-                        LOG.info(f"Queuing bug {bug.id} for verification")
-                        return True
-                    if bugmon.needs_confirm():
-                        LOG.info(f"Queuing bug {bug.id} for confirmation")
-                        return True
-                    if bugmon.needs_bisect():
-                        LOG.info(f"Queuing bug {bug.id} for bisection")
-                        return True
-                    if self.force_confirm and bug.status in [
-                        "ASSIGNED",
-                        "NEW",
-                        "UNCONFIRMED",
-                        "REOPENED",
-                    ]:
+                    if any(
+                        [
+                            bugmon.needs_verify(),
+                            bugmon.needs_confirm(),
+                            bugmon.needs_bisect(),
+                            bugmon.needs_pernosco(),
+                            self.force_confirm and bug.status in CONFIRMABLE,
+                        ]
+                    ):
+                        LOG.info(f"Queuing bug {bug.id} for processing")
                         return True
 
             except BugmonException as e:
@@ -107,26 +104,44 @@ class BugMonitorTask(object):
 
         return False
 
-    def create_tasks(self):
-        """
-        Fetch all bugs and generate artifacts representing the tasks that need to be
-        performed on those bugs
-        """
+    def create_tasks(self, artifact_dir):
+        """Fetch all bugs and generate artifacts representing the tasks that need to be
+        performed on those bugs"""
 
         for bug in self.fetch_bugs():
-            parent_id = os.getenv("TASK_ID") if self.in_taskcluster else slugId()
-            monitor_path = f"monitor-{bug.id}-{parent_id}.json"
+            parent_id = os.getenv("TASK_ID") if in_taskcluster() else slugId()
+            monitor_path = Path(f"monitor-{bug.id}-{parent_id}.json")
+
+            if not artifact_dir.exists():
+                artifact_dir.mkdir(parents=True)
 
             # Write monitor artifact
-            with open(os.path.join(self.artifact_dir, monitor_path), "w") as file:
+            with open(artifact_dir / monitor_path, "w") as file:
                 bug_data = bug.to_json()
                 json.dump(json.loads(bug_data), file, indent=2)
 
             processor = ProcessorTask(
-                parent_id, monitor_path, bug.id, force_confirm=self.force_confirm,
+                parent_id,
+                bug.id,
+                monitor_path,
+                use_pernosco=True,  # "pernosco" in bug.commands,
+                force_confirm=self.force_confirm,
             )
-            reporter = ReporterTask(parent_id, processor.dest, bug.id, dep=processor.id)
+            reporter = ReporterTask(
+                parent_id,
+                bug.id,
+                processor.dest,
+                dep=processor.id,
+                trace_path=processor.trace_dest,
+            )
 
-            if self.in_taskcluster:
+            if in_taskcluster():
                 queue.createTask(processor.id, processor.task)
                 queue.createTask(reporter.id, reporter.task)
+            else:
+                processor_task_path = f"processor-task-{bug.id}-{parent_id}.json"
+                reporter_task_path = f"reporter-task-{bug.id}-{parent_id}.json"
+                with open(artifact_dir / processor_task_path, "w") as file:
+                    json.dump(processor.task, file, indent=2)
+                with open(str(artifact_dir / reporter_task_path), "w") as file:
+                    json.dump(reporter.task, file, indent=2)
