@@ -93,7 +93,7 @@ tests_no_zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy 
 
 [[package]]
 name = "autobisect"
-version = "5.0.4"
+version = "6.0.2"
 description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 category = "main"
 optional = false
@@ -129,7 +129,7 @@ uvloop = ["uvloop (>=0.15.2)"]
 
 [[package]]
 name = "bugmon"
-version = "1.3.2"
+version = "2.0.3"
 description = "A python module for analyzing SpiderMonkey and Firefox bugs"
 category = "main"
 optional = false
@@ -137,7 +137,7 @@ python-versions = "^3.7"
 develop = false
 
 [package.dependencies]
-autobisect = "^5.0.4"
+autobisect = "^6.0.2"
 bugsy = {git = "https://github.com/AutomatedTester/Bugsy.git"}
 fuzzfetch = "^2.0.1"
 typing-extensions = "^4.2.0"
@@ -146,7 +146,7 @@ typing-extensions = "^4.2.0"
 type = "git"
 url = "https://github.com/MozillaSecurity/bugmon.git"
 reference = "HEAD"
-resolved_reference = "bbaf3cfef8223e5f0a9f3399348817ce950c625a"
+resolved_reference = "8c60b5ca2e8822a52581b0d518037bf4ebaf416e"
 
 [[package]]
 name = "bugsy"
@@ -1258,8 +1258,8 @@ attrs = [
     {file = "attrs-22.1.0.tar.gz", hash = "sha256:29adc2665447e5191d0e7c568fde78b21f9672d344281d0c6e1ab085429b22b6"},
 ]
 autobisect = [
-    {file = "autobisect-5.0.4-py3-none-any.whl", hash = "sha256:1879d45c176bdb678e896d0966557403bd6a502dc04d26763ed032515e65a706"},
-    {file = "autobisect-5.0.4.tar.gz", hash = "sha256:373756811c54241ef0be38743c698b77128d2a73a4fdf93e3c446feb882caad3"},
+    {file = "autobisect-6.0.2-py3-none-any.whl", hash = "sha256:a14d990df2126d52771d941f9772c0a7445917b25b558797bda1209db3834478"},
+    {file = "autobisect-6.0.2.tar.gz", hash = "sha256:1df156ebd9042638c10f59eb32410f625dad305f1ac5eee7abd5bc1126db879b"},
 ]
 black = [
     {file = "black-22.10.0-1fixedarch-cp310-cp310-macosx_11_0_x86_64.whl", hash = "sha256:5cc42ca67989e9c3cf859e84c2bf014f6633db63d1cbdf8fdb666dcd9e77e3fa"},

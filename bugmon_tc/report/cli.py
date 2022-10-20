@@ -1,85 +1,116 @@
-# -*- coding: utf-8 -*-
-
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 import json
 import logging
 import os
+import shutil
+from pathlib import Path
 
 from bugsy import Bugsy
 
-from ..common import queue
+from bugmon.utils import (
+    download_zip_archive,
+    get_source_url,
+    submit_pernosco,
+    is_pernosco_available,
+)
+
+from ..common import (
+    fetch_trace_artifact,
+    BugmonTaskError,
+    get_bugzilla_auth,
+    get_pernosco_auth,
+    in_taskcluster,
+    fetch_artifact,
+)
 from ..common.cli import base_parser
 
 LOG = logging.getLogger(__name__)
 
+PERNOSCO = shutil.which("pernosco-submit")
 
-def in_taskcluster():
+
+def update_bug(bug_data, bz_creds):
+    """Update bug.
+
+    :param bug_data: Processed bug data
+    :param bz_creds: Bugzilla credentials
     """
-    Helper to determine if we're in a taskcluster worker
-
-    :return: bool
-    """
-    return "TASK_ID" in os.environ and "TASKCLUSTER_ROOT_URL" in os.environ
-
-
-def report(api_key, api_root, artifact_path, dry_run=False):
-    """
-    Report resuls to bugzilla
-
-    :param api_key: BZ_API_KEY
-    :param api_root: BZ_API_ROOT
-    :param artifact_path: Path to processor artifact
-    :param dry_run: Boolean indicating if bugs should be updated
-    """
-    if in_taskcluster():
-        task = queue.task(os.getenv("TASK_ID"))
-        dependencies = task.get("dependencies")
-        data = queue.getLatestArtifact(dependencies[-1], artifact_path)
-    else:
-        with open(artifact_path, "r") as file:
-            data = json.load(file)
-
-    bug_number = data["bug_number"]
-    diff = data["diff"]
-
-    if not dry_run:
-        bugsy = Bugsy(api_key=api_key, bugzilla_url=api_root)
-        bugsy.request(f"bug/{bug_number}", "PUT", json=diff)
+    bugsy = Bugsy(api_key=bz_creds["KEY"], bugzilla_url=bz_creds["URL"])
+    bugsy.request(f"bug/{bug_data['bug_number']}", "PUT", json=bug_data["diff"])
 
     # Log changes
-    comment = diff.pop("comment", None)
-    LOG.info(f"Commit changes ({bug_number}): {json.dumps(diff)}")
+    comment = bug_data["diff"].pop("comment", None)
+    LOG.info(f"Committing ({bug_data['bug_number']}): {json.dumps(bug_data['diff'])}")
 
     if comment is not None:
         for line in comment["body"].splitlines():
             LOG.info(f">{line}")
 
 
-def main(argv=None):
+def submit_trace(bug_data, trace_artifact, pernosco_creds):
+    """Submit pernosco trace
+
+    :param bug_data: Processed bug data
+    :param trace_artifact: Trace artifact path
+    :param pernosco_creds: Pernosco credentials
     """
-    Report processed results
-    """
+    if not is_pernosco_available():
+        raise BugmonTaskError("Cannot find working instance of pernosco-submit!")
+
+    LOG.info("Attempting to submit pernosco trace (this may take a while)...")
+
+    LOG.info(f"Unpacking trace artifact: {trace_artifact}")
+    with fetch_trace_artifact(trace_artifact) as trace_dir:
+        build_info_path = trace_dir / "build.json"
+        if not build_info_path.exists():
+            raise BugmonTaskError("Cannot find build.json in trace archive.")
+
+        build_info = json.loads(build_info_path.read_text())
+        source_archive_url = get_source_url(build_info["branch"], build_info["rev"])
+        LOG.info(f"Unpacking source archive: {source_archive_url}")
+        with download_zip_archive(source_archive_url) as source_dir:
+            LOG.info("Uploading pernosco session...")
+
+            env = {"PATH": os.environ.get("PATH"), **pernosco_creds}
+            submit_pernosco(trace_dir, source_dir, bug_data["bug_number"], env)
+
+
+def parse_args(argv):
+    """Parse arguments"""
     parser = base_parser(prog="BugmonReporter")
-    parser.add_argument("artifact", type=str, help="Path to artifact")
+    parser.add_argument("processor_artifact", type=Path, help="Path to bug artifact")
     parser.add_argument(
-        "--api-root",
-        type=str,
-        help="The target bugzilla instance",
-        default=os.environ.get("BZ_API_ROOT"),
-    )
-    parser.add_argument(
-        "--api-key",
-        type=str,
-        help="The bugzilla API key",
-        default=os.environ.get("BZ_API_KEY"),
+        "--trace-artifact",
+        type=Path,
+        help="Path to store the rr trace archive.",
     )
 
     args = parser.parse_args(args=argv)
-    if args.api_root is None or args.api_key is None:
-        parser.error("BZ_API_ROOT and BZ_API_KEY must be set!")
-
     logging.basicConfig(level=args.log_level)
 
-    report(args.api_key, args.api_root, args.artifact, args.dry_run)
+    if not args.processor_artifact.exists():
+        parser.error("Cannot find processor artifact!")
+
+    if args.trace_artifact and not args.trace_artifact.exists():
+        parser.error("Cannot find trace artifact!")
+
+    return args
+
+
+def main(argv=None):
+    """Report processed results"""
+    args = parse_args(argv)
+    bz_creds = get_bugzilla_auth()
+
+    if in_taskcluster():
+        bug_data = fetch_artifact(args.processor_artifact)
+    else:
+        bug_data = json.loads(args.processor_artifact.read_text())
+
+    update_bug(bug_data, bz_creds)
+
+    if args.trace_artifact is not None:
+        pernosco_creds = get_pernosco_auth()
+        submit_trace(bug_data, args.trace_artifact, pernosco_creds)

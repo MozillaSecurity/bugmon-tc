@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
-
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
+import abc
 from datetime import datetime, timedelta
 
 from taskcluster.utils import fromNow
@@ -12,57 +11,20 @@ from taskcluster.utils import stringDate
 MAX_RUNTIME = 14400
 
 
-class ProcessorTask(object):
-    """
-    Helper class for generating processor tasks
-    """
+class BaseTask(abc.ABC):
+    """Abstract class for defining tasks"""
 
-    TASK_NAME = "Processor Task"
-    WORKER_TYPE = "bugmon-processor"
-
-    def __init__(self, parent_id, src, bug_id, **kwargs):
-        """
-
-        :param parent_id: ID of parent task
-        :param src: Path to src artifact
-        :param bug_id: Bug ID
-        :param kwargs: Additional options
-        """
+    def __init__(self, parent_id, bug_id):
         self.id = slugId()
         self.parent_id = parent_id
-        self.src = src
         self.bug_id = bug_id
 
-        prefix = self.TASK_NAME.lower().replace(" ", "-")
-        self.dest = f"{prefix}-{self.bug_id}-{self.parent_id}.json"
-
-        self.dependency = kwargs.get("dep", None)
-        self.force_confirm = kwargs.get("force_confirm", False)
+        self.dependency = None
 
     @property
+    @abc.abstractmethod
     def env(self):
         """Environment variables for the task"""
-        env_object = {
-            "BUG_ACTION": "process",
-            "MONITOR_ARTIFACT": self.src,
-            "PROCESSOR_ARTIFACT": self.dest,
-        }
-
-        if self.force_confirm:
-            env_object["FORCE_CONFIRM"] = "1"
-
-        return env_object
-
-    @property
-    def scopes(self):
-        """Scopes applied to the task"""
-        return [
-            "docker-worker:capability:device:hostSharedMemory",
-            "docker-worker:capability:device:loopbackAudio",
-            "docker-worker:capability:privileged",
-            "queue:scheduler-id:-",
-            f"queue:get-artifact:project/fuzzing/bugmon/{self.src}",
-        ]
 
     @property
     def task(self):
@@ -82,7 +44,7 @@ class ProcessorTask(object):
             "provisionerId": "proj-fuzzing",
             "metadata": {
                 "description": "",
-                "name": f"{self.TASK_NAME} ({self.bug_id})",
+                "name": f"{__class__.__name__} ({self.bug_id})",
                 "owner": "jkratzer@mozilla.com",
                 "source": "https://github.com/MozillaSecurity/bugmon",
             },
@@ -103,32 +65,12 @@ class ProcessorTask(object):
                 "maxRunTime": MAX_RUNTIME,
             },
             "priority": "high",
-            "workerType": self.WORKER_TYPE,
+            "workerType": self.worker_type,
             "retries": 5,
             "routes": ["notify.email.jkratzer@mozilla.com.on-failed"],
             "schedulerId": "-",
             "scopes": self.scopes,
             "tags": {},
-        }
-
-
-class ReporterTask(ProcessorTask):
-    """
-    Helper class for generating reporter tasks
-    """
-
-    TASK_NAME = "Reporter Task"
-    WORKER_TYPE = "bugmon-monitor"
-
-    def __init__(self, parent_id, src, bug_id, dep=None):
-        super().__init__(parent_id, src, bug_id, dep=dep)
-
-    @property
-    def env(self):
-        """Environment variables for the task"""
-        return {
-            "BUG_ACTION": "report",
-            "PROCESSOR_ARTIFACT": self.src,
         }
 
     @property
@@ -137,7 +79,139 @@ class ReporterTask(ProcessorTask):
         return [
             "docker-worker:capability:device:hostSharedMemory",
             "docker-worker:capability:device:loopbackAudio",
+            "docker-worker:capability:privileged",
             "queue:scheduler-id:-",
-            f"queue:get-artifact:project/fuzzing/bugmon/{self.src}",
-            "secrets:get:project/fuzzing/bz-api-key",
         ]
+
+    @property
+    @abc.abstractmethod
+    def worker_type(self):
+        """The worker type to use for this task"""
+        pass
+
+
+class ProcessorTask(BaseTask):
+    """Helper class for generating processor tasks"""
+
+    def __init__(
+        self, parent_id, bug_id, monitor_path, use_pernosco=False, force_confirm=False
+    ):
+        """Instantiate new instance.
+
+        :param parent_id: ID of parent task
+        :param bug_id: Bug ID
+        :param src: Path to monitor artifact
+        :param kwargs: Additional options
+        """
+        super().__init__(parent_id, bug_id)
+        self.id = slugId()
+        self.parent_id = parent_id
+        self.bug_id = bug_id
+        self.monitor_path = monitor_path
+        self.dest = f"processor-result-{self.bug_id}-{self.parent_id}.json"
+
+        self.trace_dest = None
+        if use_pernosco:
+            self.trace_dest = f"processor-rr-trace-{bug_id}-{parent_id}.tar.gz"
+
+        self.force_confirm = force_confirm
+
+    @property
+    def env(self):
+        """Environment variables for the task"""
+        env_object = {
+            "BUG_ACTION": "process",
+            "MONITOR_ARTIFACT": str(self.monitor_path),
+            "PROCESSOR_ARTIFACT": str(self.dest),
+        }
+
+        if self.force_confirm:
+            env_object["FORCE_CONFIRM"] = "1"
+
+        if self.trace_dest:
+            env_object["TRACE_ARTIFACT"] = str(self.trace_dest)
+
+        return env_object
+
+    @property
+    def scopes(self):
+        """Scopes applied to the task"""
+        scopes = super().scopes
+        scopes.extend(
+            [
+                "docker-worker:capability:disableSeccomp",
+                f"queue:get-artifact:project/fuzzing/bugmon/{self.monitor_path}",
+            ]
+        )
+
+        return scopes
+
+    @property
+    def worker_type(self):
+        """The worker type to use for this task"""
+        # If a trace path was supplied, use the bugmon-pernosco worker
+        if self.trace_dest:
+            return "bugmon-pernosco"
+
+        return "bugmon-processor"
+
+
+class ReporterTask(BaseTask):
+    """Helper class for generating reporter tasks"""
+
+    def __init__(self, parent_id, bug_id, process_path, dep, trace_path=None):
+        """Instantiate a new ReporterTask instance.
+
+        :param parent_id: ID of parent task
+        :param bug_id: Bug ID
+        :param process_path: Path to process artifact
+        :param dep: Task dependency
+        :param trace_path: Optional path to trace artifact.
+        """
+        super().__init__(parent_id, bug_id)
+        self.process_path = process_path
+
+        self.dependency = dep
+        self.trace_dest = trace_path
+
+    @property
+    def env(self):
+        """Environment variables for the task"""
+        env_object = {
+            "BUG_ACTION": "report",
+            "PROCESSOR_ARTIFACT": str(self.process_path),
+        }
+
+        if self.trace_dest is not None:
+            env_object["TRACE_ARTIFACT"] = str(self.trace_dest)
+
+        return env_object
+
+    @property
+    def scopes(self):
+        """Scopes applied to the task"""
+        base = "project/fuzzing/bugmon"
+        scopes = super().scopes
+        scopes.extend(
+            [
+                "secrets:get:project/fuzzing/bz-api-key",
+                f"queue:get-artifact:{base}/{self.process_path}",
+            ]
+        )
+
+        if self.trace_dest is not None:
+            scopes.extend(
+                [
+                    "secrets:get:project/fuzzing/pernosco-user",
+                    "secrets:get:project/fuzzing/pernosco-group",
+                    "secrets:get:project/fuzzing/pernosco-secret",
+                    f"queue:get-artifact:{base}/{self.trace_dest}",
+                ]
+            )
+
+        return scopes
+
+    @property
+    def worker_type(self):
+        """The worker type to use for this task"""
+        return "bugmon-monitor"
