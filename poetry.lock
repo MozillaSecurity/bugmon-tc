@@ -129,7 +129,7 @@ uvloop = ["uvloop (>=0.15.2)"]
 
 [[package]]
 name = "bugmon"
-version = "2.0.2"
+version = "2.0.3"
 description = "A python module for analyzing SpiderMonkey and Firefox bugs"
 category = "main"
 optional = false
@@ -146,7 +146,7 @@ typing-extensions = "^4.2.0"
 type = "git"
 url = "https://github.com/MozillaSecurity/bugmon.git"
 reference = "HEAD"
-resolved_reference = "439c36a00b17f9baeb87734aed16458ccf76a173"
+resolved_reference = "8c60b5ca2e8822a52581b0d518037bf4ebaf416e"
 
 [[package]]
 name = "bugsy"
