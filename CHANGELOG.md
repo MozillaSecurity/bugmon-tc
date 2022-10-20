@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.0.1 (2022-10-20)
+### Fix
+* Add privileged and disableSeccomp capabilities to processor task ([`31d55aa`](https://github.com/MozillaSecurity/bugmon-tc/commit/31d55aa60d6d874fed96a2983bdc8280b5d4d59a))
+
 ## v2.0.0 (2022-10-20)
 ### Feature
 * Add support for submitting pernosco traces ([#6](https://github.com/MozillaSecurity/bugmon-tc/issues/6)) ([`bdc052e`](https://github.com/MozillaSecurity/bugmon-tc/commit/bdc052ec51f4ecbdfb8f628c73e9be24178d8066))
