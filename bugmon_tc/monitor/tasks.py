@@ -192,7 +192,12 @@ class ReporterTask(BaseTask):
         """Scopes applied to the task"""
         base = "project/fuzzing/bugmon"
         scopes = super().scopes
-        scopes.append(f"queue:get-artifact:{base}/{self.process_path}")
+        scopes.extend(
+            [
+                "secrets:get:project/fuzzing/bz-api-key",
+                f"queue:get-artifact:{base}/{self.process_path}",
+            ]
+        )
 
         if self.trace_dest is not None:
             scopes.append(f"queue:get-artifact:{base}/{self.trace_dest}")
