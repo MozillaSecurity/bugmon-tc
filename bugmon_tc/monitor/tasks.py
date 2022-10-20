@@ -94,7 +94,12 @@ class ProcessorTask(BaseTask):
     """Helper class for generating processor tasks"""
 
     def __init__(
-        self, parent_id, bug_id, monitor_path, use_pernosco=False, force_confirm=False
+        self,
+        parent_id,
+        bug_id,
+        monitor_path,
+        use_pernosco=False,
+        force_confirm=False,
     ):
         """Instantiate new instance.
 
