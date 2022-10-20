@@ -71,7 +71,7 @@ class BugMonitorTask(object):
         response = self.bugsy.request("bug", params=QUERY)
         bugs = [EnhancedBug(self.bugsy, **bug) for bug in response["bugs"]]
         for bug in sorted(bugs, key=lambda bug: bug.id):
-            if self.is_actionable(bug) is not None:
+            if self.is_actionable(bug):
                 yield EnhancedBug.cache_bug(bug)
 
     def is_actionable(self, bug):
