@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v2.0.0 (2022-10-20)
+### Feature
+* Add support for submitting pernosco traces ([#6](https://github.com/MozillaSecurity/bugmon-tc/issues/6)) ([`bdc052e`](https://github.com/MozillaSecurity/bugmon-tc/commit/bdc052ec51f4ecbdfb8f628c73e9be24178d8066))
+
+### Breaking
+* Makes significant changes to the exposed API ([`bdc052e`](https://github.com/MozillaSecurity/bugmon-tc/commit/bdc052ec51f4ecbdfb8f628c73e9be24178d8066))
+
 ## v1.0.1 (2021-11-18)
 ### Fix
 * Expand search range to 2020-03-01 ([`5bb3427`](https://github.com/MozillaSecurity/bugmon-tc/commit/5bb3427e0e2b1585fd90b93c1c5d02b4bf569fe2))
