@@ -6,15 +6,7 @@ import json
 import pytest
 from bugmon.bug import EnhancedBug
 
-from bugmon_tc.common import BugmonTaskError
-from bugmon_tc.monitor.cli import main as monitor_cli
 from bugmon_tc.monitor.monitor import BugMonitorTask
-
-
-def test_monitor_cli_missing_args():
-    """Test that monitor CLI raises when missing BZ_* args"""
-    with pytest.raises(BugmonTaskError):
-        monitor_cli(None)
 
 
 def test_monitor_fetch_bug(mocker, tmp_path, bug_data):
