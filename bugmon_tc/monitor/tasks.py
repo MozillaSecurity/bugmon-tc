@@ -152,6 +152,14 @@ class ProcessorTask(BaseTask):
         return scopes
 
     @property
+    def task(self):
+        task = super().task
+        task["payload"]["capabilities"]["privileged"] = True
+        task["payload"]["capabilities"]["disableSeccomp"] = True
+
+        return task
+
+    @property
     def worker_type(self):
         """The worker type to use for this task"""
         # If a trace path was supplied, use the bugmon-pernosco worker
