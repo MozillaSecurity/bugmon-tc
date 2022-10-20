@@ -116,7 +116,7 @@ class BugMonitorTask(object):
                 artifact_dir.mkdir(parents=True)
 
             # Write monitor artifact
-            with open(artifact_dir / monitor_path, "w") as file:
+            with (artifact_dir / monitor_path).open("w") as file:
                 bug_data = bug.to_json()
                 json.dump(json.loads(bug_data), file, indent=2)
 
@@ -141,7 +141,7 @@ class BugMonitorTask(object):
             else:
                 processor_task_path = f"processor-task-{bug.id}-{parent_id}.json"
                 reporter_task_path = f"reporter-task-{bug.id}-{parent_id}.json"
-                with open(artifact_dir / processor_task_path, "w") as file:
+                with (artifact_dir / processor_task_path).open("w") as file:
                     json.dump(processor.task, file, indent=2)
-                with open(str(artifact_dir / reporter_task_path), "w") as file:
+                with (artifact_dir / reporter_task_path).open("w") as file:
                     json.dump(reporter.task, file, indent=2)
