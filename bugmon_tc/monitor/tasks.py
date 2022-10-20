@@ -200,7 +200,14 @@ class ReporterTask(BaseTask):
         )
 
         if self.trace_dest is not None:
-            scopes.append(f"queue:get-artifact:{base}/{self.trace_dest}")
+            scopes.extend(
+                [
+                    "secrets:get:project/fuzzing/pernosco-user",
+                    "secrets:get:project/fuzzing/pernosco-group",
+                    "secrets:get:project/fuzzing/pernosco-secret",
+                    f"queue:get-artifact:{base}/{self.trace_dest}",
+                ]
+            )
 
         return scopes
 
