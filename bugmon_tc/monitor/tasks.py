@@ -137,7 +137,12 @@ class ProcessorTask(BaseTask):
     def scopes(self):
         """Scopes applied to the task"""
         scopes = super().scopes
-        scopes.append(f"queue:get-artifact:project/fuzzing/bugmon/{self.monitor_path}")
+        scopes.extend(
+            [
+                "docker-worker:capability:disableSeccomp",
+                f"queue:get-artifact:project/fuzzing/bugmon/{self.monitor_path}",
+            ]
+        )
 
         return scopes
 
