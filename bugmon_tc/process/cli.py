@@ -82,12 +82,12 @@ def parse_args(argv):
     args = parser.parse_args(args=argv)
     logging.basicConfig(level=args.log_level)
 
-    if os.path.exists(args.processor_artifact):
+    if args.processor_artifact.exists():
         LOG.warning(
             f"Path {args.processor_artifact} exists! Contents will be overwritten!"
         )
 
-    if args.trace_artifact and os.path.exists(args.trace_artifact):
+    if args.trace_artifact and args.trace_artifact.exists():
         LOG.warning(f"Path {args.trace_artifact} exists! Contents will be overwritten!")
 
     return args
