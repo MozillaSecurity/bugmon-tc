@@ -124,7 +124,7 @@ class BugMonitorTask(object):
                 parent_id,
                 bug.id,
                 monitor_path,
-                use_pernosco=True,  # "pernosco" in bug.commands,
+                use_pernosco="pernosco" in bug.commands,
                 force_confirm=self.force_confirm,
             )
             reporter = ReporterTask(
