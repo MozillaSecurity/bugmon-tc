@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.0.2 (2022-10-24)
+### Fix
+* Only use pernosco if command present ([`29749c9`](https://github.com/MozillaSecurity/bugmon-tc/commit/29749c97e3b0c7f29533b86609f7eb15ffde8346))
+
 ## v2.0.1 (2022-10-20)
 ### Fix
 * Add privileged and disableSeccomp capabilities to processor task ([`31d55aa`](https://github.com/MozillaSecurity/bugmon-tc/commit/31d55aa60d6d874fed96a2983bdc8280b5d4d59a))
