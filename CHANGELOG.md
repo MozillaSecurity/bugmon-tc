@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v2.0.3 (2022-10-27)
+### Fix
+* Remove unnecessary PERNOSCO check in reporter ([`5bc9661`](https://github.com/MozillaSecurity/bugmon-tc/commit/5bc9661fe694a039b2aec2f6c80db7e7bccf33fd))
+* Use type(self) to get class name ([`70f206a`](https://github.com/MozillaSecurity/bugmon-tc/commit/70f206aaf90f8d0e47891e417f81282957181d1d))
+
 ## v2.0.2 (2022-10-24)
 ### Fix
 * Only use pernosco if command present ([`29749c9`](https://github.com/MozillaSecurity/bugmon-tc/commit/29749c97e3b0c7f29533b86609f7eb15ffde8346))
