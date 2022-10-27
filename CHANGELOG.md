@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.0.5 (2022-10-27)
+### Fix
+* Remove useless check for local artifacts ([`3f2df69`](https://github.com/MozillaSecurity/bugmon-tc/commit/3f2df69602615aecc44fed2906c364d6ac9316e8))
+
 ## v2.0.4 (2022-10-27)
 ### Fix
 * Always include pernosco required scopes ([`c90944d`](https://github.com/MozillaSecurity/bugmon-tc/commit/c90944dd1e17177eecce1d7add42ed2ddde4058a))
