@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.0.4 (2022-10-27)
+### Fix
+* Always include pernosco required scopes ([`c90944d`](https://github.com/MozillaSecurity/bugmon-tc/commit/c90944dd1e17177eecce1d7add42ed2ddde4058a))
+
 ## v2.0.3 (2022-10-27)
 ### Fix
 * Remove unnecessary PERNOSCO check in reporter ([`5bc9661`](https://github.com/MozillaSecurity/bugmon-tc/commit/5bc9661fe694a039b2aec2f6c80db7e7bccf33fd))
