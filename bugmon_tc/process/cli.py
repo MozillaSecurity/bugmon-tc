@@ -12,7 +12,7 @@ from bugmon import BugMonitor
 from bugmon.bug import EnhancedBug
 from bugmon.utils import get_pernosco_trace
 
-from ..common import fetch_artifact, in_taskcluster, BugmonTaskError
+from ..common import fetch_artifact, in_taskcluster, BugmonTaskError, queue
 from ..common.cli import base_parser
 
 LOG = logging.getLogger(__name__)
@@ -98,7 +98,9 @@ def main(argv=None):
     args = parse_args(argv)
 
     if in_taskcluster():
-        monitor_artifact = fetch_artifact(args.monitor_artifact)
+        task = queue.task(os.getenv("TASK_ID"))
+        task_id = task.get("taskGroupId")
+        monitor_artifact = fetch_artifact(task_id, args.monitor_artifact)
     else:
         monitor_artifact = json.loads(args.monitor_artifact.read_text())
 

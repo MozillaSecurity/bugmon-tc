@@ -61,15 +61,14 @@ def download_url(url):
         yield temp
 
 
-def fetch_artifact(path):
+def fetch_artifact(task_id, artifact_path):
     """Get artifact url
 
-    :param path: Path to the artifact
+    :param task_id: Task id
+    :param artifact_path: Path to the artifact
     """
-    task = queue.task(os.getenv("TASK_ID"))
-    parent_id = task.get("taskGroupId")
-    LOG.info(f"Fetching artifact: {parent_id} {path}")
-    return queue.getLatestArtifact(parent_id, str(path))
+    LOG.info(f"Fetching artifact: {task_id} {artifact_path}")
+    return queue.getLatestArtifact(task_id, artifact_path)
 
 
 @contextmanager
@@ -80,7 +79,11 @@ def fetch_trace_artifact(artifact_path):
     """
     with tempfile.TemporaryDirectory() as tempdir:
         if in_taskcluster():
-            artifact_info = fetch_artifact(artifact_path)
+            # Trace artifacts are only used by the report, so they are linked to the
+            # processor task
+            task = queue.task(os.getenv("TASK_ID"))
+            dependencies = task.get("dependencies")
+            artifact_info = fetch_artifact(dependencies[-1], artifact_path)
             # All artifacts are returned as JSON.  If the artifact itself is not JSON,
             # it will include a URL to the direct resource.
             with download_url(artifact_info["url"]) as artifact:
