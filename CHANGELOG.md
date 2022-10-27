@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.1.0 (2022-10-27)
+### Feature
+* Pass in task_id to fetch_artifact ([`31acc7e`](https://github.com/MozillaSecurity/bugmon-tc/commit/31acc7e323077795b47824bfce094bc358dbb335))
+
 ## v2.0.5 (2022-10-27)
 ### Fix
 * Remove useless check for local artifacts ([`3f2df69`](https://github.com/MozillaSecurity/bugmon-tc/commit/3f2df69602615aecc44fed2906c364d6ac9316e8))
