@@ -208,19 +208,13 @@ class ReporterTask(BaseTask):
         scopes.extend(
             [
                 "secrets:get:project/fuzzing/bz-api-key",
+                "secrets:get:project/fuzzing/pernosco-user",
+                "secrets:get:project/fuzzing/pernosco-group",
+                "secrets:get:project/fuzzing/pernosco-secret",
                 f"queue:get-artifact:{base}/{self.process_path}",
+                f"queue:get-artifact:{base}/{self.trace_dest}",
             ]
         )
-
-        if self.trace_dest is not None:
-            scopes.extend(
-                [
-                    "secrets:get:project/fuzzing/pernosco-user",
-                    "secrets:get:project/fuzzing/pernosco-group",
-                    "secrets:get:project/fuzzing/pernosco-secret",
-                    f"queue:get-artifact:{base}/{self.trace_dest}",
-                ]
-            )
 
         return scopes
 
