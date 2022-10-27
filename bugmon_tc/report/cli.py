@@ -87,12 +87,6 @@ def parse_args(argv):
     args = parser.parse_args(args=argv)
     logging.basicConfig(level=args.log_level)
 
-    if not args.processor_artifact.exists():
-        parser.error("Cannot find processor artifact!")
-
-    if args.trace_artifact and not args.trace_artifact.exists():
-        parser.error("Cannot find trace artifact!")
-
     return args
 
 
