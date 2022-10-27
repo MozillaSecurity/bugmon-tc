@@ -44,7 +44,7 @@ class BaseTask(abc.ABC):
             "provisionerId": "proj-fuzzing",
             "metadata": {
                 "description": "",
-                "name": f"{__class__.__name__} ({self.bug_id})",
+                "name": f"{type(self).__name__} ({self.bug_id})",
                 "owner": "jkratzer@mozilla.com",
                 "source": "https://github.com/MozillaSecurity/bugmon",
             },
