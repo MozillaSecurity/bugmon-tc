@@ -4,7 +4,6 @@
 import json
 import logging
 import os
-import shutil
 from pathlib import Path
 
 from bugsy import Bugsy
@@ -27,8 +26,6 @@ from ..common import (
 from ..common.cli import base_parser
 
 LOG = logging.getLogger(__name__)
-
-PERNOSCO = shutil.which("pernosco-submit")
 
 
 def update_bug(bug_data, bz_creds):
