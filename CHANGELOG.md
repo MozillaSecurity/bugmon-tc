@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.1.2 (2022-10-28)
+### Fix
+* Revert bug chfield value ([`ebf4958`](https://github.com/MozillaSecurity/bugmon-tc/commit/ebf49587f79981a0209ca7406fcad30cecbd541b))
+
 ## v2.1.1 (2022-10-28)
 ### Fix
 * Wrap artifact path in str ([`7c57131`](https://github.com/MozillaSecurity/bugmon-tc/commit/7c57131d439e9e0ace94a329f8a6382ae428d280))
