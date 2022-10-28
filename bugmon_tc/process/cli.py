@@ -100,7 +100,7 @@ def main(argv=None):
     if in_taskcluster():
         task = queue.task(os.getenv("TASK_ID"))
         task_id = task.get("taskGroupId")
-        monitor_artifact = fetch_artifact(task_id, args.monitor_artifact)
+        monitor_artifact = fetch_artifact(task_id, str(args.monitor_artifact))
     else:
         monitor_artifact = json.loads(args.monitor_artifact.read_text())
 
