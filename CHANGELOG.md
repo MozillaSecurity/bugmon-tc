@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.1.1 (2022-10-28)
+### Fix
+* Wrap artifact path in str ([`7c57131`](https://github.com/MozillaSecurity/bugmon-tc/commit/7c57131d439e9e0ace94a329f8a6382ae428d280))
+
 ## v2.1.0 (2022-10-27)
 ### Feature
 * Pass in task_id to fetch_artifact ([`31acc7e`](https://github.com/MozillaSecurity/bugmon-tc/commit/31acc7e323077795b47824bfce094bc358dbb335))
