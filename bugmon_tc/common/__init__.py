@@ -11,6 +11,7 @@ from urllib.parse import urlparse
 
 import requests
 from requests import RequestException
+from taskcluster import TaskclusterRestFailure
 from taskcluster.helper import TaskclusterConfig
 
 LOG = logging.getLogger(__name__)
@@ -68,7 +69,16 @@ def fetch_artifact(task_id, artifact_path):
     :param artifact_path: Path to the artifact
     """
     LOG.info(f"Fetching artifact: {task_id} {artifact_path}")
-    return queue.getLatestArtifact(task_id, artifact_path)
+    url = queue.buildUrl("getLatestArtifact", task_id, artifact_path)
+    # Allows HTTP_30x redirections retrieving the artifact
+    response = queue.session.get(url, stream=True, allow_redirects=True)
+
+    try:
+        response.raise_for_status()
+    except TaskclusterRestFailure as e:
+        raise BugmonTaskError(e) from TaskclusterRestFailure
+
+    return response.json()
 
 
 @contextmanager
