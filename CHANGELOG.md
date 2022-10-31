@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.1.3 (2022-10-31)
+### Fix
+* Allow redirects when fetching artifacts ([#7](https://github.com/MozillaSecurity/bugmon-tc/issues/7)) ([`d49f137`](https://github.com/MozillaSecurity/bugmon-tc/commit/d49f1379b3cbe007072e152662cbdefc94567df4))
+
 ## v2.1.2 (2022-10-28)
 ### Fix
 * Revert bug chfield value ([`ebf4958`](https://github.com/MozillaSecurity/bugmon-tc/commit/ebf49587f79981a0209ca7406fcad30cecbd541b))
