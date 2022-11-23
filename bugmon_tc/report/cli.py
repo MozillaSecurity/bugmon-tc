@@ -107,4 +107,4 @@ def main(argv=None):
 
     if args.trace_artifact is not None:
         pernosco_creds = get_pernosco_auth()
-        submit_trace(bug_data, args.trace_artifact, pernosco_creds)
+        submit_trace(bug_data, str(args.trace_artifact), pernosco_creds)
