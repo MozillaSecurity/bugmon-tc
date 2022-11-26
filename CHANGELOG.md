@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.1.5 (2022-11-26)
+### Fix
+* Only update bug if submit_trace succeeds ([`aafa553`](https://github.com/MozillaSecurity/bugmon-tc/commit/aafa5530812aa09ec9e36956e9197b51c4bf5355))
+
 ## v2.1.4 (2022-11-23)
 ### Fix
 * Convert trace_artifact path to str ([`a3b58d4`](https://github.com/MozillaSecurity/bugmon-tc/commit/a3b58d424d687578e7228cc889d6d10d48377fcb))
