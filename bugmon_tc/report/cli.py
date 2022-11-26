@@ -103,8 +103,8 @@ def main(argv=None):
     else:
         bug_data = json.loads(args.processor_artifact.read_text())
 
-    update_bug(bug_data, bz_creds)
-
     if args.trace_artifact is not None:
         pernosco_creds = get_pernosco_auth()
         submit_trace(bug_data, str(args.trace_artifact), pernosco_creds)
+
+    update_bug(bug_data, bz_creds)
