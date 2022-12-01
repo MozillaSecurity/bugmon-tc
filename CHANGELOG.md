@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.1.6 (2022-12-01)
+### Fix
+* Binary artifacts are returned directly in tc ([`f525da3`](https://github.com/MozillaSecurity/bugmon-tc/commit/f525da3ce4e40dd40667b171f45957a2b66e5d28))
+
 ## v2.1.5 (2022-11-26)
 ### Fix
 * Only update bug if submit_trace succeeds ([`aafa553`](https://github.com/MozillaSecurity/bugmon-tc/commit/aafa5530812aa09ec9e36956e9197b51c4bf5355))

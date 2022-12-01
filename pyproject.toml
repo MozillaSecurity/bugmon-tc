@@ -27,7 +27,7 @@ authors = ["pyoor <pyoor@users.noreply.github.com>"]
 description = "Bugmon Taskcluster Implementation"
 license = "MPL-2.0"
 name = "bugmon-tc"
-version = "2.1.5"
+version = "2.1.6"
 
 [tool.poetry.dependencies]
 bugmon = {git = "https://github.com/MozillaSecurity/bugmon.git"}
