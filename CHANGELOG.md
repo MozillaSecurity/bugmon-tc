@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.1.7 (2022-12-01)
+### Fix
+* TemporaryDirectory() returns a string ([`5d5f4ac`](https://github.com/MozillaSecurity/bugmon-tc/commit/5d5f4acb9d3dca6a40877f888b195db0f252fa4d))
+
 ## v2.1.6 (2022-12-01)
 ### Fix
 * Binary artifacts are returned directly in tc ([`f525da3`](https://github.com/MozillaSecurity/bugmon-tc/commit/f525da3ce4e40dd40667b171f45957a2b66e5d28))
