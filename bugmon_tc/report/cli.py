@@ -21,7 +21,7 @@ from ..common import (
     get_bugzilla_auth,
     get_pernosco_auth,
     in_taskcluster,
-    fetch_artifact,
+    fetch_json_artifact,
     queue,
 )
 from ..common.cli import base_parser
@@ -99,7 +99,7 @@ def main(argv=None):
     if in_taskcluster():
         task = queue.task(os.getenv("TASK_ID"))
         dependencies = task.get("dependencies")
-        bug_data = fetch_artifact(dependencies[-1], str(args.processor_artifact))
+        bug_data = fetch_json_artifact(dependencies[-1], str(args.processor_artifact))
     else:
         bug_data = json.loads(args.processor_artifact.read_text())
 

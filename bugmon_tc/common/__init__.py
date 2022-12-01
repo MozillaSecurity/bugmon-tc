@@ -7,7 +7,6 @@ import pathlib
 import tarfile
 import tempfile
 from contextlib import contextmanager
-from urllib.parse import urlparse
 
 import requests
 from requests import RequestException
@@ -44,24 +43,6 @@ def get_url(url: str):
     return data
 
 
-@contextmanager
-def download_url(url):
-    """Download a URL to a temporary file and return the handle
-
-    :param url: The URL to download
-    """
-    parsed = urlparse(url)
-    ext = pathlib.PurePosixPath(parsed.path).suffix
-
-    resp = get_url(url)
-    with tempfile.TemporaryFile(suffix=ext) as temp:
-        for chunk in resp.iter_content(chunk_size=128 * 1024):
-            temp.write(chunk)
-
-        temp.seek(0)
-        yield temp
-
-
 def fetch_artifact(task_id, artifact_path):
     """Get artifact url
 
@@ -78,7 +59,17 @@ def fetch_artifact(task_id, artifact_path):
     except TaskclusterRestFailure as e:
         raise BugmonTaskError(e) from TaskclusterRestFailure
 
-    return response.json()
+    return response
+
+
+def fetch_json_artifact(task_id, artifact_path):
+    """Fetch a JSON artifact
+
+    :param task_id: Task id
+    :param artifact_path: Path to the artifact
+    """
+    resp = fetch_artifact(task_id, artifact_path)
+    return resp.json()
 
 
 @contextmanager
@@ -93,11 +84,14 @@ def fetch_trace_artifact(artifact_path):
             # processor task
             task = queue.task(os.getenv("TASK_ID"))
             dependencies = task.get("dependencies")
-            artifact_info = fetch_artifact(dependencies[-1], artifact_path)
-            # All artifacts are returned as JSON.  If the artifact itself is not JSON,
-            # it will include a URL to the direct resource.
-            with download_url(artifact_info["url"]) as artifact:
-                archive = tarfile.open(fileobj=artifact)
+            resp = fetch_artifact(dependencies[-1], artifact_path)
+
+            with tempfile.TemporaryFile(suffix="tar.gz") as temp:
+                for chunk in resp.iter_content(chunk_size=128 * 1024):
+                    temp.write(chunk)
+
+                temp.seek(0)
+                archive = tarfile.open(fileobj=temp)
                 archive.extractall(tempdir.name)
         else:
             with open(artifact_path, "r") as file:
