@@ -92,7 +92,7 @@ def fetch_trace_artifact(artifact_path):
 
                 temp.seek(0)
                 archive = tarfile.open(fileobj=temp)
-                archive.extractall(tempdir.name)
+                archive.extractall(tempdir)
         else:
             with open(artifact_path, "r") as file:
                 archive = tarfile.open(file.name)
