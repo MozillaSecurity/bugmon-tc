@@ -86,18 +86,22 @@ class BugMonitorTask(object):
                 bugmon = BugMonitor(self.bugsy, bug, Path(temp_dir))
                 LOG.info(f"Analyzing bug {bug.id} (Status: {bug.status})")
 
-                if bugmon.is_supported():
-                    if any(
-                        [
-                            bugmon.needs_verify(),
-                            bugmon.needs_confirm(),
-                            bugmon.needs_bisect(),
-                            bugmon.needs_pernosco(),
-                            self.force_confirm and bug.status in CONFIRMABLE,
-                        ]
-                    ):
-                        LOG.info(f"Queuing bug {bug.id} for processing")
-                        return True
+                # If the bug is not supported, we still want to close it out
+                if not bugmon.is_supported():
+                    LOG.info(f"Bug {bug.id} not supported - queuing for removal")
+                    return True
+
+                if any(
+                    [
+                        bugmon.needs_verify(),
+                        bugmon.needs_confirm(),
+                        bugmon.needs_bisect(),
+                        bugmon.needs_pernosco(),
+                        self.force_confirm and bug.status in CONFIRMABLE,
+                    ]
+                ):
+                    LOG.info(f"Queuing bug {bug.id} for processing")
+                    return True
 
             except BugmonException as e:
                 LOG.error(f"Error processing bug {bug.id}: {e}")
