@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v2.1.8 (2023-03-03)
+### Fix
+* Close unsupported bugs ([`d80374a`](https://github.com/MozillaSecurity/bugmon-tc/commit/d80374aaee75fc45ad047b3f45e05dd389eeed69))
+* Use pernosco if pernosco-wanted keyword present ([`dd2cd38`](https://github.com/MozillaSecurity/bugmon-tc/commit/dd2cd38575ded61df3c65225ed110a5170e91fa7))
+
 ## v2.1.7 (2022-12-01)
 ### Fix
 * TemporaryDirectory() returns a string ([`5d5f4ac`](https://github.com/MozillaSecurity/bugmon-tc/commit/5d5f4acb9d3dca6a40877f888b195db0f252fa4d))
