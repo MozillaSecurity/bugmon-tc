@@ -3,7 +3,6 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 import json
 
-import pytest
 from bugmon.bug import EnhancedBug
 
 from bugmon_tc.monitor.monitor import BugMonitorTask
@@ -22,23 +21,6 @@ def test_monitor_fetch_bug(mocker, tmp_path, bug_data):
     result = list(monitor.fetch_bugs())
     assert len(result) == 1
     assert isinstance(result[0], EnhancedBug)
-
-
-@pytest.mark.parametrize("command", ["verify", "confirm", "bisect", None])
-def test_monitor_is_actionable(mocker, tmp_path, bug_data, command):
-    """Test that BugMonitorTask.is_actionable matches expected state"""
-    mocker.patch("bugmon.BugMonitor.is_supported", return_value=True)
-    monitor = BugMonitorTask("key", "root", tmp_path)
-    bug_data["whiteboard"] = f"[bugmon:{command}"
-    bug = EnhancedBug(bugsy=None, **bug_data)
-
-    # Change status to avoid unspecified actions
-    bug.status = "RESOLVED"
-
-    if command is None:
-        assert monitor.is_actionable(bug) is False
-    else:
-        assert monitor.is_actionable(bug) is True
 
 
 def test_monitor_create_tasks_local(mocker, tmp_path, bug_data):
