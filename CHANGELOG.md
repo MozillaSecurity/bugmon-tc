@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v3.0.0 (2023-04-25)
+### Breaking
+* drop support for pythin 3.7 ([`c30146d`](https://github.com/MozillaSecurity/bugmon-tc/commit/c30146de4bda656cfdc77bf2b418c11527b5dd7b))
+
 ## v2.1.8 (2023-03-03)
 ### Fix
 * Close unsupported bugs ([`d80374a`](https://github.com/MozillaSecurity/bugmon-tc/commit/d80374aaee75fc45ad047b3f45e05dd389eeed69))
