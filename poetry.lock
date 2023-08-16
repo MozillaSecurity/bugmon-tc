@@ -186,13 +186,13 @@ tests-no-zope = ["cloudpickle", "hypothesis", "mypy (>=1.1.1)", "pympler", "pyte
 
 [[package]]
 name = "autobisect"
-version = "7.0.3"
+version = "7.0.4"
 description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "autobisect-7.0.3-py3-none-any.whl", hash = "sha256:710ac00864f211ca1bdc85ad1870e275fdcf4220da8ac8bf9c031563f5d8ef6a"},
-    {file = "autobisect-7.0.3.tar.gz", hash = "sha256:e955bbd94249d76d78ae879b5c19b57040e38adcf9df657b6a51a7b84ea1e821"},
+    {file = "autobisect-7.0.4-py3-none-any.whl", hash = "sha256:ee0d5f431f9360cddb90887041f2be8190160dcc014c2568b7176844089797ea"},
+    {file = "autobisect-7.0.4.tar.gz", hash = "sha256:4b55eb450d6b3274244282cee07cb4d324c306809c3d1e78811c9147f6ad7a2c"},
 ]
 
 [package.dependencies]
@@ -237,7 +237,7 @@ uvloop = ["uvloop (>=0.15.2)"]
 
 [[package]]
 name = "bugmon"
-version = "3.1.2"
+version = "3.1.3"
 description = "A python module for analyzing SpiderMonkey and Firefox bugs"
 optional = false
 python-versions = "^3.8"
@@ -245,7 +245,7 @@ files = []
 develop = false
 
 [package.dependencies]
-autobisect = "^7.0.3"
+autobisect = "^7.0.4"
 bugsy = {git = "https://github.com/AutomatedTester/Bugsy.git"}
 fuzzfetch = "^2.4.1"
 typing-extensions = "^4.2.0"
@@ -254,7 +254,7 @@ typing-extensions = "^4.2.0"
 type = "git"
 url = "https://github.com/MozillaSecurity/bugmon.git"
 reference = "HEAD"
-resolved_reference = "dc143db9ead5ba46a3f67d008e5d3bf47c50bdc0"
+resolved_reference = "2b154a445437e99f129c288b639a76ab2be6ac60"
 
 [[package]]
 name = "bugsy"
