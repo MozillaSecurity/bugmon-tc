@@ -38,7 +38,7 @@ def get_url(url: str):
         data = requests.get(url, stream=True)
         data.raise_for_status()
     except RequestException as e:
-        raise BugmonTaskError(e) from None
+        raise BugmonTaskError(e) from e
 
     return data
 
@@ -57,7 +57,7 @@ def fetch_artifact(task_id, artifact_path):
     try:
         response.raise_for_status()
     except TaskclusterRestFailure as e:
-        raise BugmonTaskError(e) from TaskclusterRestFailure
+        raise BugmonTaskError(e) from e
 
     return response
 
