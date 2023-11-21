@@ -74,7 +74,7 @@ def fetch_json_artifact(task_id, artifact_path):
 
 @contextmanager
 def fetch_trace_artifact(artifact_path):
-    """Retrieve an rr trace artifact
+    """Retrieve a rr trace artifact
 
     :param artifact_path: Path to the trace artifact
     """
