@@ -4,6 +4,10 @@ repos:
     rev: v0.0.6
     hooks:
       - id: orion_ci
+  - repo: https://github.com/marco-c/taskcluster_yml_validator
+    rev: v0.0.9
+    hooks:
+      - id: taskcluster_yml
   - repo: local
     hooks:
       - id: black
@@ -35,11 +39,6 @@ repos:
         language: system
         pass_filenames: false
         types: [ python ]
-      - id: taskcluster_yml
-        name: taskcluster_yml
-        entry: poetry run taskcluster_yml_validator
-        files: "^\\.taskcluster\\.yml$"
-        language: system
       - id: toml-sort
         name: toml-sort
         entry: poetry run toml-sort --check -a
