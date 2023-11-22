@@ -26,6 +26,14 @@ def process_bug(
     trace_dest: Optional[Path] = None,
     force_confirm: bool = False,
 ) -> None:
+    """Process bug from file.
+
+    :param bug_data: Raw bug data.
+    :param proc_dest: Destination for storing process results.
+    :param trace_dest: Optional destination for storing trace results.
+    :param force_confirm: Optional boolean indicating if we should forcefully confirm bugs.
+    :return:
+    """
     bug = EnhancedBug(bugsy=None, **bug_data)
     with tempfile.TemporaryDirectory() as temp_dir:
         working_path = Path(temp_dir)
@@ -39,7 +47,7 @@ def process_bug(
         LOG.info(f"Processing bug {bug.id} (Status: {bug.status})")
         bugmon.process(force_confirm)
 
-        with open(proc_dest, "w") as file:
+        with open(proc_dest, mode="w", encoding="utf-8") as file:
             json.dump({"bug_number": bug.id, "diff": bug.diff()}, file, indent=2)
 
         if trace_dest is not None:

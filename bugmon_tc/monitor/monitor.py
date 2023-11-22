@@ -40,6 +40,7 @@ class MonitorError(Exception):
 
 
 def needs_force_confirmed(force_confirm: bool, bug: EnhancedBug) -> bool:
+    """Determine if bug is eligible for forced confirmation"""
     return force_confirm and bug.status in [
         "ASSIGNED",
         "NEW",
@@ -49,9 +50,7 @@ def needs_force_confirmed(force_confirm: bool, bug: EnhancedBug) -> bool:
 
 
 class BugMonitorTask(object):
-    """
-    Class for generating bugmon taskgraph
-    """
+    """Class for generating bugmon taskgraph"""
 
     def __init__(
         self,

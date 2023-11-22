@@ -89,7 +89,6 @@ class BaseTask(abc.ABC):
     @abc.abstractmethod
     def worker_type(self) -> str:
         """The worker type to use for this task"""
-        pass
 
 
 class ProcessorTask(BaseTask):
