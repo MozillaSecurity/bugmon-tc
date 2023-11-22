@@ -49,7 +49,7 @@ def needs_force_confirmed(force_confirm: bool, bug: EnhancedBug) -> bool:
     ]
 
 
-class BugMonitorTask(object):
+class BugMonitorTask:
     """Class for generating bugmon taskgraph"""
 
     def __init__(
