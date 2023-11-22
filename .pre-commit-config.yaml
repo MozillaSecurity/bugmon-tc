@@ -35,7 +35,7 @@ repos:
         types: [ python ]
       - id: pylint
         name: pylint
-        entry: poetry run pylint -j 0 bugmon
+        entry: poetry run pylint -j 0 bugmon_tc
         language: system
         pass_filenames: false
         types: [ python ]
