@@ -51,7 +51,7 @@ def update_bug(bug_data: Dict[str, Any], bz_creds: BugzillaCreds) -> None:
 
 
 def submit_trace(
-    bug_data: dict[str, Any],
+    bug_data: Dict[str, Any],
     trace_artifact: Path,
     pernosco_creds: PernoscoCreds,
 ) -> None:
