@@ -3,9 +3,10 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 import argparse
 import logging
+from typing import Any
 
 
-def base_parser(*args, **kwargs):
+def base_parser(*args: Any, **kwargs: Any) -> argparse.ArgumentParser:
     """
     Common arguments shared across modules
     """

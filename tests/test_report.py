@@ -2,7 +2,6 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 import json
-import os
 from operator import itemgetter
 
 import pytest
@@ -61,7 +60,7 @@ def test_submit_trace(bug_data_processed, build_info, mocker, monkeypatch, tmp_p
         trace_dir,
         source_dir,
         bug_data_processed["bug_number"],
-        {"PATH": os.environ.get("PATH"), **pernosco_creds},
+        pernosco_creds,
     )
 
 

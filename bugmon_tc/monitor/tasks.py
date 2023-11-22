@@ -3,6 +3,8 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 import abc
 from datetime import datetime, timedelta
+from pathlib import Path
+from typing import Any, List, Optional, Dict
 
 from taskcluster.utils import fromNow
 from taskcluster.utils import slugId
@@ -14,20 +16,20 @@ MAX_RUNTIME = 14400
 class BaseTask(abc.ABC):
     """Abstract class for defining tasks"""
 
-    def __init__(self, parent_id, bug_id):
+    def __init__(self, parent_id: str, bug_id: str) -> None:
         self.id = slugId()
         self.parent_id = parent_id
         self.bug_id = bug_id
 
-        self.dependency = None
+        self.dependency: Optional[str] = None
 
     @property
     @abc.abstractmethod
-    def env(self):
+    def env(self) -> Dict[str, str]:
         """Environment variables for the task"""
 
     @property
-    def task(self):
+    def task(self) -> Dict[str, Any]:
         """Task definition"""
         now = datetime.utcnow()
 
@@ -74,7 +76,7 @@ class BaseTask(abc.ABC):
         }
 
     @property
-    def scopes(self):
+    def scopes(self) -> List[str]:
         """Scopes applied to the task"""
         return [
             "docker-worker:capability:device:hostSharedMemory",
@@ -85,7 +87,7 @@ class BaseTask(abc.ABC):
 
     @property
     @abc.abstractmethod
-    def worker_type(self):
+    def worker_type(self) -> str:
         """The worker type to use for this task"""
         pass
 
@@ -95,12 +97,12 @@ class ProcessorTask(BaseTask):
 
     def __init__(
         self,
-        parent_id,
-        bug_id,
-        monitor_path,
-        use_pernosco=False,
-        force_confirm=False,
-    ):
+        parent_id: str,
+        bug_id: str,
+        monitor_path: Path,
+        use_pernosco: bool = False,
+        force_confirm: bool = False,
+    ) -> None:
         """Instantiate new instance.
 
         :param parent_id: ID of parent task
@@ -113,16 +115,16 @@ class ProcessorTask(BaseTask):
         self.parent_id = parent_id
         self.bug_id = bug_id
         self.monitor_path = monitor_path
-        self.dest = f"processor-result-{self.bug_id}-{self.parent_id}.json"
+        self.dest = Path(f"processor-result-{self.bug_id}-{self.parent_id}.json")
 
         self.trace_dest = None
         if use_pernosco:
-            self.trace_dest = f"processor-rr-trace-{bug_id}-{parent_id}.tar.gz"
+            self.trace_dest = Path(f"processor-rr-trace-{bug_id}-{parent_id}.tar.gz")
 
         self.force_confirm = force_confirm
 
     @property
-    def env(self):
+    def env(self) -> Dict[str, str]:
         """Environment variables for the task"""
         env_object = {
             "BUG_ACTION": "process",
@@ -139,7 +141,7 @@ class ProcessorTask(BaseTask):
         return env_object
 
     @property
-    def scopes(self):
+    def scopes(self) -> List[str]:
         """Scopes applied to the task"""
         scopes = super().scopes
         scopes.extend(
@@ -152,7 +154,7 @@ class ProcessorTask(BaseTask):
         return scopes
 
     @property
-    def task(self):
+    def task(self) -> Dict[str, Any]:
         task = super().task
         task["payload"]["capabilities"]["privileged"] = True
         task["payload"]["capabilities"]["disableSeccomp"] = True
@@ -160,7 +162,7 @@ class ProcessorTask(BaseTask):
         return task
 
     @property
-    def worker_type(self):
+    def worker_type(self) -> str:
         """The worker type to use for this task"""
         # If a trace path was supplied, use the bugmon-pernosco worker
         if self.trace_dest:
@@ -172,7 +174,14 @@ class ProcessorTask(BaseTask):
 class ReporterTask(BaseTask):
     """Helper class for generating reporter tasks"""
 
-    def __init__(self, parent_id, bug_id, process_path, dep, trace_path=None):
+    def __init__(
+        self,
+        parent_id: str,
+        bug_id: str,
+        process_path: Path,
+        dep: str,
+        trace_path: Optional[Path] = None,
+    ):
         """Instantiate a new ReporterTask instance.
 
         :param parent_id: ID of parent task
@@ -188,7 +197,7 @@ class ReporterTask(BaseTask):
         self.trace_dest = trace_path
 
     @property
-    def env(self):
+    def env(self) -> Dict[str, str]:
         """Environment variables for the task"""
         env_object = {
             "BUG_ACTION": "report",
@@ -201,7 +210,7 @@ class ReporterTask(BaseTask):
         return env_object
 
     @property
-    def scopes(self):
+    def scopes(self) -> List[str]:
         """Scopes applied to the task"""
         base = "project/fuzzing/bugmon"
         scopes = super().scopes
@@ -219,6 +228,6 @@ class ReporterTask(BaseTask):
         return scopes
 
     @property
-    def worker_type(self):
+    def worker_type(self) -> str:
         """The worker type to use for this task"""
         return "bugmon-monitor"

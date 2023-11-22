@@ -1,12 +1,14 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
+import argparse
 import json
 import logging
 import os
 import shutil
 import tempfile
 from pathlib import Path
+from typing import Any, Optional, Dict
 
 from bugmon import BugMonitor
 from bugmon.bug import EnhancedBug
@@ -18,9 +20,13 @@ from ..common.cli import base_parser
 LOG = logging.getLogger(__name__)
 
 
-def process_bug(bug_data, proc_dest, trace_dest=None, force_confirm=False):
+def process_bug(
+    bug_data: Dict[str, Any],
+    proc_dest: Path,
+    trace_dest: Optional[Path] = None,
+    force_confirm: bool = False,
+) -> None:
     bug = EnhancedBug(bugsy=None, **bug_data)
-
     with tempfile.TemporaryDirectory() as temp_dir:
         working_path = Path(temp_dir)
         bugmon = BugMonitor(
@@ -46,7 +52,7 @@ def process_bug(bug_data, proc_dest, trace_dest=None, force_confirm=False):
             LOG.info("Compressing rr trace (this may take a while)...")
             shutil.make_archive(
                 # Assumes arg.trace_artifact with a suffix of ".tar.gz"
-                base_name=trace_dest.with_suffix("").with_suffix(""),
+                base_name=str(trace_dest.with_suffix("").with_suffix("")),
                 format="gztar",
                 root_dir=str(latest_trace),
             )
@@ -54,7 +60,7 @@ def process_bug(bug_data, proc_dest, trace_dest=None, force_confirm=False):
         return None
 
 
-def parse_args(argv):
+def parse_args(argv: Any = None) -> argparse.Namespace:
     """Parse arguments"""
     parser = base_parser(prog="BugmonProcessor")
     parser.add_argument(
@@ -93,14 +99,14 @@ def parse_args(argv):
     return args
 
 
-def main(argv=None):
+def main(argv: Optional[Dict[str, Any]] = None) -> None:
     """Process bug"""
     args = parse_args(argv)
 
     if in_taskcluster():
         task = queue.task(os.getenv("TASK_ID"))
         task_id = task.get("taskGroupId")
-        monitor_artifact = fetch_json_artifact(task_id, str(args.monitor_artifact))
+        monitor_artifact = fetch_json_artifact(task_id, args.monitor_artifact)
     else:
         monitor_artifact = json.loads(args.monitor_artifact.read_text())
 

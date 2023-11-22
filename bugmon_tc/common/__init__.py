@@ -3,33 +3,42 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 import logging
 import os
-import pathlib
 import tarfile
 import tempfile
 from contextlib import contextmanager
+from pathlib import Path
+from typing import TypedDict, Generator, Dict, Any, cast
 
 import requests
-from requests import RequestException
-from taskcluster import TaskclusterRestFailure
+from bugmon import PernoscoCreds
+from requests import RequestException, Response
+from taskcluster import TaskclusterRestFailure, Queue
 from taskcluster.helper import TaskclusterConfig
 
 LOG = logging.getLogger(__name__)
 
 # Shared taskcluster configuration
 taskcluster = TaskclusterConfig(os.environ["TASKCLUSTER_ROOT_URL"])
-queue = taskcluster.get_service("queue")
+queue: Queue = taskcluster.get_service("queue")
+
+
+class BugzillaCreds(TypedDict):
+    """Interface representing bugzilla credentials"""
+
+    KEY: str
+    URL: str
 
 
 class BugmonTaskError(Exception):
     """Error handler for bugmon tasks"""
 
 
-def in_taskcluster():
+def in_taskcluster() -> bool:
     """Helper function for determining if we're running in taskcluster"""
     return "TASK_ID" in os.environ and "TASKCLUSTER_ROOT_URL" in os.environ
 
 
-def get_url(url: str):
+def get_url(url: str) -> Response:
     """Retrieve URL contents
 
     :param url: The URL to retrieve
@@ -43,16 +52,16 @@ def get_url(url: str):
     return data
 
 
-def fetch_artifact(task_id, artifact_path):
+def fetch_artifact(task_id: str, artifact_path: Path) -> Response:
     """Get artifact url
 
     :param task_id: Task id
     :param artifact_path: Path to the artifact
     """
     LOG.info(f"Fetching artifact: {task_id} {artifact_path}")
-    url = queue.buildUrl("getLatestArtifact", task_id, artifact_path)
+    url = queue.buildUrl("getLatestArtifact", task_id, str(artifact_path))
     # Allows HTTP_30x redirections retrieving the artifact
-    response = queue.session.get(url, stream=True, allow_redirects=True)
+    response: Response = queue.session.get(url, stream=True, allow_redirects=True)
 
     try:
         response.raise_for_status()
@@ -62,18 +71,18 @@ def fetch_artifact(task_id, artifact_path):
     return response
 
 
-def fetch_json_artifact(task_id, artifact_path):
+def fetch_json_artifact(task_id: str, artifact_path: Path) -> Dict[str, Any]:
     """Fetch a JSON artifact
 
     :param task_id: Task id
     :param artifact_path: Path to the artifact
     """
     resp = fetch_artifact(task_id, artifact_path)
-    return resp.json()
+    return cast(Dict[str, Any], resp.json())
 
 
 @contextmanager
-def fetch_trace_artifact(artifact_path):
+def fetch_trace_artifact(artifact_path: Path) -> Generator[Path, None, None]:
     """Retrieve a rr trace artifact
 
     :param artifact_path: Path to the trace artifact
@@ -98,10 +107,10 @@ def fetch_trace_artifact(artifact_path):
                 archive = tarfile.open(file.name)
                 archive.extractall(tempdir)
 
-        yield pathlib.Path(tempdir)
+        yield Path(tempdir)
 
 
-def get_bugzilla_auth():
+def get_bugzilla_auth() -> BugzillaCreds:
     """Extract Bugzilla API keys from env"""
     try:
         return {
@@ -112,7 +121,7 @@ def get_bugzilla_auth():
         raise BugmonTaskError("Cannot find Bugzilla credentials in env") from e
 
 
-def get_pernosco_auth():
+def get_pernosco_auth() -> PernoscoCreds:
     """Extract Bugzilla API keys from env"""
     try:
         return {

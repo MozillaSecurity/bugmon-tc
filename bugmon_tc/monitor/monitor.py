@@ -6,6 +6,7 @@ import logging
 import os
 import tempfile
 from pathlib import Path
+from typing import Iterator
 
 from bugsy import Bugsy
 from bugmon import BugMonitor, BugmonException
@@ -38,7 +39,7 @@ class MonitorError(Exception):
     """Exception for monitor issues"""
 
 
-def needs_force_confirmed(force_confirm, bug):
+def needs_force_confirmed(force_confirm: bool, bug: EnhancedBug) -> bool:
     return force_confirm and bug.status in [
         "ASSIGNED",
         "NEW",
@@ -52,7 +53,12 @@ class BugMonitorTask(object):
     Class for generating bugmon taskgraph
     """
 
-    def __init__(self, api_key, api_root, force_confirm=False):
+    def __init__(
+        self,
+        api_key: str,
+        api_root: str,
+        force_confirm: bool = False,
+    ) -> None:
         """
 
         :param api_key: BZ_API_KEY
@@ -62,7 +68,7 @@ class BugMonitorTask(object):
         self.bugsy = Bugsy(api_key=api_key, bugzilla_url=api_root)
         self.force_confirm = force_confirm
 
-    def fetch_bugs(self):
+    def fetch_bugs(self) -> Iterator[EnhancedBug]:
         """
         Generate EnhancedBug instances for all actionable bugs
 
@@ -74,7 +80,7 @@ class BugMonitorTask(object):
             if self.is_actionable(bug):
                 yield EnhancedBug.cache_bug(bug)
 
-    def is_actionable(self, bug):
+    def is_actionable(self, bug: EnhancedBug) -> bool:
         """
         Determine which action, if any, can be performed on the bug
 
@@ -108,7 +114,7 @@ class BugMonitorTask(object):
 
         return False
 
-    def create_tasks(self, artifact_dir):
+    def create_tasks(self, artifact_dir: Path) -> None:
         """Fetch all bugs and generate artifacts representing the tasks that need to be
         performed on those bugs"""
 
@@ -124,12 +130,14 @@ class BugMonitorTask(object):
                 bug_data = bug.to_json()
                 json.dump(json.loads(bug_data), file, indent=2)
 
+            use_pernosco = (
+                "pernosco" in bug.commands or "pernosco-wanted" in bug.keywords
+            )
             processor = ProcessorTask(
                 parent_id,
                 bug.id,
                 monitor_path,
-                use_pernosco="pernosco" in bug.commands
-                or "pernosco-wanted" in bug.keywords,
+                use_pernosco=use_pernosco,
                 force_confirm=self.force_confirm,
             )
             reporter = ReporterTask(
