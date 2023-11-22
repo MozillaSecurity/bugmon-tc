@@ -1,19 +1,21 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
+import argparse
 import json
 import logging
 import os
 from pathlib import Path
-
-from bugsy import Bugsy
+from typing import Any, Dict, Optional
 
 from bugmon.utils import (
     download_zip_archive,
     get_source_url,
     submit_pernosco,
     is_pernosco_available,
+    PernoscoCreds,
 )
+from bugsy import Bugsy
 
 from ..common import (
     fetch_trace_artifact,
@@ -23,13 +25,14 @@ from ..common import (
     in_taskcluster,
     fetch_json_artifact,
     queue,
+    BugzillaCreds,
 )
 from ..common.cli import base_parser
 
 LOG = logging.getLogger(__name__)
 
 
-def update_bug(bug_data, bz_creds):
+def update_bug(bug_data: Dict[str, Any], bz_creds: BugzillaCreds) -> None:
     """Update bug.
 
     :param bug_data: Processed bug data
@@ -47,7 +50,11 @@ def update_bug(bug_data, bz_creds):
             LOG.info(f">{line}")
 
 
-def submit_trace(bug_data, trace_artifact, pernosco_creds):
+def submit_trace(
+    bug_data: dict[str, Any],
+    trace_artifact: Path,
+    pernosco_creds: PernoscoCreds,
+) -> None:
     """Submit pernosco trace
 
     :param bug_data: Processed bug data
@@ -71,11 +78,15 @@ def submit_trace(bug_data, trace_artifact, pernosco_creds):
         with download_zip_archive(source_archive_url) as source_dir:
             LOG.info("Uploading pernosco session...")
 
-            env = {"PATH": os.environ.get("PATH"), **pernosco_creds}
-            submit_pernosco(trace_dir, source_dir, bug_data["bug_number"], env)
+            submit_pernosco(
+                trace_dir,
+                source_dir,
+                bug_data["bug_number"],
+                pernosco_creds,
+            )
 
 
-def parse_args(argv):
+def parse_args(argv: Any = None) -> argparse.Namespace:
     """Parse arguments"""
     parser = base_parser(prog="BugmonReporter")
     parser.add_argument("processor_artifact", type=Path, help="Path to bug artifact")
@@ -91,7 +102,7 @@ def parse_args(argv):
     return args
 
 
-def main(argv=None):
+def main(argv: Optional[Dict[str, Any]] = None) -> None:
     """Report processed results"""
     args = parse_args(argv)
     bz_creds = get_bugzilla_auth()
@@ -99,12 +110,12 @@ def main(argv=None):
     if in_taskcluster():
         task = queue.task(os.getenv("TASK_ID"))
         dependencies = task.get("dependencies")
-        bug_data = fetch_json_artifact(dependencies[-1], str(args.processor_artifact))
+        bug_data = fetch_json_artifact(dependencies[-1], args.processor_artifact)
     else:
         bug_data = json.loads(args.processor_artifact.read_text())
 
     if args.trace_artifact is not None:
         pernosco_creds = get_pernosco_auth()
-        submit_trace(bug_data, str(args.trace_artifact), pernosco_creds)
+        submit_trace(bug_data, args.trace_artifact, pernosco_creds)
 
     update_bug(bug_data, bz_creds)
