@@ -44,7 +44,7 @@ def get_url(url: str) -> Response:
     :param url: The URL to retrieve
     """
     try:
-        data = requests.get(url, stream=True)
+        data = requests.get(url, stream=True, timeout=60)
         data.raise_for_status()
     except RequestException as e:
         raise BugmonTaskError(e) from e
@@ -103,7 +103,7 @@ def fetch_trace_artifact(artifact_path: Path) -> Generator[Path, None, None]:
                 archive = tarfile.open(fileobj=temp)
                 archive.extractall(tempdir)
         else:
-            with open(artifact_path, "r") as file:
+            with open(artifact_path, mode="r", encoding="utf-8") as file:
                 archive = tarfile.open(file.name)
                 archive.extractall(tempdir)
 
