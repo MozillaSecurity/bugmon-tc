@@ -7,7 +7,7 @@ import tarfile
 import tempfile
 from contextlib import contextmanager
 from pathlib import Path
-from typing import TypedDict, Generator, Dict, Any, cast
+from typing import TypedDict, Dict, Any, cast, Iterator
 
 import requests
 from bugmon import PernoscoCreds
@@ -82,7 +82,7 @@ def fetch_json_artifact(task_id: str, artifact_path: Path) -> Dict[str, Any]:
 
 
 @contextmanager
-def fetch_trace_artifact(artifact_path: Path) -> Generator[Path, None, None]:
+def fetch_trace_artifact(artifact_path: Path) -> Iterator[Path]:
     """Retrieve a rr trace artifact
 
     :param artifact_path: Path to the trace artifact
