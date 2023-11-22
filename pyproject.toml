@@ -4,17 +4,17 @@ requires = ["poetry>=1.0.5"]
 
 [tool.coverage.report]
 exclude_lines = [
-    "pragma: no cover",
+  "pragma: no cover"
 ]
 
 [tool.coverage.run]
 omit = [
-    "*/setup.py",
-    "*/tests/*",
-    "*/build/*",
-    "*/dist/*",
-    "*/.tox/*",
-    "*/.egg/*",
+  "*/.egg/*",
+  "*/.tox/*",
+  "*/build/*",
+  "*/dist/*",
+  "*/setup.py",
+  "*/tests/*"
 ]
 
 [tool.isort]
@@ -42,22 +42,22 @@ python = "^3.8.1"
 taskcluster = ">=30.0.0"
 
 [tool.poetry.group.dev.dependencies]
-black = "^22.10.0"
+black = "^23.11.0"
 coverage = {extras = ["toml"], version = "^7.2.3"}
-flake8 = "^4.0.1"
-flake8-isort = "^4.0.0"
+flake8 = "^6.1.0"
+flake8-isort = "^6.1.1"
 flake8-quotes = "^3.3.1"
-gitlint = "^0.17.0"
+gitlint = "^0.19.1"
 mypy = "^1.7.0"
-pre-commit = "^2.13.0"
-pylint = "^2.4.4"
+pre-commit = "^3.5.0"
+pylint = "^3.0.2"
 pytest = "^7.1.2"
 pytest-black = "^0.3.8"
-pytest-cov = "^3.0.0"
+pytest-cov = "^4.1.0"
 pytest-flake8 = "^1.1.1"
 pytest-mock = "^3.0.0"
-pytest-pylint = "^0.18.0"
-toml-sort = "^0.19.0"
+pytest-pylint = "^0.21.0"
+toml-sort = "^0.23.1"
 types-requests = "^2.31.0.10"
 
 [tool.poetry.scripts]
@@ -70,22 +70,11 @@ max-line-length = 88
 
 [tool.pylint.messages_control]
 disable = [
-    "fixme",
-    "invalid-name",
-    "line-too-long",
-    "logging-format-interpolation",
-    "logging-fstring-interpolation",
-    "missing-module-docstring",
-    "too-few-public-methods",
-    "too-many-arguments",
-    "too-many-branches",
-    "too-many-instance-attributes",
-    "too-many-lines",
-    "too-many-locals",
-    "too-many-nested-blocks",
-    "too-many-return-statements",
-    "too-many-statements",
-    "useless-object-inheritance"
+  "duplicate-code",
+  "line-too-long",
+  "logging-fstring-interpolation",
+  "missing-module-docstring",
+  "too-many-arguments"
 ]
 
 [tool.pytest.ini_options]
