@@ -24,7 +24,6 @@ profile = "black"
 
 [tool.mypy]
 disallow_subclassing_any = "False"
-exclude = "^.*tests.*$"
 ignore_missing_imports = "True"
 implicit_reexport = "True"
 strict = "True"
