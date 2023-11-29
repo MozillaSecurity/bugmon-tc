@@ -2,13 +2,29 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 import argparse
+import json
 import os
 from pathlib import Path
 
 import pytest
 
 from bugmon_tc.common import BugmonTaskError
-from bugmon_tc.process.cli import process_bug, parse_args
+from bugmon_tc.process.cli import process_bug, parse_args, main
+
+
+@pytest.fixture
+def mock_args():
+    return {
+        "monitor_artifact": "monitor_artifact.json",
+        "processor_artifact": "processor_artifact.json",
+        "trace_artifact": "trace_artifact.tar.gz",
+        "force_confirm": True,
+    }
+
+
+@pytest.fixture
+def mock_task_data():
+    return {"bug_id": 123, "status": "NEW"}  # Adjust this to match your actual data
 
 
 def test_parse_args_basic(caplog):
@@ -113,3 +129,44 @@ def test_process_bug_raises_no_trace(mocker, tmp_path, bug_data):
         process_bug(bug_data, dest, trace_dest=trace_dest)
 
     assert str(e_info.value) == "Unable to identify a pernosco trace!"
+
+
+def test_main_in_taskcluster(mocker, tmp_path):
+    """Test that process_bug is called with the correct args when in taskcluster"""
+    mocker.patch("bugmon_tc.process.cli.in_taskcluster", return_value=True)
+    mocker.patch(
+        "bugmon_tc.process.cli.queue.task", return_value={"taskGroupId": "123"}
+    )
+    mock_task_data = {"bug_id": 123, "status": "NEW"}
+    mocker.patch(
+        "bugmon_tc.process.cli.fetch_json_artifact", return_value=mock_task_data
+    )
+    mock_process_bug = mocker.patch("bugmon_tc.process.cli.process_bug")
+
+    main(["monitor_artifact.json", "processor_artifact.json"])
+
+    mock_process_bug.assert_called_once_with(
+        mock_task_data,
+        Path("processor_artifact.json"),
+        force_confirm=False,
+        trace_dest=None,
+    )
+
+
+def test_main_in_local(mocker, tmp_path):
+    """Test that process_bug is called with the correct args when run locally"""
+    mocker.patch("bugmon_tc.process.cli.in_taskcluster", return_value=False)
+    mock_task_data = {"bug_id": 123, "status": "NEW"}
+    monitor_artifact_path = tmp_path / "monitor.json"
+    monitor_artifact_path.write_text(json.dumps({"bug_id": 123, "status": "NEW"}))
+    processor_artifact_path = tmp_path / "processor.json"
+    mock_process_bug = mocker.patch("bugmon_tc.process.cli.process_bug")
+
+    main([str(monitor_artifact_path), str(processor_artifact_path)])
+
+    mock_process_bug.assert_called_once_with(
+        mock_task_data,
+        processor_artifact_path,
+        force_confirm=False,
+        trace_dest=None,
+    )
