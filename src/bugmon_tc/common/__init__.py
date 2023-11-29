@@ -103,8 +103,7 @@ def fetch_trace_artifact(artifact_path: Path) -> Iterator[Path]:
                 archive = tarfile.open(fileobj=temp)
                 archive.extractall(tempdir)
         else:
-            with open(artifact_path, mode="r", encoding="utf-8") as file:
-                archive = tarfile.open(file.name)
+            with tarfile.open(artifact_path, mode="r:gz") as archive:
                 archive.extractall(tempdir)
 
         yield Path(tempdir)
