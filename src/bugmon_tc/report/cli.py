@@ -6,7 +6,7 @@ import json
 import logging
 import os
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 from bugmon.utils import (
     download_zip_archive,
@@ -102,7 +102,7 @@ def parse_args(argv: Any = None) -> argparse.Namespace:
     return args
 
 
-def main(argv: Optional[Dict[str, Any]] = None) -> None:
+def main(argv: Any = None) -> None:
     """Report processed results"""
     args = parse_args(argv)
     bz_creds = get_bugzilla_auth()
