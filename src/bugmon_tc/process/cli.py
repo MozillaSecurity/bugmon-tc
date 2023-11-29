@@ -8,7 +8,7 @@ import os
 import shutil
 import tempfile
 from pathlib import Path
-from typing import Any, Optional, Dict
+from typing import Any, Optional, Dict, List
 
 from bugmon import BugMonitor
 from bugmon.bug import EnhancedBug
@@ -68,7 +68,7 @@ def process_bug(
         return None
 
 
-def parse_args(argv: Any = None) -> argparse.Namespace:
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Parse arguments"""
     parser = base_parser(prog="BugmonProcessor")
     parser.add_argument(
@@ -107,7 +107,7 @@ def parse_args(argv: Any = None) -> argparse.Namespace:
     return args
 
 
-def main(argv: Any = None) -> None:
+def main(argv: Optional[List[str]] = None) -> None:
     """Process bug"""
     args = parse_args(argv)
 

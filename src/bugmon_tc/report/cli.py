@@ -6,7 +6,7 @@ import json
 import logging
 import os
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional, List
 
 from bugmon.utils import (
     download_zip_archive,
@@ -86,7 +86,7 @@ def submit_trace(
             )
 
 
-def parse_args(argv: Any = None) -> argparse.Namespace:
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Parse arguments"""
     parser = base_parser(prog="BugmonReporter")
     parser.add_argument("processor_artifact", type=Path, help="Path to bug artifact")
@@ -108,7 +108,7 @@ def parse_args(argv: Any = None) -> argparse.Namespace:
     return args
 
 
-def main(argv: Any = None) -> None:
+def main(argv: Optional[List[str]] = None) -> None:
     """Report processed results"""
     args = parse_args(argv)
     bz_creds = get_bugzilla_auth()

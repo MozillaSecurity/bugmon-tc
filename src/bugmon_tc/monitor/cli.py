@@ -4,7 +4,7 @@
 import argparse
 import logging
 from pathlib import Path
-from typing import Any
+from typing import Optional, List
 
 from .monitor import BugMonitorTask
 from ..common import get_bugzilla_auth
@@ -13,7 +13,7 @@ from ..common.cli import base_parser
 LOG = logging.getLogger(__name__)
 
 
-def parse_args(argv: Any = None) -> argparse.Namespace:
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Parse arguments"""
     parser = base_parser("BugmonMonitor")
     parser.add_argument(
@@ -28,7 +28,7 @@ def parse_args(argv: Any = None) -> argparse.Namespace:
     return args
 
 
-def main(argv: Any = None) -> None:
+def main(argv: Optional[List[str]] = None) -> None:
     """Generate bugmon tasks"""
     args = parse_args(argv)
     bz_creds = get_bugzilla_auth()
