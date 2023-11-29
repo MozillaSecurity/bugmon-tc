@@ -1,7 +1,9 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
+import os
 from pathlib import Path
+from unittest.mock import Mock, MagicMock, patch
 
 import pytest
 import requests
@@ -16,6 +18,7 @@ from bugmon_tc.common import (
     fetch_json_artifact,
     get_bugzilla_auth,
     get_pernosco_auth,
+    fetch_trace_artifact,
 )
 
 
@@ -36,7 +39,7 @@ def test_monitor_in_taskcluster(monkeypatch, is_enabled):
 def test_get_url_success(mocker):
     """Test that get_url succeeds"""
     # Mock the requests.get method to return a successful response
-    mock_response = mocker.Mock(status_code=200, raise_for_status=mocker.Mock())
+    mock_response = Mock(status_code=200, raise_for_status=mocker.Mock())
     mocker.patch.object(requests, "get", return_value=mock_response)
     result = get_url("http://example.com")
     assert result is not None
@@ -54,7 +57,7 @@ def test_get_url_request_exception(mocker):
 
 def test_fetch_artifact(mocker):
     """Simple test of fetch_artifact"""
-    mock_response = mocker.Mock()
+    mock_response = Mock()
     mock_response.iter_content.return_value = b"artifact content"
 
     mocker.patch("bugmon_tc.common.queue.session.get", return_value=mock_response)
@@ -64,7 +67,7 @@ def test_fetch_artifact(mocker):
 
 def test_fetch_artifact_exception_condition(mocker):
     """Test that failed requests raise"""
-    mock_response = mocker.Mock()
+    mock_response = Mock()
     mock_response.raise_for_status.side_effect = TaskclusterRestFailure(
         "HTTP 404 Not Found", None, 500
     )
@@ -89,6 +92,46 @@ def test_fetch_json_artifact(mocker):
     mock_fetch_artifact.assert_called_once_with(task_id, Path(artifact_path))
     mock_fetch_artifact.return_value.json.assert_called_once_with()
     assert result == json_data
+
+
+def test_fetch_trace_artifact_in_taskcluster(mocker):
+    mock_response = Mock()
+    mocker.patch("bugmon_tc.common.in_taskcluster", return_value=True)
+    mocker.patch("bugmon_tc.common.fetch_artifact", return_value=mock_response)
+    mock_queue = mocker.patch("bugmon_tc.common.queue")
+
+    # Mock dependencies to simulate a task with dependencies
+    mock_task = Mock()
+    mock_task.get.return_value = MagicMock()
+    mock_queue.task.return_value = mock_task
+
+    mock_iter_content = Mock(side_effect=[[b"chunk1", b"chunk2"]])
+    mock_response.iter_content = mock_iter_content
+
+    # Mock the open method to simulate opening a TemporaryFile
+    mocker.patch("builtins.open", mocker.mock_open())
+
+    # Mock the tarfile.open method to simulate extracting the archive
+    mock_tarfile = mocker.patch("tarfile.open", autospec=True)
+
+    with fetch_trace_artifact(Path("/fake/path")) as tempdir:
+        assert os.path.exists(tempdir)
+        assert mock_tarfile.called
+        assert mock_iter_content.called
+
+
+def test_fetch_trace_artifact_local(mocker):
+    """Test that when not in taskcluster, the function should use the local file"""
+    mocker.patch("bugmon_tc.common.in_taskcluster", return_value=False)
+    mocker.patch("builtins.open", mocker.mock_open())
+    artifact_path = Path("/path/to/artifact")
+    with patch("tarfile.open", autospec=True) as mock_tarfile_open:
+        # Call the function that uses tarfile.open
+        with fetch_trace_artifact(artifact_path) as tempdir:
+            assert os.path.exists(tempdir)
+
+        # Assert that tarfile.open was called with the correct arguments
+        mock_tarfile_open.assert_called_once_with(artifact_path, mode="r:gz")
 
 
 def test_get_bugzilla_auth(monkeypatch):
