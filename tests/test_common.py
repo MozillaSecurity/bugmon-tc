@@ -1,6 +1,8 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
+from pathlib import Path
+
 import pytest
 import requests
 from requests import RequestException
@@ -56,7 +58,7 @@ def test_fetch_artifact(mocker):
     mock_response.iter_content.return_value = b"artifact content"
 
     mocker.patch("bugmon_tc.common.queue.session.get", return_value=mock_response)
-    response = fetch_artifact("12345", "path/to/artifact")
+    response = fetch_artifact("12345", Path("path/to/artifact"))
     assert response == mock_response
 
 
@@ -70,7 +72,7 @@ def test_fetch_artifact_exception_condition(mocker):
     mocker.patch("bugmon_tc.common.queue.session.get", return_value=mock_response)
 
     with pytest.raises(BugmonTaskError, match="HTTP 404 Not Found"):
-        fetch_artifact("12345", "path/to/artifact")
+        fetch_artifact("12345", Path("path/to/artifact"))
     mock_response.raise_for_status.assert_called_once_with()
 
 
@@ -82,9 +84,9 @@ def test_fetch_json_artifact(mocker):
     mock_fetch_artifact.return_value.json.return_value = json_data
 
     artifact_path = "path/to/artifact"
-    result = fetch_json_artifact(task_id, artifact_path)
+    result = fetch_json_artifact(task_id, Path(artifact_path))
 
-    mock_fetch_artifact.assert_called_once_with(task_id, artifact_path)
+    mock_fetch_artifact.assert_called_once_with(task_id, Path(artifact_path))
     mock_fetch_artifact.return_value.json.assert_called_once_with()
     assert result == json_data
 
