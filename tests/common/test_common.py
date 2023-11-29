@@ -39,7 +39,7 @@ def test_monitor_in_taskcluster(monkeypatch, is_enabled):
 def test_get_url_success(mocker):
     """Test that get_url succeeds"""
     # Mock the requests.get method to return a successful response
-    mock_response = Mock(status_code=200, raise_for_status=mocker.Mock())
+    mock_response = Mock(status_code=200, raise_for_status=Mock())
     mocker.patch.object(requests, "get", return_value=mock_response)
     result = get_url("http://example.com")
     assert result is not None
