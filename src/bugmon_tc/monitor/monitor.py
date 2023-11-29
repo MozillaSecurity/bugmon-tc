@@ -134,14 +134,14 @@ class BugMonitorTask:
             )
             processor = ProcessorTask(
                 parent_id,
-                bug.id,
+                bug,
                 monitor_path,
                 use_pernosco=use_pernosco,
                 force_confirm=self.force_confirm,
             )
             reporter = ReporterTask(
                 parent_id,
-                bug.id,
+                bug,
                 processor.dest,
                 dep=processor.id,
                 trace_path=processor.trace_dest,
