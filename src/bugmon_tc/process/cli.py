@@ -90,7 +90,7 @@ def parse_args(argv: Any = None) -> argparse.Namespace:
         "--force-confirm",
         action="store_true",
         help="Force bug confirmation regardless of state",
-        default=os.environ.get("FORCE_CONFIRM", None),
+        default=os.environ.get("FORCE_CONFIRM", False),
     )
 
     args = parser.parse_args(args=argv)
