@@ -198,7 +198,17 @@ class ProcessorTask(BaseTask):
                     ),
                     "bugmon-process",
                 ]
-                self._task["payload"]["image"] = "mozillasecurity/bugmon-win:latest"
+                del self._task["payload"]["image"]
+                self._task["payload"]["mounts"] = [
+                    {
+                        "format": "tar.bz2",
+                        "content": {
+                            "artifact": "public/msys2.tar.bz2",
+                            "namespace": "project.fuzzing.orion.bugmon-win.master",
+                        },
+                        "directory": ".",
+                    }
+                ]
                 self._task["payload"]["onExitStatus"] = {"retry": [0x40010004]}
 
                 # translate artifacts from dict to array for generic-worker
