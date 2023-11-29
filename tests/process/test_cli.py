@@ -153,7 +153,7 @@ def test_main_in_taskcluster(mocker, tmp_path):
     )
 
 
-def test_main_in_local(mocker, tmp_path):
+def test_main_local(mocker, tmp_path):
     """Test that process_bug is called with the correct args when run locally"""
     mocker.patch("bugmon_tc.process.cli.in_taskcluster", return_value=False)
     mock_task_data = {"bug_id": 123, "status": "NEW"}
