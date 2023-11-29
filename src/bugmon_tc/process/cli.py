@@ -107,7 +107,7 @@ def parse_args(argv: Any = None) -> argparse.Namespace:
     return args
 
 
-def main(argv: Optional[Dict[str, Any]] = None) -> None:
+def main(argv: Any = None) -> None:
     """Process bug"""
     args = parse_args(argv)
 
