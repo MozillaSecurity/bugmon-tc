@@ -198,6 +198,7 @@ class ProcessorTask(BaseTask):
                     ),
                     "bugmon-process",
                 ]
+                self._task["payload"]["image"] = "mozillasecurity/bugmon-win:latest"
                 self._task["payload"]["onExitStatus"] = {"retry": [0x40010004]}
 
                 # translate artifacts from dict to array for generic-worker
