@@ -34,7 +34,7 @@ description = "Bugmon Taskcluster Implementation"
 license = "MPL-2.0"
 name = "bugmon-tc"
 packages = [{from = "src", include = "bugmon_tc"}]
-version = "3.0.0"
+version = "3.1.0"
 
 [tool.poetry.dependencies]
 bugmon = {git = "https://github.com/MozillaSecurity/bugmon.git"}
@@ -86,6 +86,4 @@ build_command = "pip install poetry && poetry build"
 commit_subject = "chore(release): {version} [skip ci]"
 upload_to_pypi = false
 upload_to_release = false
-version_toml = [
-  "pyproject.toml:tool.poetry.version"
-]
+version_toml = "pyproject.toml:tool.poetry.version"

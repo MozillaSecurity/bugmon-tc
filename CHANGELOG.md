@@ -2,6 +2,32 @@
 
 <!--next-version-placeholder-->
 
+## v3.1.0 (2023-12-04)
+
+### Feature
+
+* Add support for windows processor tasks ([`8aef506`](https://github.com/MozillaSecurity/bugmon-tc/commit/8aef506d0137ba0bc8b26dfc4107dececdb428d8))
+* Enable mypy and add type hints ([`9b54077`](https://github.com/MozillaSecurity/bugmon-tc/commit/9b54077b2c625d55692d2d2aadd4713c98d0c83f))
+* Update bugmon and lockfile ([`8d637a8`](https://github.com/MozillaSecurity/bugmon-tc/commit/8d637a8603473032b253ef6da2aa5f6f0d0b2728))
+
+### Fix
+
+* Call orion launch script ([`d20edb6`](https://github.com/MozillaSecurity/bugmon-tc/commit/d20edb660789f89434a54050717f64b52d54adc3))
+* Add more explicit type hints to main and parse_args ([`b43f9d6`](https://github.com/MozillaSecurity/bugmon-tc/commit/b43f9d6728f47ce4ea8dda1f9562ec9a81da04ab))
+* Windows images are defined using the mounts key ([`fc4e223`](https://github.com/MozillaSecurity/bugmon-tc/commit/fc4e2231a0405bbe4a15a246d307f3ed3ef93fe8))
+* Set bugmon-win image when processing a windows bug ([`adc0147`](https://github.com/MozillaSecurity/bugmon-tc/commit/adc0147010ac7ea7707d4c8f19c81ab30f4ff351))
+* Raise parser error if path doesn't exist ([`d1ec33e`](https://github.com/MozillaSecurity/bugmon-tc/commit/d1ec33eb70aedc1bb92980f98445478fa8718d35))
+* Fix argv typer hint ([`39dbb10`](https://github.com/MozillaSecurity/bugmon-tc/commit/39dbb10f10085e79891109a3f0f67c55322e2c31))
+* Set type hint for argv to Any ([`437e34c`](https://github.com/MozillaSecurity/bugmon-tc/commit/437e34c96aa5bebe8db1cf92029a79df9614cebe))
+* Set force_confirm arg to False by default ([`389ff78`](https://github.com/MozillaSecurity/bugmon-tc/commit/389ff7891e539f3c5827434b31e83ca626592c7f))
+* Remove unnecessary call to open ([`8f4d2ac`](https://github.com/MozillaSecurity/bugmon-tc/commit/8f4d2ac4723935f848dda7e8fc56ec46dcbb83b3))
+* Use Dict from typing ([`766a3d5`](https://github.com/MozillaSecurity/bugmon-tc/commit/766a3d531a9cf4c7efecdaf25ea14105bdc01df0))
+* Address pylint warnings ([`d4ac65d`](https://github.com/MozillaSecurity/bugmon-tc/commit/d4ac65d4914a23a3fed375098475481e26e2169d))
+
+### Documentation
+
+* Fix minor typo ([`462dd04`](https://github.com/MozillaSecurity/bugmon-tc/commit/462dd04dbb1fb159007d4185f6d987d69e6c407f))
+
 ## v3.0.0 (2023-04-25)
 ### Breaking
 * drop support for pythin 3.7 ([`c30146d`](https://github.com/MozillaSecurity/bugmon-tc/commit/c30146de4bda656cfdc77bf2b418c11527b5dd7b))
