@@ -190,6 +190,10 @@ def test_processor_task_task_definition_windows(bug_data, mocker):
     bug = EnhancedBug(None, **bug_data)
     processor = ProcessorTask(PARENT_ID, bug, MONITOR_ARTIFACT_PATH)
 
+    assert "cache" not in processor.task["payload"]
+    assert "capabilities" not in processor.task["payload"]
+    assert "image" not in processor.task["payload"]
+
     assert processor.task["payload"]["command"] == [
         "set HOME=%CD%",
         "set ARTIFACTS=%CD%",

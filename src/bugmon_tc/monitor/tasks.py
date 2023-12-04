@@ -198,6 +198,8 @@ class ProcessorTask(BaseTask):
                     ),
                     "launch.sh",
                 ]
+                del self._task["payload"]["cache"]
+                del self._task["payload"]["capabilities"]
                 del self._task["payload"]["image"]
                 self._task["payload"]["mounts"] = [
                     {
