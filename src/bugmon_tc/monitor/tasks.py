@@ -196,7 +196,7 @@ class ProcessorTask(BaseTask):
                             "%PATH%",
                         ]
                     ),
-                    "bugmon-process",
+                    "launch.sh",
                 ]
                 del self._task["payload"]["image"]
                 self._task["payload"]["mounts"] = [
