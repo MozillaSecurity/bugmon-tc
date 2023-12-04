@@ -87,5 +87,5 @@ commit_subject = "chore(release): {version} [skip ci]"
 upload_to_pypi = false
 upload_to_release = false
 version_toml = [
-    "pyproject.toml:tool.poetry.version",
+  "pyproject.toml:tool.poetry.version"
 ]
