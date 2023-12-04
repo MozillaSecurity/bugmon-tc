@@ -245,7 +245,7 @@ typing-extensions = "^4.2.0"
 type = "git"
 url = "https://github.com/MozillaSecurity/bugmon.git"
 reference = "HEAD"
-resolved_reference = "dc67c99a041c4915fa4e71b37f8a306f7a737095"
+resolved_reference = "2c33f057221fc58efe3de0c17540f872f4376b02"
 
 [[package]]
 name = "bugsy"
@@ -1638,13 +1638,13 @@ files = [
 
 [[package]]
 name = "taskcluster"
-version = "58.0.2"
+version = "59.0.0"
 description = "Python client for Taskcluster"
 optional = false
 python-versions = "*"
 files = [
-    {file = "taskcluster-58.0.2-py3-none-any.whl", hash = "sha256:41c2a88a3ec27fa942dd025910d08241b09c07f5ea5fd6e0ebd35b9166a1618a"},
-    {file = "taskcluster-58.0.2.tar.gz", hash = "sha256:cb020d8a21170d37e208bac6275d40eb6e1d4fc0a1aed71b43e917231108738b"},
+    {file = "taskcluster-59.0.0-py3-none-any.whl", hash = "sha256:d902d1452c7f2208705991f5cc587ae32e9240560152f7f9583491b5c130add8"},
+    {file = "taskcluster-59.0.0.tar.gz", hash = "sha256:7fcbc9c4686941732dc4f7cc69ab5d6006a5b11aa8115dc873aab6aa11bf9465"},
 ]
 
 [package.dependencies]
