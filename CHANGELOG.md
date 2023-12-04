@@ -2,6 +2,16 @@
 
 <!--next-version-placeholder-->
 
+## v3.1.1 (2023-12-04)
+
+### Fix
+
+* Cache and capabilities are not valid payload fields for windows ([`da1e21c`](https://github.com/MozillaSecurity/bugmon-tc/commit/da1e21cfdefeb7989de8f7f05930987674b49ffb))
+
+### Documentation
+
+* Fix link to codecov results ([`2350b9c`](https://github.com/MozillaSecurity/bugmon-tc/commit/2350b9c1b087ccf65a718cd2e5048e46599a91ea))
+
 ## v3.1.0 (2023-12-04)
 
 ### Feature
