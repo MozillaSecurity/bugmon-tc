@@ -175,7 +175,7 @@ class ProcessorTask(BaseTask):
                 ]
             )
 
-        return scopes
+        return sorted(scopes)
 
     @property
     def task(self) -> Dict[str, Any]:
@@ -289,9 +289,11 @@ class ReporterTask(BaseTask):
         ]
 
         if self.trace_dest:
-            scopes.append(f"queue:get-artifact:{base}/{self.trace_dest}",)
+            scopes.append(
+                f"queue:get-artifact:{base}/{self.trace_dest}",
+            )
 
-        return scopes
+        return sorted(scopes)
 
     @property
     def worker_type(self) -> str:

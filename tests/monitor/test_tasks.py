@@ -130,12 +130,12 @@ def test_processor_task_scopes_linux(bug_data, mocker):
     task = ProcessorTask("PARENT_ID", bug, MONITOR_ARTIFACT_PATH)
 
     assert task.scopes == [
-        f"queue:get-artifact:project/fuzzing/bugmon/{MONITOR_ARTIFACT_PATH}",
-        "queue:scheduler-id:-",
         "docker-worker:capability:device:hostSharedMemory",
         "docker-worker:capability:device:loopbackAudio",
         "docker-worker:capability:disableSeccomp",
         "docker-worker:capability:privileged",
+        f"queue:get-artifact:project/fuzzing/bugmon/{MONITOR_ARTIFACT_PATH}",
+        "queue:scheduler-id:-",
     ]
 
 
@@ -321,13 +321,13 @@ def test_reporter_task_scopes(bug_data):
     )
 
     assert reporter_task.scopes == [
-        "secrets:get:project/fuzzing/bz-api-key",
-        "secrets:get:project/fuzzing/pernosco-user",
-        "secrets:get:project/fuzzing/pernosco-group",
-        "secrets:get:project/fuzzing/pernosco-secret",
         f"queue:get-artifact:project/fuzzing/bugmon/{PROCESSOR_ARTIFACT_PATH}",
         f"queue:get-artifact:project/fuzzing/bugmon/{TRACE_ARTIFACT_PATH}",
         "queue:scheduler-id:-",
+        "secrets:get:project/fuzzing/bz-api-key",
+        "secrets:get:project/fuzzing/pernosco-group",
+        "secrets:get:project/fuzzing/pernosco-secret",
+        "secrets:get:project/fuzzing/pernosco-user",
     ]
 
 
