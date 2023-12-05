@@ -213,7 +213,7 @@ def test_processor_task_task_definition_windows(bug_data, mocker):
     assert processor.task["payload"]["artifacts"] == [
         {
             "name": "project/fuzzing/bugmon",
-            "path": "/bugmon-artifacts/",
+            "path": "bugmon-artifacts/",
             "type": "directory",
         }
     ]

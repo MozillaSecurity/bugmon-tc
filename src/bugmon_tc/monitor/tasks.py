@@ -214,11 +214,14 @@ class ProcessorTask(BaseTask):
                 self._task["payload"]["onExitStatus"] = {"retry": [0x40010004]}
 
                 # translate artifacts from dict to array for generic-worker
-                self._task["payload"]["artifacts"] = [
-                    # `... or artifact` because dict.update returns None
-                    artifact.update({"name": name}) or artifact
-                    for name, artifact in self._task["payload"]["artifacts"].items()
-                ]
+                artifacts = []
+                for name, artifact in self._task["payload"]["artifacts"].items():
+                    # strip preceding "/" as generic-worker requires relative paths
+                    artifact.update(
+                        {"name": name, "path": artifact["path"].lstrip("/")}
+                    )
+                    artifacts.append(artifact)
+                self._task["payload"]["artifacts"] = artifacts
 
         return self._task
 
