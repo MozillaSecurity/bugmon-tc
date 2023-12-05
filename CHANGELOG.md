@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.1.2 (2023-12-05)
+
+### Fix
+
+* Generic-worker expects relative artifact paths ([`0e88573`](https://github.com/MozillaSecurity/bugmon-tc/commit/0e88573987d8d06009577c21b0018f970daabfd0))
+
 ## v3.1.1 (2023-12-04)
 
 ### Fix
