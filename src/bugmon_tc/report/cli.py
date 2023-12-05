@@ -99,11 +99,12 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     args = parser.parse_args(args=argv)
     logging.basicConfig(level=args.log_level)
 
-    if not args.processor_artifact.exists():
-        parser.error(f"Cannot find path {args.processor_artifact}!")
+    if not in_taskcluster():
+        if not args.processor_artifact.exists():
+            parser.error(f"Cannot find path {args.processor_artifact}!")
 
-    if args.trace_artifact and not args.trace_artifact.exists():
-        parser.error(f"Cannot find path {args.trace_artifact}!")
+        if args.trace_artifact and not args.trace_artifact.exists():
+            parser.error(f"Cannot find path {args.trace_artifact}!")
 
     return args
 
