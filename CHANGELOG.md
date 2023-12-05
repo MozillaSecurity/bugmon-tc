@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v3.1.3 (2023-12-05)
+
+### Fix
+
+* Sort all list output ([`07d8351`](https://github.com/MozillaSecurity/bugmon-tc/commit/07d83510b0f1a019da8a2eea1d16f618a506acd5))
+* Only add get-artifact scope for trace if set ([`f121c86`](https://github.com/MozillaSecurity/bugmon-tc/commit/f121c861a6016a657eef3da50a274bb11d1eb44e))
+* Only raise errors on unfound files when not in tc ([`9dfbede`](https://github.com/MozillaSecurity/bugmon-tc/commit/9dfbede5267de0dd3e43d9d9ab4778d5352e37f5))
+
 ## v3.1.2 (2023-12-05)
 
 ### Fix
