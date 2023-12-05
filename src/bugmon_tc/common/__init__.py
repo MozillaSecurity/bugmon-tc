@@ -59,7 +59,7 @@ def fetch_artifact(task_id: str, artifact_path: Path) -> Response:
     :param artifact_path: Path to the artifact
     """
     LOG.info(f"Fetching artifact: {task_id} {artifact_path}")
-    url = queue.buildUrl("getLatestArtifact", task_id, str(artifact_path))
+    url = queue.buildUrl("getLatestArtifact", task_id, artifact_path.as_posix())
     # Allows HTTP_30x redirections retrieving the artifact
     response: Response = queue.session.get(url, stream=True, allow_redirects=True)
 
