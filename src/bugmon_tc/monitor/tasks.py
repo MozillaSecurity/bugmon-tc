@@ -279,15 +279,19 @@ class ReporterTask(BaseTask):
     def scopes(self) -> List[str]:
         """Scopes applied to the task"""
         base = "project/fuzzing/bugmon"
-        return [
+        scopes = [
             "secrets:get:project/fuzzing/bz-api-key",
             "secrets:get:project/fuzzing/pernosco-user",
             "secrets:get:project/fuzzing/pernosco-group",
             "secrets:get:project/fuzzing/pernosco-secret",
             f"queue:get-artifact:{base}/{self.process_path}",
-            f"queue:get-artifact:{base}/{self.trace_dest}",
             "queue:scheduler-id:-",
         ]
+
+        if self.trace_dest:
+            scopes.append(f"queue:get-artifact:{base}/{self.trace_dest}",)
+
+        return scopes
 
     @property
     def worker_type(self) -> str:
