@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.1.4 (2023-12-05)
+
+### Fix
+
+* Convert path to posix str before building url ([`684d6fc`](https://github.com/MozillaSecurity/bugmon-tc/commit/684d6fcc2fe4f469b7bd7deeb4d8d71bf3f2d546))
+
 ## v3.1.3 (2023-12-05)
 
 ### Fix
