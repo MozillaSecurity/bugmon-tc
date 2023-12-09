@@ -125,3 +125,26 @@ def test_monitor_create_tasks_taskcluster(mocker, tmp_path, bug_data):
     mocked_create_task = mocker.patch("bugmon_tc.common.queue.createTask")
     monitor.create_tasks(tmp_path)
     assert mocked_create_task.call_count == 2
+
+
+def test_monitor_create_tasks_no_pernosco_for_windows(mocker, tmp_path, bug_data):
+    """Test task creation but pernosco is excluded for windows bugs"""
+    bug_data["op_sys"] = "Windows"
+    bug_response = {"bugs": [bug_data]}
+    mocker.patch("bugsy.Bugsy.request", return_value=bug_response)
+    mocker.patch("bugmon.BugMonitor.is_supported", return_value=False)
+    mocker.patch("bugmon_tc.monitor.monitor.in_taskcluster", return_value=True)
+
+    cached_bug = EnhancedBug(None, **bug_data)
+    mocker.patch("bugmon.bug.EnhancedBug.cache_bug", return_value=cached_bug)
+
+    mock_processor = mocker.patch("bugmon_tc.monitor.monitor.ProcessorTask")
+    mock_processor.id = ""
+    mock_processor.dest = tmp_path
+    mock_processor.trace_dest = None
+
+    monitor = BugMonitorTask("key", "root")
+
+    mocker.patch("bugmon_tc.common.queue.createTask")
+    monitor.create_tasks(tmp_path)
+    assert mock_processor.call_args.kwargs.get("use_pernosco") is False

@@ -130,7 +130,9 @@ class BugMonitorTask:
                 json.dump(json.loads(bug_data), file, indent=2)
 
             use_pernosco = (
-                "pernosco" in bug.commands or "pernosco-wanted" in bug.keywords
+                ("pernosco" in bug.commands or "pernosco-wanted" in bug.keywords)
+                and bug.platform.system == "Linux"
+                and bug.platform.machine == "x86_64"
             )
             processor = ProcessorTask(
                 parent_id,
