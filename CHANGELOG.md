@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v3.1.5 (2023-12-09)
+
+### Fix
+
+* Only attempt to record pernosco sessions for linux x86_64 bugs ([`d116e5d`](https://github.com/MozillaSecurity/bugmon-tc/commit/d116e5d55513cfd6540f6bbeee9d3680e20ee583))
+* Update bugmon ([`4bc91fa`](https://github.com/MozillaSecurity/bugmon-tc/commit/4bc91fa534a253f22873457bbb9d0fc510bfdaf5))
+* Update bugmon ([`68eb3fe`](https://github.com/MozillaSecurity/bugmon-tc/commit/68eb3fef230e00b7b32a42ea4d1aff3db1fbb1e8))
+
 ## v3.1.4 (2023-12-05)
 
 ### Fix
