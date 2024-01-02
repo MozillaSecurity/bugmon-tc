@@ -169,19 +169,19 @@ tests-no-zope = ["cloudpickle", "hypothesis", "mypy (>=1.1.1)", "pympler", "pyte
 
 [[package]]
 name = "autobisect"
-version = "7.4.3"
+version = "7.5.0"
 description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "autobisect-7.4.3-py3-none-any.whl", hash = "sha256:be32607bedb64c15370c885c3e5051f36b58327bbe6e7e9a64a6ace864aeb1ec"},
-    {file = "autobisect-7.4.3.tar.gz", hash = "sha256:06ee2a8c602c9adf12ea5d7b9ab01f3cda12ebed180256b8855fafa9830a6779"},
+    {file = "autobisect-7.5.0-py3-none-any.whl", hash = "sha256:809b180d0d94803c3e1848846e5e45127cffc6c326fa6a004c5ac4592e34c38b"},
+    {file = "autobisect-7.5.0.tar.gz", hash = "sha256:767009ab62afe9e2ca2faad76ab4c8234418128cd7547b5e6a5be7aa7de8817c"},
 ]
 
 [package.dependencies]
 fuzzfetch = ">=2.4.3,<3.0.0"
 grizzly-framework = "0.17.0"
-lithium-reducer = ">=1.0.0,<2.0.0"
+lithium-reducer = ">=1.1.1,<2.0.0"
 platformdirs = ">=3.10.0,<4.0.0"
 
 [[package]]
@@ -228,7 +228,7 @@ uvloop = ["uvloop (>=0.15.2)"]
 
 [[package]]
 name = "bugmon"
-version = "3.6.0"
+version = "3.6.1"
 description = "A python module for analyzing SpiderMonkey and Firefox bugs"
 optional = false
 python-versions = "^3.8.1"
@@ -236,7 +236,7 @@ files = []
 develop = false
 
 [package.dependencies]
-autobisect = "^7.4.3"
+autobisect = "^7.5.0"
 bugsy = {git = "https://github.com/AutomatedTester/Bugsy.git"}
 fuzzfetch = "^2.4.2"
 typing-extensions = "^4.2.0"
@@ -245,7 +245,7 @@ typing-extensions = "^4.2.0"
 type = "git"
 url = "https://github.com/MozillaSecurity/bugmon.git"
 reference = "HEAD"
-resolved_reference = "3fa5fccb16b331451d58a7d396156e5a0886d492"
+resolved_reference = "4a7b9600ca7b44a1ef9213fe7457a81cc72de32a"
 
 [[package]]
 name = "bugsy"
@@ -999,14 +999,17 @@ six = ">=1.13.0"
 
 [[package]]
 name = "lithium-reducer"
-version = "1.0.0"
+version = "1.1.1"
 description = "Lithium is an automated testcase reduction tool"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "lithium-reducer-1.0.0.tar.gz", hash = "sha256:eb1bc969f469b6cda74c758faa56555a81fb9a56c200dd9b8eb6ef9145691bed"},
-    {file = "lithium_reducer-1.0.0-py3-none-any.whl", hash = "sha256:9bc9671b2d546120342d0ac0549dfae3a9e5e940bb4617557793109aecd3b05d"},
+    {file = "lithium-reducer-1.1.1.tar.gz", hash = "sha256:8ebd161546ff969b0b58c38651130cb14da9704e5ca26b3002a39b0edcfd9aa6"},
+    {file = "lithium_reducer-1.1.1-py3-none-any.whl", hash = "sha256:26a2cfc882873e83796eba7fe50139bc92f611ac2f4375c3af99dd416c06c621"},
 ]
+
+[package.dependencies]
+ffpuppet = ">=0.11.2,<0.12.0"
 
 [package.extras]
 dev = ["pre-commit", "tox"]
