@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.1.7 (2024-01-02)
+
+### Fix
+
+* Update bugmon ([`f00bbf8`](https://github.com/MozillaSecurity/bugmon-tc/commit/f00bbf8499c481d35822b6622ff2d6ffe6cf4144))
+
 ## v3.1.6 (2023-12-13)
 
 ### Fix
