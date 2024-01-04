@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.1.8 (2024-01-04)
+
+### Fix
+
+* Use indexed image ([`81e636d`](https://github.com/MozillaSecurity/bugmon-tc/commit/81e636d3d1b562cd72b5d62708b099204f8e3abb))
+
 ## v3.1.7 (2024-01-02)
 
 ### Fix
