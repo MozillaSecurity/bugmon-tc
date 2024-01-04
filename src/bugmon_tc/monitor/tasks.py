@@ -69,7 +69,11 @@ class BaseTask(abc.ABC):
                     "capabilities": self.capabilities,
                     "env": self.env,
                     "features": {"taskclusterProxy": True},
-                    "image": "mozillasecurity/bugmon:latest",
+                    "image": {
+                        "type": "indexed-image",
+                        "path": "public/bugmon.tar.zst",
+                        "namespace": "project.fuzzing.orion.bugmon.master",
+                    },
                     "maxRunTime": MAX_RUNTIME,
                 },
                 "priority": "high",
