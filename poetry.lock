@@ -245,7 +245,7 @@ typing-extensions = "^4.2.0"
 type = "git"
 url = "https://github.com/MozillaSecurity/bugmon.git"
 reference = "HEAD"
-resolved_reference = "4a7b9600ca7b44a1ef9213fe7457a81cc72de32a"
+resolved_reference = "0a12a4e20fd3f976dbbd426c50d89203faa77383"
 
 [[package]]
 name = "bugsy"
