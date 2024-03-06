@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.1.9 (2024-03-06)
+
+### Fix
+
+* Enable privileged mode on reporter tasks ([`cc6b82d`](https://github.com/MozillaSecurity/bugmon-tc/commit/cc6b82da5c6da2f0986870228756b77a186edc8d))
+
 ## v3.1.8 (2024-01-04)
 
 ### Fix
