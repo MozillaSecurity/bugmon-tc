@@ -267,6 +267,16 @@ class ReporterTask(BaseTask):
         self.trace_dest = trace_path
 
     @property
+    def capabilities(self) -> Dict[str, Any]:
+        """Task capabilities"""
+        if self.bug.platform.system == "Linux":
+            return {
+                "privileged": True,
+            }
+
+        return super().capabilities
+
+    @property
     def env(self) -> Dict[str, str]:
         """Environment variables for the task"""
         env_object = {
