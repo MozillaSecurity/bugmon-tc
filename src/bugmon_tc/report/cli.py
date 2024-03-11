@@ -66,10 +66,6 @@ def submit_trace(
 
     LOG.info(f"Unpacking trace artifact: {trace_artifact}")
     with fetch_trace_artifact(trace_artifact) as trace_dir:
-        build_info_path = trace_dir / "build.json"
-        if not build_info_path.exists():
-            raise BugmonTaskError("Cannot find build.json in trace archive.")
-
         LOG.info("Uploading pernosco session...")
         submit_pernosco(
             trace_dir,
