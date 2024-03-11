@@ -9,8 +9,6 @@ from pathlib import Path
 from typing import Any, Dict, Optional, List
 
 from bugmon.utils import (
-    download_zip_archive,
-    get_source_url,
     submit_pernosco,
     is_pernosco_available,
     PernoscoCreds,
@@ -72,18 +70,12 @@ def submit_trace(
         if not build_info_path.exists():
             raise BugmonTaskError("Cannot find build.json in trace archive.")
 
-        build_info = json.loads(build_info_path.read_text())
-        source_archive_url = get_source_url(build_info["branch"], build_info["rev"])
-        LOG.info(f"Unpacking source archive: {source_archive_url}")
-        with download_zip_archive(source_archive_url) as source_dir:
-            LOG.info("Uploading pernosco session...")
-
-            submit_pernosco(
-                trace_dir,
-                source_dir,
-                bug_data["bug_number"],
-                pernosco_creds,
-            )
+        LOG.info("Uploading pernosco session...")
+        submit_pernosco(
+            trace_dir,
+            bug_data["bug_number"],
+            pernosco_creds,
+        )
 
 
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
