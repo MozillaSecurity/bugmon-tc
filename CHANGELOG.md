@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v3.2.0 (2024-03-11)
+
+### Feature
+
+* Local sources are no longer required for pernosco traces ([`a494117`](https://github.com/MozillaSecurity/bugmon-tc/commit/a4941173dbe8483deae1a00cf53d08862fb64461))
+* Local sources are no longer required for pernosco traces ([`8556e22`](https://github.com/MozillaSecurity/bugmon-tc/commit/8556e22a91cf03d432ff5d21691fcf2e2a1d58d4))
+
 ## v3.1.9 (2024-03-06)
 
 ### Fix
