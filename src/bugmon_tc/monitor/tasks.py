@@ -49,7 +49,7 @@ class BaseTask(abc.ABC):
                 "taskGroupId": self.parent_id,
                 "dependencies": dependencies,
                 "created": stringDate(now),
-                "deadline": stringDate(now + timedelta(seconds=MAX_RUNTIME)),
+                "deadline": stringDate(now + timedelta(seconds=MAX_RUNTIME + 3600)),
                 "expires": stringDate(fromNow("1 week", now)),
                 "provisionerId": "proj-fuzzing",
                 "metadata": {

@@ -168,7 +168,7 @@ def test_processor_task_task_definition_linux(bug_data, mocker):
     assert processor.task["dependencies"] == [PARENT_ID]
     assert processor.task["created"] == stringDate(created)
     assert processor.task["deadline"] == stringDate(
-        created + timedelta(seconds=MAX_RUNTIME)
+        created + timedelta(seconds=MAX_RUNTIME + 3600)
     )
     assert processor.task["expires"] == stringDate(fromNow("1 week", created))
     assert (
