@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.2.1 (2024-06-10)
+
+### Fix
+
+* Increase deadline by 1 hour ([`1186f87`](https://github.com/MozillaSecurity/bugmon-tc/commit/1186f87a5baf9c3faadc12481a746dca465a71ca))
+
 ## v3.2.0 (2024-03-11)
 
 ### Feature
