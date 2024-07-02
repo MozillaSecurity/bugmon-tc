@@ -154,7 +154,8 @@ def test_processor_task_scopes_windows(bug_data, mocker):
 
 
 @freeze_time("2023-01-01")
-def test_processor_task_task_definition_linux(bug_data, mocker):
+@pytest.mark.parametrize("force_confirm", [True, False])
+def test_processor_task_task_definition_linux(bug_data, mocker, force_confirm):
     """Test that a ProcessorTask's task definition matches the expected format for Linux bugs"""
     bug_data["op_sys"] = "Linux"
     mocker.patch("bugmon.bug.platform.system", return_value="Linux")
@@ -162,14 +163,22 @@ def test_processor_task_task_definition_linux(bug_data, mocker):
     created = datetime(2023, 1, 1)
 
     bug = EnhancedBug(None, **bug_data)
-    processor = ProcessorTask(PARENT_ID, bug, MONITOR_ARTIFACT_PATH)
+    processor = ProcessorTask(
+        PARENT_ID, bug, MONITOR_ARTIFACT_PATH, force_confirm=force_confirm
+    )
 
     assert processor.task["taskGroupId"] == PARENT_ID
     assert processor.task["dependencies"] == [PARENT_ID]
     assert processor.task["created"] == stringDate(created)
-    assert processor.task["deadline"] == stringDate(
-        created + timedelta(seconds=MAX_RUNTIME + 3600)
-    )
+
+    if force_confirm:
+        deadline_seconds = max(12 * 3600, MAX_RUNTIME + 3600)
+    else:
+        deadline_seconds = MAX_RUNTIME + 3600
+
+    expected_deadline = stringDate(created + timedelta(seconds=deadline_seconds))
+    assert processor.task["deadline"] == expected_deadline
+
     assert processor.task["expires"] == stringDate(fromNow("1 week", created))
     assert (
         processor.task["metadata"]["name"] == f"{type(processor).__name__} ({bug.id})"
