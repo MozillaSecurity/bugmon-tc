@@ -186,6 +186,19 @@ class ProcessorTask(BaseTask):
         """Processor task definition"""
         if self._task is None:
             self._task = super().task
+            if self.force_confirm:
+                # Set deadline to 12 hours when force confirming bugs as this task
+                # is only run once a week
+                created_str = self._task["created"]
+                if created_str.endswith("Z"):
+                    # Check if there is timezone information
+                    created_str = created_str[:-1] + "+00:00"
+                    # Convert the string back to a datetime object
+                created = datetime.fromisoformat(created_str)
+                self._task["deadline"] = stringDate(
+                    created + timedelta(seconds=max(12 * 3600, (MAX_RUNTIME + 3600)))
+                )
+
             if self.bug.platform.system == "Windows":
                 self._task["payload"]["command"] = [
                     "set HOME=%CD%",
