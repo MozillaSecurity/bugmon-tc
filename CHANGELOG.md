@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.3.0 (2024-07-02)
+
+### Feature
+
+* Increase bugmon-confirm deadline to 12 hours ([`f91cb39`](https://github.com/MozillaSecurity/bugmon-tc/commit/f91cb39d96bf5db18ca42cba5a36bca567b48c76))
+
 ## v3.2.1 (2024-06-10)
 
 ### Fix
