@@ -320,6 +320,13 @@ class ReporterTask(BaseTask):
                 f"queue:get-artifact:{base}/{self.trace_dest}",
             )
 
+        if self.bug.platform.system == "Linux":
+            scopes.extend(
+                [
+                    "docker-worker:capability:privileged",
+                ]
+            )
+
         return sorted(scopes)
 
     @property

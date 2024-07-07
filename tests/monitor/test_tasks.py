@@ -330,6 +330,7 @@ def test_reporter_task_scopes(bug_data):
     )
 
     assert reporter_task.scopes == [
+        "docker-worker:capability:privileged",
         f"queue:get-artifact:project/fuzzing/bugmon/{PROCESSOR_ARTIFACT_PATH}",
         f"queue:get-artifact:project/fuzzing/bugmon/{TRACE_ARTIFACT_PATH}",
         "queue:scheduler-id:-",
