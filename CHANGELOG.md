@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.3.1 (2024-07-08)
+
+### Fix
+
+* Add scope docker-worker:capability:privileged to ReporterTask ([`91b2e4c`](https://github.com/MozillaSecurity/bugmon-tc/commit/91b2e4c12bd8aebe1449314ba0e6a3998163eb07))
+
 ## v3.3.0 (2024-07-02)
 
 ### Feature
