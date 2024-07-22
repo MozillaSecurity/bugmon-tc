@@ -29,6 +29,7 @@ def test_processor_task_init(bug_data):
     assert processor_task.dest == Path(f"processor-result-{bug.id}-{PARENT_ID}.json")
     assert processor_task.trace_dest is None  # By default, use_pernosco is False
     assert processor_task.force_confirm is False  # By default, force_confirm is False
+    assert processor_task.force_confirm is False  # By default, force_confirm is False
 
 
 def test_processor_task_init_with_options(bug_data):

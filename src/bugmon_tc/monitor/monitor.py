@@ -131,6 +131,7 @@ class BugMonitorTask:
 
             use_pernosco = (
                 ("pernosco" in bug.commands or "pernosco-wanted" in bug.keywords)
+                and "pernosco-failed" not in bug.commands
                 and bug.platform.system == "Linux"
                 and bug.platform.machine == "x86_64"
             )
