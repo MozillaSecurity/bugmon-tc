@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.3.2 (2024-07-22)
+
+### Fix
+
+* Ignore pernosco-keyword if pernosco-failed command is set ([`fe48bce`](https://github.com/MozillaSecurity/bugmon-tc/commit/fe48bce3221bb6e4bdaac3a02f751327f01c3733))
+
 ## v3.3.1 (2024-07-08)
 
 ### Fix
