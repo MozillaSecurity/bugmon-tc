@@ -38,7 +38,7 @@ version = "3.3.2"
 
 [tool.poetry.dependencies]
 bugmon = {git = "https://github.com/MozillaSecurity/bugmon.git"}
-python = "^3.8.1"
+python = "^3.9.0"
 taskcluster = ">=30.0.0"
 
 [tool.poetry.group.dev.dependencies]
@@ -75,7 +75,8 @@ disable = [
   "line-too-long",
   "logging-fstring-interpolation",
   "missing-module-docstring",
-  "too-many-arguments"
+  "too-many-arguments",
+  "too-many-positional-arguments"
 ]
 
 [tool.pytest.ini_options]

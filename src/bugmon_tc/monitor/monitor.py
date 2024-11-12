@@ -6,7 +6,7 @@ import logging
 import os
 import tempfile
 from pathlib import Path
-from typing import Iterator
+from typing import Iterator, cast
 
 from bugsy import Bugsy
 from bugmon import BugMonitor, BugmonException
@@ -118,7 +118,9 @@ class BugMonitorTask:
         performed on those bugs"""
 
         for bug in self.fetch_bugs():
-            parent_id = os.getenv("TASK_ID") if in_taskcluster() else slugId()
+            parent_id = cast(
+                str, os.getenv("TASK_ID") if in_taskcluster() else slugId()
+            )
             monitor_path = Path(f"monitor-{bug.id}-{parent_id}.json")
 
             if not artifact_dir.exists():
