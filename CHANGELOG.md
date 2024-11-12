@@ -2,6 +2,16 @@
 
 <!--next-version-placeholder-->
 
+## v4.0.0 (2024-11-12)
+
+### Feature
+
+* Drop support for python 3.8 ([`3ddb139`](https://github.com/MozillaSecurity/bugmon-tc/commit/3ddb139d7414119589bc3dc4ebf692687a68be35))
+
+### Breaking
+
+* Sets minimum python to version 3.9. ([`3ddb139`](https://github.com/MozillaSecurity/bugmon-tc/commit/3ddb139d7414119589bc3dc4ebf692687a68be35))
+
 ## v3.3.2 (2024-07-22)
 
 ### Fix
