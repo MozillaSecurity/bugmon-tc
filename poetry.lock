@@ -183,17 +183,17 @@ tests-mypy = ["mypy (>=1.11.1)", "pytest-mypy-plugins"]
 
 [[package]]
 name = "autobisect"
-version = "8.0.0"
+version = "8.0.1"
 description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "autobisect-8.0.0-py3-none-any.whl", hash = "sha256:abf1e99c15a7b0f08e8138730a84644ac07011f858e9a2e865f10abbb9c6ea7a"},
-    {file = "autobisect-8.0.0.tar.gz", hash = "sha256:8ba0ea58dca00a0aa91212a80d7c6d0e04191010f144c577338d09d98574ed67"},
+    {file = "autobisect-8.0.1-py3-none-any.whl", hash = "sha256:7a6604917cdf8e6f102419dee70a62ef2eb34ad13c46b5beef2f5ec13529431e"},
+    {file = "autobisect-8.0.1.tar.gz", hash = "sha256:a72dfb4b48d363a83080fd1ecfe0c871484ba910286155d09f4d2e93d8895e39"},
 ]
 
 [package.dependencies]
-fuzzfetch = ">=10.0.0,<11.0.0"
+fuzzfetch = ">=10.0.1,<11.0.0"
 grizzly-framework = ">=0.21.0,<0.22.0"
 lithium-reducer = ">=4.0.0,<5.0.0"
 platformdirs = ">=4.2.2,<5.0.0"
@@ -254,7 +254,7 @@ files = []
 develop = false
 
 [package.dependencies]
-autobisect = "^8.0.0"
+autobisect = "^8.0.1"
 bugsy = {git = "https://github.com/AutomatedTester/Bugsy.git"}
 fuzzfetch = "^10.0.0"
 typing-extensions = "^4.2.0"
@@ -263,7 +263,7 @@ typing-extensions = "^4.2.0"
 type = "git"
 url = "https://github.com/MozillaSecurity/bugmon.git"
 reference = "HEAD"
-resolved_reference = "a558df783b00db2fd867f542debf18bd7ab0d86a"
+resolved_reference = "2d188f4d258b45f5ad407ea571621d0e7d3ce183"
 
 [[package]]
 name = "bugsy"
@@ -924,13 +924,13 @@ files = [
 
 [[package]]
 name = "fuzzfetch"
-version = "10.0.0"
+version = "10.0.1"
 description = "Downloader for firefox/jsshell builds."
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "fuzzfetch-10.0.0-py3-none-any.whl", hash = "sha256:59e6d4f6a70597bdf5e3a3f513341b61fd708b387597c8a222e5ce2fa48d3e43"},
-    {file = "fuzzfetch-10.0.0.tar.gz", hash = "sha256:ada07a71206988bba113652cd59d94e824f4401439d16ab97480f640d881b69f"},
+    {file = "fuzzfetch-10.0.1-py3-none-any.whl", hash = "sha256:7300d60d1f6acfeb22d90537c21d8495eacd07c3ce244e97f709c70cb30e4858"},
+    {file = "fuzzfetch-10.0.1.tar.gz", hash = "sha256:4fbaaa4b318d31036687c2f21b1405f618cf54d7e729ce2c21327e1721e14330"},
 ]
 
 [package.dependencies]
@@ -1846,13 +1846,13 @@ files = [
 
 [[package]]
 name = "six"
-version = "1.16.0"
+version = "1.17.0"
 description = "Python 2 and 3 compatibility utilities"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
+python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
 files = [
-    {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
-    {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
+    {file = "six-1.17.0-py2.py3-none-any.whl", hash = "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274"},
+    {file = "six-1.17.0.tar.gz", hash = "sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81"},
 ]
 
 [[package]]
@@ -1868,13 +1868,13 @@ files = [
 
 [[package]]
 name = "taskcluster"
-version = "75.0.0"
+version = "75.0.1"
 description = "Python client for Taskcluster"
 optional = false
 python-versions = "*"
 files = [
-    {file = "taskcluster-75.0.0-py3-none-any.whl", hash = "sha256:0d39f32bd7cb0ddf75a51827c15fbb5641d1f5922654451ba3ecae72fcfc8e1a"},
-    {file = "taskcluster-75.0.0.tar.gz", hash = "sha256:f932ec449f265a52dce2fea89a4de5b1607f47e21ce84a6fe33d78afe43c7d42"},
+    {file = "taskcluster-75.0.1-py3-none-any.whl", hash = "sha256:6b16a0d8ffa3431a66a2ffe428f8e5c7874b9cbeddba7d5ce0e8d8783d4c95a3"},
+    {file = "taskcluster-75.0.1.tar.gz", hash = "sha256:3100ce68e7a655701cd78290067f0df1b05e0a85c69df29f60ceaad6baf0fc53"},
 ]
 
 [package.dependencies]
