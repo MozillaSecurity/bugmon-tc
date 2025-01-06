@@ -217,7 +217,7 @@ def test_processor_task_task_definition_windows(bug_data, mocker):
                 "%PATH%",
             ]
         ),
-        "launch.sh",
+        "bash launch.sh",
     ]
     assert processor.task["payload"]["onExitStatus"]["retry"] == [0x40010004]
     assert processor.task["payload"]["artifacts"] == [
