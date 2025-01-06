@@ -213,7 +213,7 @@ class ProcessorTask(BaseTask):
                             "%PATH%",
                         ]
                     ),
-                    "launch.sh",
+                    "bash launch.sh",
                 ]
                 del self._task["payload"]["cache"]
                 del self._task["payload"]["capabilities"]
