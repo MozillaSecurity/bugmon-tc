@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v4.0.1 (2025-01-06)
+
+### Fix
+
+* Ensure launch.sh is evaluated by bash ([`5c56974`](https://github.com/MozillaSecurity/bugmon-tc/commit/5c5697415f5963ddbcf797b773c449c1357b8ffd))
+
 ## v4.0.0 (2024-11-12)
 
 ### Feature
