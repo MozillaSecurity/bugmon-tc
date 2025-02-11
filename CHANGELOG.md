@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v4.1.0 (2025-02-11)
+
+### Feature
+
+* Allow setting debug logging via env variable ([`449cd1d`](https://github.com/MozillaSecurity/bugmon-tc/commit/449cd1d51153c48ebab94fd44a880c76bf1529c8))
+
 ## v4.0.1 (2025-01-06)
 
 ### Fix
