@@ -3,6 +3,7 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 import argparse
 import logging
+import os
 from typing import Any
 
 
@@ -31,5 +32,10 @@ def base_parser(*args: Any, **kwargs: Any) -> argparse.ArgumentParser:
         help="Be more verbose",
     )
 
-    parser.set_defaults(log_level=logging.INFO)
+    log_level = logging.INFO
+    if bool(os.getenv("DEBUG")):
+        log_level = logging.DEBUG
+
+    parser.set_defaults(log_level=log_level)
+
     return parser
