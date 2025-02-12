@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v4.2.1 (2025-02-12)
+
+### Fix
+
+* Propagate debug parameter to sub tasks ([`7f25fd1`](https://github.com/MozillaSecurity/bugmon-tc/commit/7f25fd1216044a4129f8de49ad641cdb34b13cc5))
+* Propagate debug parameter to sub tasks ([`3f35d73`](https://github.com/MozillaSecurity/bugmon-tc/commit/3f35d73855daae520aa398708bc7a4685ff5e304))
+
 ## v4.2.0 (2025-02-12)
 
 ### Feature
