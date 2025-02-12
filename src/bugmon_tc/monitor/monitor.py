@@ -113,7 +113,7 @@ class BugMonitorTask:
 
         return False
 
-    def create_tasks(self, artifact_dir: Path) -> None:
+    def create_tasks(self, artifact_dir: Path, debug: bool = False) -> None:
         """Fetch all bugs and generate artifacts representing the tasks that need to be
         performed on those bugs"""
 
@@ -143,6 +143,7 @@ class BugMonitorTask:
                 monitor_path,
                 use_pernosco=use_pernosco,
                 force_confirm=self.force_confirm,
+                enable_debug=debug,
             )
             reporter = ReporterTask(
                 parent_id,
@@ -150,6 +151,7 @@ class BugMonitorTask:
                 processor.dest,
                 dep=processor.id,
                 trace_path=processor.trace_dest,
+                enable_debug=debug,
             )
 
             if in_taskcluster():

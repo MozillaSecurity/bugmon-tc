@@ -112,9 +112,11 @@ def test_processor_task_env_extra_args(bug_data):
         MONITOR_ARTIFACT_PATH,
         use_pernosco=True,
         force_confirm=True,
+        enable_debug=True,
     )
     assert processor.env == {
         "BUG_ACTION": "process",
+        "DEBUG": "1",
         "FORCE_CONFIRM": "1",
         "MONITOR_ARTIFACT": str(MONITOR_ARTIFACT_PATH),
         "PROCESSOR_ARTIFACT": str(processor.dest),
@@ -282,10 +284,12 @@ def test_reporter_task_env(bug_data):
         PROCESSOR_ARTIFACT_PATH,
         dep=dependency,
         trace_path=TRACE_ARTIFACT_PATH,
+        enable_debug=True,
     )
 
     assert reporter_task.env == {
         "BUG_ACTION": "report",
+        "DEBUG": "1",
         "PROCESSOR_ARTIFACT": str(PROCESSOR_ARTIFACT_PATH),
         "TRACE_ARTIFACT": str(TRACE_ARTIFACT_PATH),
     }

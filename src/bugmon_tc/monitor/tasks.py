@@ -108,6 +108,7 @@ class ProcessorTask(BaseTask):
         monitor_path: Path,
         use_pernosco: bool = False,
         force_confirm: bool = False,
+        enable_debug: bool = False,
     ) -> None:
         """Instantiate new instance.
 
@@ -128,6 +129,7 @@ class ProcessorTask(BaseTask):
             self.trace_dest = Path(f"processor-rr-trace-{bug.id}-{parent_id}.tar.gz")
 
         self.force_confirm = force_confirm
+        self.enable_debug = enable_debug
         self._task = None
 
     @property
@@ -150,6 +152,9 @@ class ProcessorTask(BaseTask):
             "MONITOR_ARTIFACT": str(self.monitor_path),
             "PROCESSOR_ARTIFACT": str(self.dest),
         }
+
+        if self.enable_debug:
+            env_object["DEBUG"] = "1"
 
         if self.force_confirm:
             env_object["FORCE_CONFIRM"] = "1"
@@ -264,6 +269,7 @@ class ReporterTask(BaseTask):
         process_path: Path,
         dep: str,
         trace_path: Optional[Path] = None,
+        enable_debug: bool = False,
     ):
         """Instantiate a new ReporterTask instance.
 
@@ -278,6 +284,7 @@ class ReporterTask(BaseTask):
 
         self.dependency = dep
         self.trace_dest = trace_path
+        self.enable_debug = enable_debug
 
     @property
     def capabilities(self) -> Dict[str, Any]:
@@ -296,6 +303,9 @@ class ReporterTask(BaseTask):
             "BUG_ACTION": "report",
             "PROCESSOR_ARTIFACT": str(self.process_path),
         }
+
+        if self.enable_debug:
+            env_object["DEBUG"] = "1"
 
         if self.trace_dest is not None:
             env_object["TRACE_ARTIFACT"] = str(self.trace_dest)

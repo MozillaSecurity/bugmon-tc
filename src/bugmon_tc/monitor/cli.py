@@ -22,8 +22,12 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         help="Force bug confirmation regardless of state",
     )
     parser.add_argument("output", type=Path, help="Path to store artifacts")
+
     args = parser.parse_args(args=argv)
-    logging.basicConfig(level=args.log_level)
+
+    logging.basicConfig(level=logging.INFO)
+    if args.debug:
+        logging.basicConfig(level=logging.DEBUG)
 
     return args
 

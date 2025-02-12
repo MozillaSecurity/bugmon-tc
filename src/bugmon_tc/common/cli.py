@@ -2,7 +2,6 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 import argparse
-import logging
 import os
 from typing import Any
 
@@ -16,26 +15,17 @@ def base_parser(*args: Any, **kwargs: Any) -> argparse.ArgumentParser:
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
-        "--quiet",
-        "-q",
-        dest="log_level",
-        action="store_const",
-        const=logging.WARNING,
-        help="Be less verbose",
-    )
-    group.add_argument(
-        "--verbose",
-        "-v",
-        dest="log_level",
-        action="store_const",
-        const=logging.DEBUG,
-        help="Be more verbose",
+        "--debug",
+        "-d",
+        dest="debug",
+        action="store_true",
+        help="Enable verbose debugging output",
     )
 
-    log_level = logging.INFO
+    enable_debug = False
     if bool(os.getenv("DEBUG")):
-        log_level = logging.DEBUG
+        enable_debug = True
 
-    parser.set_defaults(log_level=log_level)
+    parser.set_defaults(debug=enable_debug)
 
     return parser

@@ -85,7 +85,10 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     )
 
     args = parser.parse_args(args=argv)
-    logging.basicConfig(level=args.log_level)
+
+    logging.basicConfig(level=logging.INFO)
+    if args.debug:
+        logging.basicConfig(level=logging.DEBUG)
 
     if not in_taskcluster():
         if not args.processor_artifact.exists():
@@ -100,7 +103,6 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
 def main(argv: Optional[List[str]] = None) -> None:
     """Report processed results"""
     args = parse_args(argv)
-    bz_creds = get_bugzilla_auth()
 
     if in_taskcluster():
         task = queue.task(os.getenv("TASK_ID"))
@@ -113,4 +115,5 @@ def main(argv: Optional[List[str]] = None) -> None:
         pernosco_creds = get_pernosco_auth()
         submit_trace(bug_data, args.trace_artifact, pernosco_creds)
 
+    bz_creds = get_bugzilla_auth()
     update_bug(bug_data, bz_creds)

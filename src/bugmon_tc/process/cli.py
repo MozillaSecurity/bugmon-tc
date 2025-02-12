@@ -94,7 +94,10 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     )
 
     args = parser.parse_args(args=argv)
-    logging.basicConfig(level=args.log_level)
+
+    logging.basicConfig(level=logging.INFO)
+    if args.debug:
+        logging.basicConfig(level=logging.DEBUG)
 
     if args.processor_artifact.exists():
         LOG.warning(
