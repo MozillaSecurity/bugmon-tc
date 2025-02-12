@@ -34,7 +34,7 @@ description = "Bugmon Taskcluster Implementation"
 license = "MPL-2.0"
 name = "bugmon-tc"
 packages = [{from = "src", include = "bugmon_tc"}]
-version = "4.1.0"
+version = "4.2.0"
 
 [tool.poetry.dependencies]
 bugmon = {git = "https://github.com/MozillaSecurity/bugmon.git"}

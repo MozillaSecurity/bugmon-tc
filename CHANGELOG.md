@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v4.2.0 (2025-02-12)
+
+### Feature
+
+* Enable debug logging via task env ([`18940a7`](https://github.com/MozillaSecurity/bugmon-tc/commit/18940a7b75ee3753076193451ad2c40a33ad2bac))
+
 ## v4.1.0 (2025-02-11)
 
 ### Feature
