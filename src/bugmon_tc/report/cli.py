@@ -87,8 +87,11 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     args = parser.parse_args(args=argv)
 
     logging.basicConfig(level=logging.INFO)
+
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.INFO)
 
     if not in_taskcluster():
         if not args.processor_artifact.exists():
