@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v4.2.2 (2025-02-12)
+
+### Fix
+
+* Log level can only be set once ([`a7de51d`](https://github.com/MozillaSecurity/bugmon-tc/commit/a7de51d0c5d0032246c0fa9b4b8da7af82fa1973))
+
 ## v4.2.1 (2025-02-12)
 
 ### Fix
