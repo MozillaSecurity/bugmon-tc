@@ -41,5 +41,6 @@ def main(argv: Optional[List[str]] = None) -> None:
         bz_creds["KEY"],
         bz_creds["URL"],
         force_confirm=args.force_confirm,
+        enable_debug=args.debug,
     )
-    monitor.create_tasks(args.output, debug=args.debug)
+    monitor.create_tasks(args.output)

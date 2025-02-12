@@ -25,5 +25,7 @@ def test_main(mocker, tmp_path):
 
     main(["--force-confirm", str(tmp_path)])
 
-    mock_bug_monitor_task.assert_called_once_with("key", "url", force_confirm=True)
+    mock_bug_monitor_task.assert_called_once_with(
+        "key", "url", force_confirm=True, enable_debug=False
+    )
     mock_bug_monitor_task.return_value.create_tasks.assert_called_once_with(tmp_path)

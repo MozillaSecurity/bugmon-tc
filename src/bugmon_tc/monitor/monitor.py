@@ -57,6 +57,7 @@ class BugMonitorTask:
         api_key: str,
         api_root: str,
         force_confirm: bool = False,
+        enable_debug: bool = False,
     ) -> None:
         """
 
@@ -66,6 +67,7 @@ class BugMonitorTask:
         """
         self.bugsy = Bugsy(api_key=api_key, bugzilla_url=api_root)
         self.force_confirm = force_confirm
+        self.enable_debug = enable_debug
 
     def fetch_bugs(self) -> Iterator[EnhancedBug]:
         """
@@ -113,7 +115,7 @@ class BugMonitorTask:
 
         return False
 
-    def create_tasks(self, artifact_dir: Path, debug: bool = False) -> None:
+    def create_tasks(self, artifact_dir: Path) -> None:
         """Fetch all bugs and generate artifacts representing the tasks that need to be
         performed on those bugs"""
 
@@ -143,7 +145,7 @@ class BugMonitorTask:
                 monitor_path,
                 use_pernosco=use_pernosco,
                 force_confirm=self.force_confirm,
-                enable_debug=debug,
+                enable_debug=self.enable_debug,
             )
             reporter = ReporterTask(
                 parent_id,
@@ -151,7 +153,7 @@ class BugMonitorTask:
                 processor.dest,
                 dep=processor.id,
                 trace_path=processor.trace_dest,
-                enable_debug=debug,
+                enable_debug=self.enable_debug,
             )
 
             if in_taskcluster():
