@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v4.2.3 (2025-02-12)
+
+### Fix
+
+* Set log level once in processor and reporter ([`29ae481`](https://github.com/MozillaSecurity/bugmon-tc/commit/29ae4818d088423538c71d980d14882c23fe9219))
+
 ## v4.2.2 (2025-02-12)
 
 ### Fix
