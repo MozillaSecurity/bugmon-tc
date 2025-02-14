@@ -138,7 +138,7 @@ def test_processor_task_scopes_linux(bug_data, mocker):
         "docker-worker:capability:disableSeccomp",
         "docker-worker:capability:privileged",
         f"queue:get-artifact:project/fuzzing/bugmon/{MONITOR_ARTIFACT_PATH}",
-        "queue:scheduler-id:-",
+        "queue:scheduler-id:fuzzing",
     ]
 
 
@@ -152,7 +152,7 @@ def test_processor_task_scopes_windows(bug_data, mocker):
 
     assert task.scopes == [
         f"queue:get-artifact:project/fuzzing/bugmon/{MONITOR_ARTIFACT_PATH}",
-        "queue:scheduler-id:-",
+        "queue:scheduler-id:fuzzing",
     ]
 
 
@@ -338,7 +338,7 @@ def test_reporter_task_scopes(bug_data):
         "docker-worker:capability:privileged",
         f"queue:get-artifact:project/fuzzing/bugmon/{PROCESSOR_ARTIFACT_PATH}",
         f"queue:get-artifact:project/fuzzing/bugmon/{TRACE_ARTIFACT_PATH}",
-        "queue:scheduler-id:-",
+        "queue:scheduler-id:fuzzing",
         "secrets:get:project/fuzzing/bz-api-key",
         "secrets:get:project/fuzzing/pernosco-group",
         "secrets:get:project/fuzzing/pernosco-secret",

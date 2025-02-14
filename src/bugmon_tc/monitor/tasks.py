@@ -80,7 +80,7 @@ class BaseTask(abc.ABC):
                 "workerType": self.worker_type,
                 "retries": 5,
                 "routes": ["notify.email.jkratzer@mozilla.com.on-failed"],
-                "schedulerId": "-",
+                "schedulerId": "fuzzing",
                 "scopes": self.scopes,
                 "tags": {},
             }
@@ -172,7 +172,7 @@ class ProcessorTask(BaseTask):
         """Scopes applied to the task"""
         scopes = [
             f"queue:get-artifact:project/fuzzing/bugmon/{self.monitor_path}",
-            "queue:scheduler-id:-",
+            "queue:scheduler-id:fuzzing",
         ]
         if self.bug.platform.system == "Linux":
             scopes.extend(
@@ -322,7 +322,7 @@ class ReporterTask(BaseTask):
             "secrets:get:project/fuzzing/pernosco-group",
             "secrets:get:project/fuzzing/pernosco-secret",
             f"queue:get-artifact:{base}/{self.process_path}",
-            "queue:scheduler-id:-",
+            "queue:scheduler-id:fuzzing",
         ]
 
         if self.trace_dest:
