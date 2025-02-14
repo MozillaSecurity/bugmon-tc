@@ -58,6 +58,7 @@ pytest-cov = "^4.1.0"
 pytest-flake8 = "^1.1.1"
 pytest-mock = "^3.0.0"
 pytest-pylint = "^0.21.0"
+python-semantic-release = "^9.19.1"
 toml-sort = "^0.23.1"
 types-requests = "^2.31.0.10"
 
@@ -83,9 +84,12 @@ disable = [
 [tool.pytest.ini_options]
 log_level = "DEBUG"
 
+[tool.semantic_relase.publish]
+upload_to_vcs_release = false
+
 [tool.semantic_release]
-build_command = "pip install poetry && poetry build"
-commit_subject = "chore(release): {version} [skip ci]"
-upload_to_pypi = false
-upload_to_release = false
-version_toml = "pyproject.toml:tool.poetry.version"
+build_command = "poetry build"
+commit_message = "chore(release): {version} [skip ci]"
+version_toml = [
+  "pyproject.toml:tool.poetry.version"
+]
