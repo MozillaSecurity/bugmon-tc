@@ -58,7 +58,7 @@ pytest-cov = "^6.0.0"
 pytest-flake8 = "^1.1.1"
 pytest-mock = "^3.0.0"
 pytest-pylint = "^0.21.0"
-python-semantic-release = "^9.19.1"
+python-semantic-release = "^10.1.0"
 toml-sort = "^0.24.2"
 types-requests = "^2.31.0.10"
 
