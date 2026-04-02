@@ -9,7 +9,7 @@ Bugmon TC is a series of tools for running bugmon processes as isolated tasks in
 ```shell script
 git clone https://github.com/MozillaSecurity/bugmon-tc
 cd bugmon-tc
-poetry install
+uv sync
 ```
 
 ## Overview

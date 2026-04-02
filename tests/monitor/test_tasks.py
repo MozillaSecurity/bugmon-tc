@@ -10,12 +10,26 @@ from bugmon import EnhancedBug
 from freezegun import freeze_time
 from taskcluster import stringDate, fromNow
 
-from bugmon_tc.monitor.tasks import ProcessorTask, ReporterTask, MAX_RUNTIME
+from bugmon_tc.monitor.tasks import (
+    ProcessorTask,
+    ReporterTask,
+    MAX_RUNTIME,
+    _get_created,
+)
 
 PARENT_ID = "UkGN9k6QSNi0-s62I5vvdg"
 MONITOR_ARTIFACT_PATH = Path("path/to/monitor_artifact")
 PROCESSOR_ARTIFACT_PATH = Path("path/to/processor_artifact")
 TRACE_ARTIFACT_PATH = Path("path/to/trace_artifact")
+
+
+@pytest.fixture(autouse=True)
+def _clear_created_cache(mocker):
+    """Clear _get_created cache between tests and mock non-TC environment."""
+    _get_created.cache_clear()
+    mocker.patch("bugmon_tc.monitor.tasks.in_taskcluster", return_value=False)
+    yield
+    _get_created.cache_clear()
 
 
 def test_processor_task_init(bug_data):

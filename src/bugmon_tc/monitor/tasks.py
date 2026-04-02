@@ -2,8 +2,10 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 import abc
+import os
 
 from datetime import datetime, timedelta
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, List, Optional, Dict
 
@@ -12,7 +14,34 @@ from taskcluster.utils import fromNow
 from taskcluster.utils import slugId
 from taskcluster.utils import stringDate
 
+from ..common import queue, in_taskcluster
+
 MAX_RUNTIME = 14400
+
+
+@lru_cache(maxsize=1)
+def _get_created() -> datetime:
+    """Resolve the task creation time.
+
+    In Taskcluster, this fetches the hook task's created timestamp so that
+    deadlines are relative to when the hook fired, not when child tasks are
+    built.  Outside Taskcluster, falls back to the current time.
+    """
+    if in_taskcluster():
+        try:
+            task = queue.task(os.getenv("TASK_ID"))
+            created_str = task["created"]
+            if created_str.endswith("Z"):
+                created_str = created_str[:-1] + "+00:00"
+            created = datetime.fromisoformat(created_str)
+        except Exception as e:
+            raise RuntimeError(
+                f"Failed to resolve hook trigger time from task definition: {e}"
+            ) from e
+        # Strip tzinfo for consistency with taskcluster.utils (naive UTC)
+        return created.replace(tzinfo=None)
+
+    return datetime.utcnow()
 
 
 class BaseTask(abc.ABC):
@@ -43,7 +72,7 @@ class BaseTask(abc.ABC):
             if self.dependency is not None:
                 dependencies.append(self.dependency)
 
-            now = datetime.utcnow()
+            now = _get_created()
 
             self._task = {
                 "taskGroupId": self.parent_id,
