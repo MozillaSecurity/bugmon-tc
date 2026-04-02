@@ -9,15 +9,15 @@ from bugmon import BugmonException
 from bugmon.bug import EnhancedBug
 
 from bugmon_tc.monitor.monitor import BugMonitorTask, needs_force_confirmed
-from bugmon_tc.monitor.tasks import _get_created
+from bugmon_tc.monitor.tasks import _get_monitor_task
 
 
 @pytest.fixture(autouse=True)
-def _clear_created_cache():
-    """Clear _get_created cache between tests."""
-    _get_created.cache_clear()
+def _clear_monitor_task_cache():
+    """Clear _get_monitor_task cache between tests."""
+    _get_monitor_task.cache_clear()
     yield
-    _get_created.cache_clear()
+    _get_monitor_task.cache_clear()
 
 
 @pytest.mark.parametrize("status", ["ASSIGNED", "NEW", "UNCONFIRMED", "REOPENED"])

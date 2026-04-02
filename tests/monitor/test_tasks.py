@@ -14,7 +14,7 @@ from bugmon_tc.monitor.tasks import (
     ProcessorTask,
     ReporterTask,
     MAX_RUNTIME,
-    _get_created,
+    _get_monitor_task,
 )
 
 PARENT_ID = "UkGN9k6QSNi0-s62I5vvdg"
@@ -24,12 +24,12 @@ TRACE_ARTIFACT_PATH = Path("path/to/trace_artifact")
 
 
 @pytest.fixture(autouse=True)
-def _clear_created_cache(mocker):
-    """Clear _get_created cache between tests and mock non-TC environment."""
-    _get_created.cache_clear()
+def _clear_monitor_task_cache(mocker):
+    """Clear _get_monitor_task cache between tests and mock non-TC environment."""
+    _get_monitor_task.cache_clear()
     mocker.patch("bugmon_tc.monitor.tasks.in_taskcluster", return_value=False)
     yield
-    _get_created.cache_clear()
+    _get_monitor_task.cache_clear()
 
 
 def test_processor_task_init(bug_data):
@@ -178,6 +178,8 @@ def test_processor_task_task_definition_linux(bug_data, mocker, force_confirm):
     mocker.patch("bugmon.bug.platform.system", return_value="Linux")
 
     created = datetime(2023, 1, 1)
+    expected_deadline = created + timedelta(seconds=MAX_RUNTIME + 3600)
+    expected_max_run_time = int((expected_deadline - created).total_seconds())
 
     bug = EnhancedBug(None, **bug_data)
     processor = ProcessorTask(
@@ -187,22 +189,14 @@ def test_processor_task_task_definition_linux(bug_data, mocker, force_confirm):
     assert processor.task["taskGroupId"] == PARENT_ID
     assert processor.task["dependencies"] == [PARENT_ID]
     assert processor.task["created"] == stringDate(created)
-
-    if force_confirm:
-        deadline_seconds = max(12 * 3600, MAX_RUNTIME + 3600)
-    else:
-        deadline_seconds = MAX_RUNTIME + 3600
-
-    expected_deadline = stringDate(created + timedelta(seconds=deadline_seconds))
-    assert processor.task["deadline"] == expected_deadline
-
+    assert processor.task["deadline"] == stringDate(expected_deadline)
     assert processor.task["expires"] == stringDate(fromNow("1 week", created))
     assert (
         processor.task["metadata"]["name"] == f"{type(processor).__name__} ({bug.id})"
     )
     assert processor.task["payload"]["capabilities"] == processor.capabilities
     assert processor.task["payload"]["env"] == processor.env
-    assert processor.task["payload"]["maxRunTime"] == MAX_RUNTIME
+    assert processor.task["payload"]["maxRunTime"] == expected_max_run_time
     assert processor.task["workerType"] == processor.worker_type
     assert processor.task["scopes"] == processor.scopes
 
