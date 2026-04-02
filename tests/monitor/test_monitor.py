@@ -9,6 +9,15 @@ from bugmon import BugmonException
 from bugmon.bug import EnhancedBug
 
 from bugmon_tc.monitor.monitor import BugMonitorTask, needs_force_confirmed
+from bugmon_tc.monitor.tasks import _get_created
+
+
+@pytest.fixture(autouse=True)
+def _clear_created_cache():
+    """Clear _get_created cache between tests."""
+    _get_created.cache_clear()
+    yield
+    _get_created.cache_clear()
 
 
 @pytest.mark.parametrize("status", ["ASSIGNED", "NEW", "UNCONFIRMED", "REOPENED"])
@@ -116,6 +125,7 @@ def test_monitor_create_tasks_taskcluster(mocker, tmp_path, bug_data):
     mocker.patch("bugsy.Bugsy.request", return_value=bug_response)
     mocker.patch("bugmon.BugMonitor.is_supported", return_value=False)
     mocker.patch("bugmon_tc.monitor.monitor.in_taskcluster", return_value=True)
+    mocker.patch("bugmon_tc.monitor.tasks.in_taskcluster", return_value=False)
 
     cached_bug = EnhancedBug(None, **bug_data)
     mocker.patch("bugmon.bug.EnhancedBug.cache_bug", return_value=cached_bug)
@@ -151,6 +161,7 @@ def test_monitor_create_tasks_pernosco_not_supported(
     mocker.patch("bugsy.Bugsy.request", return_value=bug_response)
     mocker.patch("bugmon.BugMonitor.is_supported", return_value=False)
     mocker.patch("bugmon_tc.monitor.monitor.in_taskcluster", return_value=True)
+    mocker.patch("bugmon_tc.monitor.tasks.in_taskcluster", return_value=False)
 
     cached_bug = EnhancedBug(None, **bug_data)
     mocker.patch("bugmon.bug.EnhancedBug.cache_bug", return_value=cached_bug)
