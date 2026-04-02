@@ -7,7 +7,7 @@ import os
 from datetime import datetime, timedelta
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, List, Optional, Dict
+from typing import Any, Dict, List, Optional, cast
 
 from bugmon import EnhancedBug
 from taskcluster.utils import fromNow
@@ -19,29 +19,33 @@ from ..common import queue, in_taskcluster
 MAX_RUNTIME = 14400
 
 
-@lru_cache(maxsize=1)
-def _get_created() -> datetime:
-    """Resolve the task creation time.
+def _parse_tc_datetime(value: str) -> datetime:
+    """Parse a Taskcluster ISO 8601 datetime string into a naive UTC datetime."""
+    if value.endswith("Z"):
+        value = value[:-1] + "+00:00"
+    return datetime.fromisoformat(value).replace(tzinfo=None)
 
-    In Taskcluster, this fetches the hook task's created timestamp so that
-    deadlines are relative to when the hook fired, not when child tasks are
-    built.  Outside Taskcluster, falls back to the current time.
+
+@lru_cache(maxsize=1)
+def _get_monitor_task() -> Dict[str, Any]:
+    """Fetch and cache the monitor (parent) task definition from Taskcluster."""
+    try:
+        return cast(Dict[str, Any], queue.task(os.getenv("TASK_ID")))
+    except Exception as e:
+        raise RuntimeError(f"Failed to fetch monitor task definition: {e}") from e
+
+
+def _get_deadline() -> datetime:
+    """Resolve the child task deadline.
+
+    In Taskcluster, returns the monitor task's deadline minus 15 minutes so
+    that child tasks complete before the next hook fires.  Outside Taskcluster,
+    falls back to now + MAX_RUNTIME + 1 hour.
     """
     if in_taskcluster():
-        try:
-            task = queue.task(os.getenv("TASK_ID"))
-            created_str = task["created"]
-            if created_str.endswith("Z"):
-                created_str = created_str[:-1] + "+00:00"
-            created = datetime.fromisoformat(created_str)
-        except Exception as e:
-            raise RuntimeError(
-                f"Failed to resolve hook trigger time from task definition: {e}"
-            ) from e
-        # Strip tzinfo for consistency with taskcluster.utils (naive UTC)
-        return created.replace(tzinfo=None)
-
-    return datetime.utcnow()
+        deadline = _parse_tc_datetime(_get_monitor_task()["deadline"])
+        return deadline - timedelta(minutes=15)
+    return datetime.utcnow() + timedelta(seconds=MAX_RUNTIME + 3600)
 
 
 class BaseTask(abc.ABC):
@@ -72,13 +76,15 @@ class BaseTask(abc.ABC):
             if self.dependency is not None:
                 dependencies.append(self.dependency)
 
-            now = _get_created()
+            now = datetime.utcnow()
+            deadline = _get_deadline()
+            max_run_time = int((deadline - now).total_seconds())
 
             self._task = {
                 "taskGroupId": self.parent_id,
                 "dependencies": dependencies,
                 "created": stringDate(now),
-                "deadline": stringDate(now + timedelta(seconds=MAX_RUNTIME + 3600)),
+                "deadline": stringDate(deadline),
                 "expires": stringDate(fromNow("1 week", now)),
                 "provisionerId": "proj-fuzzing",
                 "metadata": {
@@ -103,7 +109,7 @@ class BaseTask(abc.ABC):
                         "path": "public/bugmon.tar.zst",
                         "namespace": "project.fuzzing.orion.bugmon.master",
                     },
-                    "maxRunTime": MAX_RUNTIME,
+                    "maxRunTime": max_run_time,
                 },
                 "priority": "high",
                 "workerType": self.worker_type,
@@ -220,18 +226,6 @@ class ProcessorTask(BaseTask):
         """Processor task definition"""
         if self._task is None:
             self._task = super().task
-            if self.force_confirm:
-                # Set deadline to 12 hours when force confirming bugs as this task
-                # is only run once a week
-                created_str = self._task["created"]
-                if created_str.endswith("Z"):
-                    # Check if there is timezone information
-                    created_str = created_str[:-1] + "+00:00"
-                    # Convert the string back to a datetime object
-                created = datetime.fromisoformat(created_str)
-                self._task["deadline"] = stringDate(
-                    created + timedelta(seconds=max(12 * 3600, (MAX_RUNTIME + 3600)))
-                )
 
             if self.bug.platform.system == "Windows":
                 self._task["payload"]["command"] = [
