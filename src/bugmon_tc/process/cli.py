@@ -50,6 +50,9 @@ def process_bug(
         with open(proc_dest, mode="w", encoding="utf-8") as file:
             json.dump({"bug_number": bug.id, "diff": bug.diff()}, file, indent=2)
 
+        if bugmon._close_bug:  # pylint: disable=protected-access
+            return None
+
         if trace_dest is not None:
             latest_trace = get_pernosco_trace(bugmon.log_dir)
 

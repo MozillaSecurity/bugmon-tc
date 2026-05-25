@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pytest
 
+from bugmon import BugMonitor
 from bugmon_tc.common import BugmonTaskError
 from bugmon_tc.process.cli import process_bug, parse_args, main
 
@@ -118,6 +119,22 @@ def test_process_bug(mocker, tmp_path, bug_data, with_trace):
 
     if with_trace:
         assert trace_dest.exists() is True
+
+
+def test_process_bug_skips_trace_when_closed(mocker, tmp_path, bug_data):
+    """Test that process_bug skips the trace check when the bug is being closed"""
+    dest = tmp_path / "results.json"
+    trace_dest = tmp_path / "trace.tar.gz"
+
+    def mock_process(self, force_confirm=False):
+        self._close_bug = True  # pylint: disable=protected-access
+
+    mocker.patch.object(BugMonitor, "process", mock_process)
+
+    process_bug(bug_data, dest, trace_dest=trace_dest)
+
+    assert dest.exists()
+    assert not trace_dest.exists()
 
 
 def test_process_bug_raises_no_trace(mocker, tmp_path, bug_data):
