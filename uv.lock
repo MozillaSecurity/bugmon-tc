@@ -352,7 +352,7 @@ dependencies = [
 
 [[package]]
 name = "bugmon-tc"
-version = "5.2.0"
+version = "5.2.1"
 source = { editable = "." }
 dependencies = [
     { name = "bugmon" },
@@ -361,6 +361,26 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "black" },
+    { name = "codecov-cli" },
+    { name = "coverage", extra = ["toml"] },
+    { name = "flake8" },
+    { name = "flake8-isort" },
+    { name = "flake8-quotes" },
+    { name = "freezegun" },
+    { name = "mypy" },
+    { name = "pylint" },
+    { name = "pyproject-fmt" },
+    { name = "pytest" },
+    { name = "pytest-black" },
+    { name = "pytest-cov" },
+    { name = "pytest-flake8" },
+    { name = "pytest-mock" },
+    { name = "pytest-pylint" },
+    { name = "python-semantic-release" },
+    { name = "types-requests" },
+]
+lint = [
     { name = "black" },
     { name = "codecov-cli" },
     { name = "coverage", extra = ["toml"] },
@@ -391,6 +411,26 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "black", specifier = ">=25.1" },
+    { name = "codecov-cli", specifier = ">=11.0.3" },
+    { name = "coverage", extras = ["toml"], specifier = ">=7.9.1" },
+    { name = "flake8", specifier = ">=7.1.2" },
+    { name = "flake8-isort", specifier = ">=6" },
+    { name = "flake8-quotes", specifier = ">=3.3.1" },
+    { name = "freezegun", specifier = ">=1.2.2" },
+    { name = "mypy", specifier = ">=1.7" },
+    { name = "pylint", specifier = ">=3.0.2" },
+    { name = "pyproject-fmt", specifier = ">=2" },
+    { name = "pytest", specifier = ">=8.3.5" },
+    { name = "pytest-black", specifier = ">=0.6" },
+    { name = "pytest-cov", specifier = ">=6" },
+    { name = "pytest-flake8", specifier = ">=1.1.1" },
+    { name = "pytest-mock", specifier = ">=3" },
+    { name = "pytest-pylint", specifier = ">=0.21" },
+    { name = "python-semantic-release", specifier = ">=10.1" },
+    { name = "types-requests", specifier = ">=2.31.0.10" },
+]
+lint = [
     { name = "black", specifier = ">=25.1" },
     { name = "codecov-cli", specifier = ">=11.0.3" },
     { name = "coverage", extras = ["toml"], specifier = ">=7.9.1" },

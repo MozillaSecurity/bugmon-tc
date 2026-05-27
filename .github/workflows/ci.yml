@@ -23,7 +23,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install package
-        run: uv sync --group dev
+        run: uv sync --group lint
 
       - name: Run linters
         run: uv run pre-commit run -a
