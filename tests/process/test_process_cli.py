@@ -115,7 +115,11 @@ def test_process_bug(mocker, tmp_path, bug_data, with_trace):
     process_bug(bug_data, dest, trace_dest=trace_dest)
 
     assert dest.exists() is True
-    assert dest.read_text() == '{\n  "bug_number": 123456,\n  "diff": {}\n}'
+    assert json.loads(dest.read_text()) == {
+        "bug_number": 123456,
+        "diff": {},
+        "trace_available": with_trace,
+    }
 
     if with_trace:
         assert trace_dest.exists() is True
@@ -135,6 +139,7 @@ def test_process_bug_skips_trace_when_closed(mocker, tmp_path, bug_data):
 
     assert dest.exists()
     assert not trace_dest.exists()
+    assert json.loads(dest.read_text())["trace_available"] is False
 
 
 def test_process_bug_raises_no_trace(mocker, tmp_path, bug_data):

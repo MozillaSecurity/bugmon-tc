@@ -135,6 +135,29 @@ def test_parse_args_missing_file(tmp_path, skip):
         )
 
 
+def test_main_skips_trace_when_unavailable(mocker, tmp_path, mock_bz_creds):
+    """Test that submit_trace is not called when trace_available is False"""
+    bug_data = {"bug_number": 123456, "diff": {}, "trace_available": False}
+    processor_artifact = tmp_path / "processor.json"
+    processor_artifact.write_text(json.dumps(bug_data))
+    trace_artifact = tmp_path / "trace.tar.gz"
+
+    args = Namespace(
+        processor_artifact=processor_artifact,
+        trace_artifact=trace_artifact,
+        debug=False,
+    )
+    mocker.patch("bugmon_tc.report.cli.parse_args", return_value=args)
+    mocker.patch("bugmon_tc.report.cli.in_taskcluster", return_value=False)
+    mocker.patch("bugmon_tc.report.cli.get_bugzilla_auth", return_value=mock_bz_creds)
+    mock_submit_trace = mocker.patch("bugmon_tc.report.cli.submit_trace")
+    mocker.patch("bugmon_tc.report.cli.update_bug")
+
+    main(args)
+
+    mock_submit_trace.assert_not_called()
+
+
 def test_main_in_taskcluster(
     mocker,
     tmp_path,

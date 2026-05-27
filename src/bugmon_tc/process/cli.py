@@ -47,13 +47,11 @@ def process_bug(
         LOG.info(f"Processing bug {bug.id} (Status: {bug.status})")
         bugmon.process(force_confirm)
 
-        with open(proc_dest, mode="w", encoding="utf-8") as file:
-            json.dump({"bug_number": bug.id, "diff": bug.diff()}, file, indent=2)
-
-        if bugmon._close_bug:  # pylint: disable=protected-access
-            return None
-
-        if trace_dest is not None:
+        trace_available = False
+        if (
+            not bugmon._close_bug  # pylint: disable=protected-access
+            and trace_dest is not None
+        ):
             latest_trace = get_pernosco_trace(bugmon.log_dir)
 
             if latest_trace is None:
@@ -66,6 +64,18 @@ def process_bug(
                 base_name=str(trace_dest.with_suffix("").with_suffix("")),
                 format="gztar",
                 root_dir=str(latest_trace),
+            )
+            trace_available = True
+
+        with open(proc_dest, mode="w", encoding="utf-8") as file:
+            json.dump(
+                {
+                    "bug_number": bug.id,
+                    "diff": bug.diff(),
+                    "trace_available": trace_available,
+                },
+                file,
+                indent=2,
             )
 
         return None

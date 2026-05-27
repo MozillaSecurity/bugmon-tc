@@ -114,7 +114,7 @@ def main(argv: Optional[List[str]] = None) -> None:
     else:
         bug_data = json.loads(args.processor_artifact.read_text())
 
-    if args.trace_artifact is not None:
+    if args.trace_artifact is not None and bug_data.get("trace_available", True):
         pernosco_creds = get_pernosco_auth()
         submit_trace(bug_data, args.trace_artifact, pernosco_creds)
 
