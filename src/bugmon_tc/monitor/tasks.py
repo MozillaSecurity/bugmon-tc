@@ -277,7 +277,7 @@ class ProcessorTask(BaseTask):
             return "bugmon-processor-windows"
         if self.trace_dest:
             # If a trace path was supplied, use the bugmon-pernosco worker
-            return "bugmon-pernosco"
+            return "bugmon-pernosco-gw"
 
         return "bugmon-processor"
 
