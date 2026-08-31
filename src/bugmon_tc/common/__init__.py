@@ -5,7 +5,7 @@ import logging
 import os
 import tarfile
 import tempfile
-from contextlib import contextmanager
+from contextlib import ExitStack, contextmanager
 from pathlib import Path
 from typing import TypedDict, Dict, Any, cast, Iterator
 
@@ -87,24 +87,38 @@ def fetch_trace_artifact(artifact_path: Path) -> Iterator[Path]:
 
     :param artifact_path: Path to the trace artifact
     """
-    with tempfile.TemporaryDirectory() as tempdir:
-        if in_taskcluster():
-            # Trace artifacts are only used by the report, so they are linked to the
-            # processor task
-            task = queue.task(os.getenv("TASK_ID"))
-            dependencies = task.get("dependencies")
-            resp = fetch_artifact(dependencies[-1], artifact_path)
 
-            with tempfile.TemporaryFile(suffix="tar.gz") as temp:
+    def safe_extraction_filter(member: tarfile.TarInfo, dest: str) -> tarfile.TarInfo:
+        """Apply the stdlib 'data' filter and reject all link members"""
+        if member.islnk() or member.issym():
+            raise tarfile.FilterError(f"link member not allowed: {member.name!r}")
+
+        return tarfile.data_filter(member, dest)
+
+    with tempfile.TemporaryDirectory() as tempdir:
+        with ExitStack() as stack:
+            if in_taskcluster():
+                # Trace artifacts are only used by the report, so they are linked to
+                # the processor task
+                task = queue.task(os.getenv("TASK_ID"))
+                dependencies = task.get("dependencies")
+                resp = fetch_artifact(dependencies[-1], artifact_path)
+
+                temp = stack.enter_context(tempfile.TemporaryFile(suffix="tar.gz"))
                 for chunk in resp.iter_content(chunk_size=128 * 1024):
                     temp.write(chunk)
 
                 temp.seek(0)
-                archive = tarfile.open(fileobj=temp)
-                archive.extractall(tempdir)
-        else:
-            with tarfile.open(artifact_path, mode="r:gz") as archive:
-                archive.extractall(tempdir)
+                archive = stack.enter_context(tarfile.open(fileobj=temp))
+            else:
+                archive = stack.enter_context(tarfile.open(artifact_path, mode="r:gz"))
+
+            try:
+                # The archive is produced by the untrusted processor task; the
+                # filter rejects links and members that would escape tempdir
+                archive.extractall(tempdir, filter=safe_extraction_filter)
+            except tarfile.FilterError as e:
+                raise BugmonTaskError(f"Unsafe member in trace archive: {e}") from e
 
         yield Path(tempdir)
 

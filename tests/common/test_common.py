@@ -1,7 +1,9 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
+import io
 import os
+import tarfile
 from pathlib import Path
 from unittest.mock import Mock, MagicMock, patch
 
@@ -132,6 +134,77 @@ def test_fetch_trace_artifact_local(mocker):
 
         # Assert that tarfile.open was called with the correct arguments
         mock_tarfile_open.assert_called_once_with(artifact_path, mode="r:gz")
+
+
+def _make_archive(path, members):
+    """Create a tar.gz archive with the supplied member names"""
+    with tarfile.open(path, mode="w:gz") as archive:
+        for name in members:
+            data = b"data"
+            info = tarfile.TarInfo(name=name)
+            info.size = len(data)
+            archive.addfile(info, io.BytesIO(data))
+
+
+def test_fetch_trace_artifact_extracts_safe_archive(mocker, tmp_path):
+    """Regular archive members are extracted"""
+    mocker.patch("bugmon_tc.common.in_taskcluster", return_value=False)
+    artifact_path = tmp_path / "trace.tar.gz"
+    _make_archive(artifact_path, ["rr-trace/data.txt"])
+
+    with fetch_trace_artifact(artifact_path) as tempdir:
+        assert (tempdir / "rr-trace" / "data.txt").read_bytes() == b"data"
+
+
+def test_fetch_trace_artifact_rejects_traversal(mocker, tmp_path):
+    """Archive members that would escape the destination raise BugmonTaskError"""
+    mocker.patch("bugmon_tc.common.in_taskcluster", return_value=False)
+    artifact_path = tmp_path / "trace.tar.gz"
+    _make_archive(artifact_path, ["../escaped.txt"])
+
+    with pytest.raises(BugmonTaskError, match="Unsafe member in trace archive"):
+        with fetch_trace_artifact(artifact_path):
+            pass
+
+
+def test_fetch_trace_artifact_neutralizes_absolute_paths(mocker, tmp_path):
+    """Absolute member paths are extracted relative to the destination"""
+    mocker.patch("bugmon_tc.common.in_taskcluster", return_value=False)
+    artifact_path = tmp_path / "trace.tar.gz"
+    _make_archive(artifact_path, ["/tmp/absolute.txt"])
+
+    with fetch_trace_artifact(artifact_path) as tempdir:
+        assert (tempdir / "tmp" / "absolute.txt").read_bytes() == b"data"
+        assert not Path("/tmp/absolute.txt").exists()
+
+
+@pytest.mark.parametrize(
+    "link_type, link_target",
+    [
+        (tarfile.SYMTYPE, "../../outside"),
+        (tarfile.SYMTYPE, "rr-trace/data.txt"),
+        (tarfile.LNKTYPE, "rr-trace/data.txt"),
+    ],
+    ids=["escaping-symlink", "internal-symlink", "hardlink"],
+)
+def test_fetch_trace_artifact_rejects_links(mocker, tmp_path, link_type, link_target):
+    """All link members raise BugmonTaskError, even those within the destination"""
+    mocker.patch("bugmon_tc.common.in_taskcluster", return_value=False)
+    artifact_path = tmp_path / "trace.tar.gz"
+    with tarfile.open(artifact_path, mode="w:gz") as archive:
+        data = b"data"
+        info = tarfile.TarInfo(name="rr-trace/data.txt")
+        info.size = len(data)
+        archive.addfile(info, io.BytesIO(data))
+
+        info = tarfile.TarInfo(name="link")
+        info.type = link_type
+        info.linkname = link_target
+        archive.addfile(info)
+
+    with pytest.raises(BugmonTaskError, match="Unsafe member in trace archive"):
+        with fetch_trace_artifact(artifact_path):
+            pass
 
 
 def test_get_bugzilla_auth(monkeypatch):
