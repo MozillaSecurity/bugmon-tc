@@ -52,7 +52,7 @@ dev = [
   "types-requests>=2.31.0.10",
 ]
 lint = [
-  "gitlint>=0.19.1",
+  "gitlint-core>=0.19.1",
   "pre-commit>=4.2",
   { include-group = "dev" },
 ]
