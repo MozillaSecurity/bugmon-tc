@@ -26,6 +26,7 @@ from ..common import (
     BugzillaCreds,
 )
 from ..common.cli import base_parser
+from .validation import resolve_bug_number, validate_bug_data
 
 LOG = logging.getLogger(__name__)
 
@@ -83,6 +84,12 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         type=Path,
         help="Path to store the rr trace archive.",
     )
+    parser.add_argument(
+        "--bug-number",
+        type=int,
+        default=os.environ.get("BUG_NUMBER"),
+        help="Expected bug number (defaults to the BUG_NUMBER env variable).",
+    )
 
     args = parser.parse_args(args=argv)
 
@@ -106,6 +113,7 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
 def main(argv: Optional[List[str]] = None) -> None:
     """Report processed results"""
     args = parse_args(argv)
+    bug_number = resolve_bug_number(args.bug_number, args.processor_artifact)
 
     if in_taskcluster():
         task = queue.task(os.getenv("TASK_ID"))
@@ -114,7 +122,9 @@ def main(argv: Optional[List[str]] = None) -> None:
     else:
         bug_data = json.loads(args.processor_artifact.read_text())
 
-    if args.trace_artifact is not None and bug_data.get("trace_available", True):
+    bug_data = validate_bug_data(bug_data, bug_number)
+
+    if args.trace_artifact is not None and bug_data["trace_available"]:
         pernosco_creds = get_pernosco_auth()
         submit_trace(bug_data, args.trace_artifact, pernosco_creds)
 

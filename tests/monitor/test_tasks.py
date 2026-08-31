@@ -297,6 +297,7 @@ def test_reporter_task_env(bug_data):
 
     assert reporter_task.env == {
         "BUG_ACTION": "report",
+        "BUG_NUMBER": "123456",
         "DEBUG": "1",
         "PROCESSOR_ARTIFACT": str(PROCESSOR_ARTIFACT_PATH),
         "TRACE_ARTIFACT": str(TRACE_ARTIFACT_PATH),
@@ -316,6 +317,7 @@ def test_reporter_task_env_without_trace(bug_data):
 
     assert reporter_task.env == {
         "BUG_ACTION": "report",
+        "BUG_NUMBER": "123456",
         "PROCESSOR_ARTIFACT": str(PROCESSOR_ARTIFACT_PATH),
     }
 

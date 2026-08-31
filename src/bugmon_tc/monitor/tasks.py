@@ -324,6 +324,7 @@ class ReporterTask(BaseTask):
         """Environment variables for the task"""
         env_object = {
             "BUG_ACTION": "report",
+            "BUG_NUMBER": str(self.bug.id),
             "PROCESSOR_ARTIFACT": str(self.process_path),
         }
 
