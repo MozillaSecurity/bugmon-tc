@@ -8,16 +8,14 @@ from pathlib import Path
 import pytest
 
 from bugmon_tc.common import BugmonTaskError
-from bugmon_tc.report.cli import update_bug, submit_trace, parse_args, main
+from bugmon_tc.report.cli import update_bug, parse_args, main
 
 
 @pytest.fixture
 def mock_args(tmp_path):
     processor_artifact_path = tmp_path / "processor_artifact.json"
-    trace_artifact_path = tmp_path / "trace_artifact.json"
     return Namespace(
         processor_artifact=processor_artifact_path,
-        trace_artifact=trace_artifact_path,
         bug_number=123456,
     )
 
@@ -25,11 +23,6 @@ def mock_args(tmp_path):
 @pytest.fixture
 def mock_bz_creds():
     return {"KEY": "fake_key", "URL": "fake_url"}
-
-
-@pytest.fixture
-def mock_pernosco_token():
-    return {"token": "fake_token"}
 
 
 @pytest.fixture
@@ -50,91 +43,17 @@ def test_update_bug(bug_data_processed, caplog, mocker):
     )
 
 
-def test_submit_trace(bug_data_processed, build_info, mocker, monkeypatch, tmp_path):
-    """Test submitting a pernosco trace"""
-    trace_artifact = tmp_path / "trace_artifact.tar.gz"
-    trace_dir = tmp_path / "trace_dir"
-    trace_dir.mkdir()
-
-    fetch_artifact_mock = mocker.patch("bugmon_tc.report.cli.fetch_trace_artifact")
-    fetch_artifact_mock.return_value.__enter__.return_value = trace_dir
-
-    submit_pernosco_mock = mocker.patch("bugmon_tc.report.cli.submit_pernosco")
-    pernosco_creds = {
-        "PERNOSCO_USER": "user",
-        "PERNOSCO_GROUP": "group",
-        "PERNOSCO_USER_SECRET_KEY": "key",
-    }
-    mocker.patch("bugmon_tc.report.cli.is_pernosco_available", return_value=True)
-    submit_trace(bug_data_processed, trace_artifact, pernosco_creds)
-
-    assert fetch_artifact_mock.call_args == mocker.call(trace_artifact)
-    assert submit_pernosco_mock.call_args == mocker.call(
-        trace_dir,
-        bug_data_processed["bug_number"],
-        pernosco_creds,
-    )
-
-
-def test_submit_trace_without_pernosco(
-    bug_data_processed, build_info, mocker, monkeypatch, tmp_path
-):
-    """Test that submitting a trace fails when pernosco is not available"""
-    mocker.patch("bugmon_tc.report.cli.is_pernosco_available", return_value=False)
-
-    trace_artifact = tmp_path / "trace_artifact.tar.gz"
-    trace_dir = tmp_path / "trace_dir"
-    trace_dir.mkdir()
-
-    pernosco_creds = {
-        "PERNOSCO_USER": "user",
-        "PERNOSCO_GROUP": "group",
-        "PERNOSCO_USER_SECRET_KEY": "key",
-    }
-
-    with pytest.raises(BugmonTaskError) as e_info:
-        submit_trace(bug_data_processed, trace_artifact, pernosco_creds)
-
-    assert str(e_info.value) == "Cannot find working instance of pernosco-submit!"
-
-
 def test_parse_args(tmp_path):
-    """Simple test of parse args"""
-    processor_artifact_path = tmp_path / "processor_artifact.json"
-    trace_artifact_path = tmp_path / "trace_artifact.tar.gz"
-    processor_artifact_path.touch()
-    trace_artifact_path.touch()
-
-    result = parse_args(
-        [
-            str(processor_artifact_path),
-            "--trace-artifact",
-            str(trace_artifact_path),
-        ]
+    processor_artifact = tmp_path / "processor.json"
+    processor_artifact.touch()
+    assert (
+        parse_args([str(processor_artifact)]).processor_artifact == processor_artifact
     )
 
-    assert result.processor_artifact == processor_artifact_path
-    assert result.trace_artifact == trace_artifact_path
 
-
-@pytest.mark.parametrize("skip", ["processor", "trace"])
-def test_parse_args_missing_file(tmp_path, skip):
-    """Test that parse_args raises when the artifact paths cannot be found"""
-    processor_artifact_path = tmp_path / "processor_artifact.json"
-    trace_artifact_path = tmp_path / "trace_artifact.tar.gz"
-    if skip != "processor":
-        processor_artifact_path.touch()
-    if skip != "trace":
-        trace_artifact_path.touch()
-
-    with pytest.raises(SystemExit) as _:
-        parse_args(
-            [
-                str(processor_artifact_path),
-                "--trace-artifact",
-                str(trace_artifact_path),
-            ]
-        )
+def test_parse_args_missing_file(tmp_path):
+    with pytest.raises(SystemExit):
+        parse_args([str(tmp_path / "missing.json")])
 
 
 def test_parse_args_bug_number_from_env(tmp_path, monkeypatch):
@@ -158,39 +77,14 @@ def test_parse_args_rejects_invalid_env_bug_number(tmp_path, monkeypatch):
         parse_args([str(processor_artifact_path)])
 
 
-def test_main_skips_trace_when_unavailable(mocker, tmp_path, mock_bz_creds):
-    """Test that submit_trace is not called when trace_available is False"""
-    bug_data = {"bug_number": 123456, "diff": {}, "trace_available": False}
-    processor_artifact = tmp_path / "processor.json"
-    processor_artifact.write_text(json.dumps(bug_data))
-    trace_artifact = tmp_path / "trace.tar.gz"
-
-    args = Namespace(
-        processor_artifact=processor_artifact,
-        trace_artifact=trace_artifact,
-        debug=False,
-        bug_number=123456,
-    )
-    mocker.patch("bugmon_tc.report.cli.parse_args", return_value=args)
-    mocker.patch("bugmon_tc.report.cli.in_taskcluster", return_value=False)
-    mocker.patch("bugmon_tc.report.cli.get_bugzilla_auth", return_value=mock_bz_creds)
-    mock_submit_trace = mocker.patch("bugmon_tc.report.cli.submit_trace")
-    mocker.patch("bugmon_tc.report.cli.update_bug")
-
-    main(args)
-
-    mock_submit_trace.assert_not_called()
-
-
 def test_main_in_taskcluster(
     mocker,
     tmp_path,
     mock_args,
     mock_bz_creds,
-    mock_pernosco_token,
     mock_task_data,
 ):
-    """Test that submit_trace and update_bug are called with the correct args when in taskcluster"""
+    """Test that update_bug are called with the correct args when in taskcluster"""
     mocker.patch("bugmon_tc.report.cli.parse_args", return_value=mock_args)
     mocker.patch("bugmon_tc.report.cli.get_bugzilla_auth", return_value=mock_bz_creds)
     mocker.patch("bugmon_tc.report.cli.in_taskcluster", return_value=True)
@@ -199,42 +93,22 @@ def test_main_in_taskcluster(
     mocker.patch(
         "bugmon_tc.report.cli.fetch_json_artifact", return_value=mock_task_data
     )
-    mocker.patch(
-        "bugmon_tc.report.cli.get_pernosco_auth", return_value=mock_pernosco_token
-    )
-    mock_submit_trace = mocker.patch("bugmon_tc.report.cli.submit_trace")
     mock_update_bug = mocker.patch("bugmon_tc.report.cli.update_bug")
 
     main(mock_args)
 
-    mock_submit_trace.assert_called_once_with(
-        mock_task_data,
-        mock_args.trace_artifact,
-        mock_pernosco_token,
-    )
     mock_update_bug.assert_called_once_with(mock_task_data, mock_bz_creds)
 
 
-def test_main_local(
-    mocker, tmp_path, mock_args, mock_bz_creds, mock_pernosco_token, mock_task_data
-):
-    """Test that submit_trace and update_bug are called with the correct args when run locally"""
+def test_main_local(mocker, tmp_path, mock_args, mock_bz_creds, mock_task_data):
+    """Test that update_bug are called with the correct args when run locally"""
     mocker.patch("bugmon_tc.report.cli.parse_args", return_value=mock_args)
     mocker.patch("bugmon_tc.report.cli.get_bugzilla_auth", return_value=mock_bz_creds)
     mocker.patch("bugmon_tc.report.cli.in_taskcluster", return_value=False)
-    mocker.patch(
-        "bugmon_tc.report.cli.get_pernosco_auth", return_value=mock_pernosco_token
-    )
-    mock_submit_trace = mocker.patch("bugmon_tc.report.cli.submit_trace")
     mock_update_bug = mocker.patch("bugmon_tc.report.cli.update_bug")
     mocker.patch.object(Path, "read_text", return_value=json.dumps(mock_task_data))
     main(mock_args)
 
-    mock_submit_trace.assert_called_once_with(
-        mock_task_data,
-        mock_args.trace_artifact,
-        mock_pernosco_token,
-    )
     mock_update_bug.assert_called_once_with(mock_task_data, mock_bz_creds)
 
 
@@ -250,7 +124,6 @@ def test_main_rejects_mismatched_artifact(mocker, tmp_path):
 
     args = Namespace(
         processor_artifact=processor_artifact,
-        trace_artifact=None,
         bug_number=123456,
     )
     mocker.patch("bugmon_tc.report.cli.parse_args", return_value=args)

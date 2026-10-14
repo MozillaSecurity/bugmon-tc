@@ -13,6 +13,20 @@ from bugmon_tc.common import BugmonTaskError
 from bugmon_tc.process.cli import process_bug, parse_args, main
 
 
+@pytest.fixture(autouse=True)
+def pernosco(mocker, monkeypatch):
+    creds = {
+        "PERNOSCO_USER": "user",
+        "PERNOSCO_GROUP": "group",
+        "PERNOSCO_USER_SECRET_KEY": "key",
+    }
+    for key, value in creds.items():
+        monkeypatch.setenv(key, value)
+    mocker.patch("bugmon_tc.process.cli.is_pernosco_available", return_value=True)
+    submit = mocker.patch("bugmon_tc.process.cli.submit_pernosco")
+    return submit, creds
+
+
 @pytest.fixture
 def mock_args():
     return {
@@ -100,7 +114,7 @@ def test_parse_args_force_confirm_from_cmd_line(caplog, mocker):
 
 
 @pytest.mark.parametrize("with_trace", [True, False])
-def test_process_bug(mocker, tmp_path, bug_data, with_trace):
+def test_process_bug(mocker, tmp_path, bug_data, with_trace, pernosco):
     """Test bug processing"""
     mocker.patch("bugmon_tc.process.cli.BugMonitor.process", return_value=None)
     dest = tmp_path / "results.json"
@@ -121,8 +135,12 @@ def test_process_bug(mocker, tmp_path, bug_data, with_trace):
         "trace_available": with_trace,
     }
 
+    submit, creds = pernosco
     if with_trace:
         assert trace_dest.exists() is True
+        submit.assert_called_once_with(raw_trace, 123456, creds)
+    else:
+        submit.assert_not_called()
 
 
 def test_process_bug_skips_trace_when_closed(mocker, tmp_path, bug_data):
@@ -192,3 +210,34 @@ def test_main_local(mocker, tmp_path):
         force_confirm=False,
         trace_dest=None,
     )
+
+
+def test_recording_does_not_inherit_pernosco_credentials(
+    mocker, tmp_path, bug_data, pernosco
+):
+    def process(self, force_confirm=False):
+        assert all(key not in os.environ for key in pernosco[1])
+        self._close_bug = True  # pylint: disable=protected-access
+
+    mocker.patch.object(BugMonitor, "process", process)
+    process_bug(bug_data, tmp_path / "result.json", tmp_path / "trace.tar.gz")
+    pernosco[0].assert_not_called()
+
+
+@pytest.mark.parametrize("available", [True, False])
+def test_submission_failure_does_not_write_result(
+    mocker, tmp_path, bug_data, pernosco, available
+):
+    mocker.patch.object(BugMonitor, "process")
+    trace = tmp_path / "trace"
+    trace.mkdir()
+    mocker.patch("bugmon_tc.process.cli.get_pernosco_trace", return_value=trace)
+    mocker.patch("bugmon_tc.process.cli.is_pernosco_available", return_value=available)
+    pernosco[0].side_effect = BugmonTaskError("Upload failed")
+    dest = tmp_path / "result.json"
+    with pytest.raises(BugmonTaskError):
+        process_bug(bug_data, dest, tmp_path / "trace.tar.gz")
+    assert not dest.exists()
+    assert (tmp_path / "trace.tar.gz").exists()
+    if not available:
+        pernosco[0].assert_not_called()

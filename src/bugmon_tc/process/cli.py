@@ -12,9 +12,15 @@ from typing import Any, Optional, Dict, List
 
 from bugmon import BugMonitor
 from bugmon.bug import EnhancedBug
-from bugmon.utils import get_pernosco_trace
+from bugmon.utils import get_pernosco_trace, is_pernosco_available, submit_pernosco
 
-from ..common import in_taskcluster, BugmonTaskError, queue, fetch_json_artifact
+from ..common import (
+    in_taskcluster,
+    BugmonTaskError,
+    queue,
+    fetch_json_artifact,
+    get_pernosco_auth,
+)
 from ..common.cli import base_parser
 
 LOG = logging.getLogger(__name__)
@@ -34,6 +40,13 @@ def process_bug(
     :param force_confirm: Optional boolean indicating if we should forcefully confirm bugs.
     :return:
     """
+    pernosco_creds = None
+    if trace_dest is not None:
+        pernosco_creds = get_pernosco_auth()
+        # Keep credentials out of the environment inherited by recorded processes.
+        for key in pernosco_creds:
+            os.environ.pop(key, None)
+
     bug = EnhancedBug(bugsy=None, **bug_data)
     with tempfile.TemporaryDirectory() as temp_dir:
         working_path = Path(temp_dir)
@@ -65,6 +78,14 @@ def process_bug(
                 format="gztar",
                 root_dir=str(latest_trace),
             )
+            if not is_pernosco_available():
+                raise BugmonTaskError(
+                    "Cannot find working instance of pernosco-submit!"
+                )
+            assert pernosco_creds is not None
+            LOG.info("Uploading pernosco session (this may take a while)...")
+            submit_pernosco(latest_trace, bug.id, pernosco_creds)
+
             trace_available = True
 
         with open(proc_dest, mode="w", encoding="utf-8") as file:

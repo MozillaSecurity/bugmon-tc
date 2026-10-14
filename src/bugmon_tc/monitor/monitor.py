@@ -152,7 +152,6 @@ class BugMonitorTask:
                 bug,
                 processor.dest,
                 dep=processor.id,
-                trace_path=processor.trace_dest,
                 enable_debug=self.enable_debug,
             )
 

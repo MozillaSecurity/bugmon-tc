@@ -219,6 +219,15 @@ class ProcessorTask(BaseTask):
                 ]
             )
 
+        if self.trace_dest is not None:
+            scopes.extend(
+                [
+                    "secrets:get:project/fuzzing/pernosco-user",
+                    "secrets:get:project/fuzzing/pernosco-group",
+                    "secrets:get:project/fuzzing/pernosco-secret",
+                ]
+            )
+
         return sorted(scopes)
 
     @property
@@ -291,7 +300,6 @@ class ReporterTask(BaseTask):
         bug: EnhancedBug,
         process_path: Path,
         dep: str,
-        trace_path: Optional[Path] = None,
         enable_debug: bool = False,
     ):
         """Instantiate a new ReporterTask instance.
@@ -300,13 +308,11 @@ class ReporterTask(BaseTask):
         :param bug: Bug ID
         :param process_path: Path to process artifact
         :param dep: Task dependency
-        :param trace_path: Optional path to trace artifact.
         """
         super().__init__(parent_id, bug)
         self.process_path = process_path
 
         self.dependency = dep
-        self.trace_dest = trace_path
         self.enable_debug = enable_debug
 
     @property
@@ -331,9 +337,6 @@ class ReporterTask(BaseTask):
         if self.enable_debug:
             env_object["DEBUG"] = "1"
 
-        if self.trace_dest is not None:
-            env_object["TRACE_ARTIFACT"] = str(self.trace_dest)
-
         return env_object
 
     @property
@@ -342,17 +345,9 @@ class ReporterTask(BaseTask):
         base = "project/fuzzing/bugmon"
         scopes = [
             "secrets:get:project/fuzzing/bz-api-key",
-            "secrets:get:project/fuzzing/pernosco-user",
-            "secrets:get:project/fuzzing/pernosco-group",
-            "secrets:get:project/fuzzing/pernosco-secret",
             f"queue:get-artifact:{base}/{self.process_path}",
             "queue:scheduler-id:fuzzing",
         ]
-
-        if self.trace_dest:
-            scopes.append(
-                f"queue:get-artifact:{base}/{self.trace_dest}",
-            )
 
         if self.bug.platform.system == "Linux":
             scopes.extend(

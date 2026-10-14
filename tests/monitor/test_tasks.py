@@ -170,6 +170,21 @@ def test_processor_task_scopes_windows(bug_data, mocker):
     ]
 
 
+@pytest.mark.parametrize("use_pernosco", [True, False])
+def test_processor_pernosco_scopes(bug_data, use_pernosco):
+    bug = EnhancedBug(None, **bug_data)
+    task = ProcessorTask(
+        PARENT_ID, bug, MONITOR_ARTIFACT_PATH, use_pernosco=use_pernosco
+    )
+    secret_scopes = {scope for scope in task.scopes if scope.startswith("secrets:")}
+    expected = {
+        "secrets:get:project/fuzzing/pernosco-user",
+        "secrets:get:project/fuzzing/pernosco-group",
+        "secrets:get:project/fuzzing/pernosco-secret",
+    }
+    assert secret_scopes == (expected if use_pernosco else set())
+
+
 @freeze_time("2023-01-01")
 @pytest.mark.parametrize("force_confirm", [True, False])
 def test_processor_task_task_definition_linux(bug_data, mocker, force_confirm):
@@ -272,14 +287,12 @@ def test_reporter_task_init(bug_data):
         bug,
         PROCESSOR_ARTIFACT_PATH,
         dep=dependency,
-        trace_path=TRACE_ARTIFACT_PATH,
     )
 
     assert reporter_task.parent_id == PARENT_ID
     assert reporter_task.bug == bug
     assert reporter_task.process_path == PROCESSOR_ARTIFACT_PATH
     assert reporter_task.dependency == dependency
-    assert reporter_task.trace_dest == TRACE_ARTIFACT_PATH
 
 
 def test_reporter_task_env(bug_data):
@@ -291,7 +304,6 @@ def test_reporter_task_env(bug_data):
         bug,
         PROCESSOR_ARTIFACT_PATH,
         dep=dependency,
-        trace_path=TRACE_ARTIFACT_PATH,
         enable_debug=True,
     )
 
@@ -300,7 +312,6 @@ def test_reporter_task_env(bug_data):
         "BUG_NUMBER": "123456",
         "DEBUG": "1",
         "PROCESSOR_ARTIFACT": str(PROCESSOR_ARTIFACT_PATH),
-        "TRACE_ARTIFACT": str(TRACE_ARTIFACT_PATH),
     }
 
 
@@ -341,18 +352,13 @@ def test_reporter_task_scopes(bug_data):
         bug,
         PROCESSOR_ARTIFACT_PATH,
         dep=dependency,
-        trace_path=TRACE_ARTIFACT_PATH,
     )
 
     assert reporter_task.scopes == [
         "docker-worker:capability:privileged",
         f"queue:get-artifact:project/fuzzing/bugmon/{PROCESSOR_ARTIFACT_PATH}",
-        f"queue:get-artifact:project/fuzzing/bugmon/{TRACE_ARTIFACT_PATH}",
         "queue:scheduler-id:fuzzing",
         "secrets:get:project/fuzzing/bz-api-key",
-        "secrets:get:project/fuzzing/pernosco-group",
-        "secrets:get:project/fuzzing/pernosco-secret",
-        "secrets:get:project/fuzzing/pernosco-user",
     ]
 
 
@@ -365,7 +371,7 @@ def test_reporter_task_worker_type(bug_data):
         bug,
         PROCESSOR_ARTIFACT_PATH,
         dep=dependency,
-        trace_path=TRACE_ARTIFACT_PATH,
     )
 
     assert reporter_task.worker_type == "bugmon-monitor"
+    assert "TRACE_ARTIFACT" not in reporter_task.task["payload"]["env"]
