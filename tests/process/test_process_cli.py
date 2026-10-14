@@ -143,8 +143,8 @@ def test_process_bug(mocker, tmp_path, bug_data, with_trace, pernosco):
         submit.assert_not_called()
 
 
-def test_process_bug_skips_trace_when_closed(mocker, tmp_path, bug_data):
-    """Test that process_bug skips the trace check when the bug is being closed"""
+def test_process_bug_submits_trace_when_closed(mocker, tmp_path, bug_data, pernosco):
+    """A requested recording must be submitted even if fix verification closes the bug."""
     dest = tmp_path / "results.json"
     trace_dest = tmp_path / "trace.tar.gz"
 
@@ -152,12 +152,17 @@ def test_process_bug_skips_trace_when_closed(mocker, tmp_path, bug_data):
         self._close_bug = True  # pylint: disable=protected-access
 
     mocker.patch.object(BugMonitor, "process", mock_process)
+    raw_trace = tmp_path / "latest-trace"
+    raw_trace.mkdir()
+    mocker.patch("bugmon_tc.process.cli.get_pernosco_trace", return_value=raw_trace)
 
     process_bug(bug_data, dest, trace_dest=trace_dest)
 
     assert dest.exists()
-    assert not trace_dest.exists()
-    assert json.loads(dest.read_text())["trace_available"] is False
+    assert trace_dest.exists()
+    assert json.loads(dest.read_text())["trace_available"] is True
+    submit, creds = pernosco
+    submit.assert_called_once_with(raw_trace, 123456, creds)
 
 
 def test_process_bug_raises_no_trace(mocker, tmp_path, bug_data):
@@ -217,11 +222,13 @@ def test_recording_does_not_inherit_pernosco_credentials(
 ):
     def process(self, force_confirm=False):
         assert all(key not in os.environ for key in pernosco[1])
-        self._close_bug = True  # pylint: disable=protected-access
 
     mocker.patch.object(BugMonitor, "process", process)
+    raw_trace = tmp_path / "latest-trace"
+    raw_trace.mkdir()
+    mocker.patch("bugmon_tc.process.cli.get_pernosco_trace", return_value=raw_trace)
     process_bug(bug_data, tmp_path / "result.json", tmp_path / "trace.tar.gz")
-    pernosco[0].assert_not_called()
+    pernosco[0].assert_called_once_with(raw_trace, 123456, pernosco[1])
 
 
 @pytest.mark.parametrize("available", [True, False])

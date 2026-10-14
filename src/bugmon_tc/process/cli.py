@@ -61,10 +61,7 @@ def process_bug(
         bugmon.process(force_confirm)
 
         trace_available = False
-        if (
-            not bugmon._close_bug  # pylint: disable=protected-access
-            and trace_dest is not None
-        ):
+        if trace_dest is not None:
             latest_trace = get_pernosco_trace(bugmon.log_dir)
 
             if latest_trace is None:
