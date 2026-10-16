@@ -26,6 +26,17 @@ def test_main(mocker, tmp_path):
     main(["--force-confirm", str(tmp_path)])
 
     mock_bug_monitor_task.assert_called_once_with(
-        "key", "url", force_confirm=True, enable_debug=False
+        "key", "url", force_confirm=True, enable_debug=False, disable_pernosco=False
     )
     mock_bug_monitor_task.return_value.create_tasks.assert_called_once_with(tmp_path)
+
+
+def test_main_disables_pernosco(mocker, tmp_path, monkeypatch):
+    monkeypatch.setenv("DISABLE_PERNOSCO", "1")
+    mocker.patch(
+        "bugmon_tc.monitor.cli.get_bugzilla_auth",
+        return_value={"KEY": "key", "URL": "url"},
+    )
+    monitor = mocker.patch("bugmon_tc.monitor.cli.BugMonitorTask")
+    main([str(tmp_path)])
+    assert monitor.call_args.kwargs["disable_pernosco"] is True
