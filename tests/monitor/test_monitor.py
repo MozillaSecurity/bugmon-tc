@@ -170,3 +170,31 @@ def test_monitor_create_tasks_pernosco_not_supported(
     monitor = BugMonitorTask("key", "root")
     monitor.create_tasks(tmp_path)
     assert mock_processor.call_args.kwargs.get("use_pernosco") is False
+
+
+@pytest.mark.parametrize("other_work", [True, False])
+def test_monitor_defers_pernosco_only_work(mocker, bug_data, other_work):
+    """A real BugMonitor excludes disabled Pernosco from actionable work."""
+    bug_data["keywords"].append("pernosco-wanted")
+    bug = EnhancedBug(None, **bug_data)
+    mocker.patch("bugmon.BugMonitor.is_supported", return_value=True)
+    mocker.patch("bugmon.BugMonitor.needs_confirm", return_value=other_work)
+    mocker.patch("bugmon.BugMonitor.needs_verify", return_value=False)
+    mocker.patch("bugmon.BugMonitor.needs_bisect", return_value=False)
+    monitor = BugMonitorTask("key", "root", disable_pernosco=True)
+    assert monitor.is_actionable(bug) is other_work
+
+
+def test_disabled_monitor_generates_ordinary_processor(mocker, tmp_path, bug_data):
+    """The monitor propagates the pause without scheduling recording workers."""
+    bug_data["keywords"].append("pernosco-wanted")
+    bug = EnhancedBug(None, **bug_data)
+    mocker.patch.object(BugMonitorTask, "fetch_bugs", return_value=iter([bug]))
+    mocker.patch("bugmon_tc.monitor.monitor.in_taskcluster", return_value=False)
+    mocker.patch("bugmon_tc.monitor.tasks.in_taskcluster", return_value=False)
+    BugMonitorTask("key", "root", disable_pernosco=True).create_tasks(tmp_path)
+    task = json.loads(next(tmp_path.glob("processor-task-*.json")).read_text())
+    assert task["workerType"] == "bugmon-processor"
+    assert task["payload"]["env"]["DISABLE_PERNOSCO"] == "1"
+    assert "TRACE_ARTIFACT" not in task["payload"]["env"]
+    assert not any(scope.startswith("secrets:") for scope in task["scopes"])

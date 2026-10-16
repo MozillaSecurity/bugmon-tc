@@ -375,3 +375,18 @@ def test_reporter_task_worker_type(bug_data):
 
     assert reporter_task.worker_type == "bugmon-monitor"
     assert "TRACE_ARTIFACT" not in reporter_task.task["payload"]["env"]
+
+
+def test_disabled_processor_ignores_recording_request(bug_data):
+    bug = EnhancedBug(None, **bug_data)
+    processor = ProcessorTask(
+        PARENT_ID,
+        bug,
+        MONITOR_ARTIFACT_PATH,
+        use_pernosco=True,
+        disable_pernosco=True,
+    )
+    assert processor.trace_dest is None
+    assert processor.worker_type == "bugmon-processor"
+    assert processor.env["DISABLE_PERNOSCO"] == "1"
+    assert not any(scope.startswith("secrets:") for scope in processor.scopes)

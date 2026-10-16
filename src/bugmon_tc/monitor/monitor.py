@@ -58,16 +58,19 @@ class BugMonitorTask:
         api_root: str,
         force_confirm: bool = False,
         enable_debug: bool = False,
+        disable_pernosco: bool = False,
     ) -> None:
         """
 
         :param api_key: BZ_API_KEY
         :param api_root: BZ_API_ROOT
         :param force_confirm: Boolean indicating if bugs should be confirmed regardless of whiteboard
+        :param disable_pernosco: Defer pernosco recording and submission
         """
         self.bugsy = Bugsy(api_key=api_key, bugzilla_url=api_root)
         self.force_confirm = force_confirm
         self.enable_debug = enable_debug
+        self.disable_pernosco = disable_pernosco
 
     def fetch_bugs(self) -> Iterator[EnhancedBug]:
         """
@@ -90,7 +93,12 @@ class BugMonitorTask:
         """
         with tempfile.TemporaryDirectory() as temp_dir:
             try:
-                bugmon = BugMonitor(self.bugsy, bug, Path(temp_dir))
+                bugmon = BugMonitor(
+                    self.bugsy,
+                    bug,
+                    Path(temp_dir),
+                    disable_pernosco=self.disable_pernosco,
+                )
                 LOG.info(f"Analyzing bug {bug.id} (Status: {bug.status})")
 
                 # If the bug is not supported, we still want to close it out
@@ -134,7 +142,8 @@ class BugMonitorTask:
                 json.dump(json.loads(bug_data), file, indent=2)
 
             use_pernosco = (
-                ("pernosco" in bug.commands or "pernosco-wanted" in bug.keywords)
+                not self.disable_pernosco
+                and ("pernosco" in bug.commands or "pernosco-wanted" in bug.keywords)
                 and "pernosco-failed" not in bug.commands
                 and bug.platform.system == "Linux"
                 and bug.platform.machine == "x86_64"
@@ -146,6 +155,7 @@ class BugMonitorTask:
                 use_pernosco=use_pernosco,
                 force_confirm=self.force_confirm,
                 enable_debug=self.enable_debug,
+                disable_pernosco=self.disable_pernosco,
             )
             reporter = ReporterTask(
                 parent_id,

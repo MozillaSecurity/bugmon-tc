@@ -194,11 +194,13 @@ def test_main_in_taskcluster(mocker, tmp_path):
         mock_task_data,
         Path("processor_artifact.json"),
         force_confirm=False,
+        disable_pernosco=False,
         trace_dest=None,
     )
 
 
-def test_main_local(mocker, tmp_path):
+@pytest.mark.parametrize("disabled", [False, True])
+def test_main_local(mocker, tmp_path, monkeypatch, disabled):
     """Test that process_bug is called with the correct args when run locally"""
     mocker.patch("bugmon_tc.process.cli.in_taskcluster", return_value=False)
     mock_task_data = {"bug_id": 123, "status": "NEW"}
@@ -207,12 +209,14 @@ def test_main_local(mocker, tmp_path):
     processor_artifact_path = tmp_path / "processor.json"
     mock_process_bug = mocker.patch("bugmon_tc.process.cli.process_bug")
 
+    monkeypatch.setenv("DISABLE_PERNOSCO", "1" if disabled else "0")
     main([str(monitor_artifact_path), str(processor_artifact_path)])
 
     mock_process_bug.assert_called_once_with(
         mock_task_data,
         processor_artifact_path,
         force_confirm=False,
+        disable_pernosco=disabled,
         trace_dest=None,
     )
 
@@ -248,3 +252,51 @@ def test_submission_failure_does_not_write_result(
     assert (tmp_path / "trace.tar.gz").exists()
     if not available:
         pernosco[0].assert_not_called()
+
+
+@pytest.mark.parametrize("with_trace", [True, False])
+def test_disabled_processor_preserves_request_without_upload(
+    mocker, tmp_path, bug_data, with_trace, pernosco
+):
+    """The processor preserves deferred work even if a trace path was supplied."""
+    bug_data["keywords"].append("pernosco-wanted")
+
+    def check_environment():
+        assert all(key not in os.environ for key in pernosco[1])
+        return True
+
+    mocker.patch("bugmon.BugMonitor.is_supported", side_effect=check_environment)
+    for action in ("verify", "confirm", "bisect"):
+        mocker.patch(f"bugmon.BugMonitor.needs_{action}", return_value=False)
+    record = mocker.patch("bugmon.BugMonitor._pernosco")
+    credentials = mocker.patch("bugmon_tc.process.cli.get_pernosco_auth")
+    compress = mocker.patch("bugmon_tc.process.cli.shutil.make_archive")
+    trace = mocker.patch("bugmon_tc.process.cli.get_pernosco_trace")
+    dest = tmp_path / "result.json"
+    process_bug(
+        bug_data,
+        dest,
+        tmp_path / "trace.tar.gz" if with_trace else None,
+        disable_pernosco=True,
+    )
+    result = json.loads(dest.read_text())
+    assert result["trace_available"] is False
+    assert "comment" not in result["diff"]
+    assert "keywords" not in result["diff"]
+    for call in (record, credentials, compress, trace, pernosco[0]):
+        call.assert_not_called()
+
+
+@pytest.mark.parametrize("value, disabled", [(None, False), ("0", False), ("1", True)])
+def test_pernosco_switch_parsing(monkeypatch, value, disabled):
+    from bugmon_tc.monitor.cli import parse_args as monitor_args
+
+    monkeypatch.delenv("DISABLE_PERNOSCO", raising=False)
+    if value is not None:
+        monkeypatch.setenv("DISABLE_PERNOSCO", value)
+    for parser, positional in (
+        (monitor_args, ["output"]),
+        (parse_args, ["monitor.json", "processor.json"]),
+    ):
+        assert parser(positional).disable_pernosco is disabled
+        assert parser(["--disable-pernosco", *positional]).disable_pernosco

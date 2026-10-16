@@ -31,6 +31,7 @@ def process_bug(
     proc_dest: Path,
     trace_dest: Optional[Path] = None,
     force_confirm: bool = False,
+    disable_pernosco: bool = False,
 ) -> None:
     """Process bug from file.
 
@@ -38,14 +39,19 @@ def process_bug(
     :param proc_dest: Destination for storing process results.
     :param trace_dest: Optional destination for storing trace results.
     :param force_confirm: Optional boolean indicating if we should forcefully confirm bugs.
+    :param disable_pernosco: Defer recording and submission, even with a trace path.
     :return:
     """
+    if disable_pernosco:
+        trace_dest = None
+
     pernosco_creds = None
     if trace_dest is not None:
         pernosco_creds = get_pernosco_auth()
-        # Keep credentials out of the environment inherited by recorded processes.
-        for key in pernosco_creds:
-            os.environ.pop(key, None)
+
+    # Keep inherited credentials out of testcase processes, even while disabled.
+    for key in ("PERNOSCO_USER", "PERNOSCO_GROUP", "PERNOSCO_USER_SECRET_KEY"):
+        os.environ.pop(key, None)
 
     bug = EnhancedBug(bugsy=None, **bug_data)
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -55,6 +61,7 @@ def process_bug(
             bug,
             working_path,
             dry_run=True,
+            disable_pernosco=disable_pernosco,
         )
 
         LOG.info(f"Processing bug {bug.id} (Status: {bug.status})")
@@ -102,6 +109,12 @@ def process_bug(
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Parse arguments"""
     parser = base_parser(prog="BugmonProcessor")
+    parser.add_argument(
+        "--disable-pernosco",
+        action="store_true",
+        default=os.getenv("DISABLE_PERNOSCO") == "1",
+        help="Defer Pernosco recording and submission (also DISABLE_PERNOSCO=1)",
+    )
     parser.add_argument(
         "monitor_artifact",
         type=Path,
@@ -158,4 +171,5 @@ def main(argv: Optional[List[str]] = None) -> None:
         args.processor_artifact,
         trace_dest=args.trace_artifact,
         force_confirm=args.force_confirm,
+        disable_pernosco=args.disable_pernosco,
     )

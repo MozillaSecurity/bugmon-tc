@@ -3,6 +3,7 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 import argparse
 import logging
+import os
 from pathlib import Path
 from typing import Optional, List
 
@@ -16,6 +17,12 @@ LOG = logging.getLogger(__name__)
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Parse arguments"""
     parser = base_parser("BugmonMonitor")
+    parser.add_argument(
+        "--disable-pernosco",
+        action="store_true",
+        default=os.getenv("DISABLE_PERNOSCO") == "1",
+        help="Defer Pernosco recording and submission (also DISABLE_PERNOSCO=1)",
+    )
     parser.add_argument(
         "--force-confirm",
         action="store_true",
@@ -43,5 +50,6 @@ def main(argv: Optional[List[str]] = None) -> None:
         bz_creds["URL"],
         force_confirm=args.force_confirm,
         enable_debug=args.debug,
+        disable_pernosco=args.disable_pernosco,
     )
     monitor.create_tasks(args.output)

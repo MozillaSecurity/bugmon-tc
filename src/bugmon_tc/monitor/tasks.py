@@ -144,6 +144,7 @@ class ProcessorTask(BaseTask):
         use_pernosco: bool = False,
         force_confirm: bool = False,
         enable_debug: bool = False,
+        disable_pernosco: bool = False,
     ) -> None:
         """Instantiate new instance.
 
@@ -152,6 +153,7 @@ class ProcessorTask(BaseTask):
         :param monitor_path: Path to monitor artifact
         :param use_pernosco: Boolean indicating if we need to record a pernosco trace
         :param force_confirm: Boolean indicating if we should confirm regardless of status
+        :param disable_pernosco: Defer pernosco recording and submission
         """
         super().__init__(parent_id, bug)
         self.id = slugId()
@@ -160,9 +162,10 @@ class ProcessorTask(BaseTask):
         self.dest = Path(f"processor-result-{bug.id}-{self.parent_id}.json")
 
         self.trace_dest = None
-        if use_pernosco:
+        if use_pernosco and not disable_pernosco:
             self.trace_dest = Path(f"processor-rr-trace-{bug.id}-{parent_id}.tar.gz")
 
+        self.disable_pernosco = disable_pernosco
         self.force_confirm = force_confirm
         self.enable_debug = enable_debug
         self._task = None
@@ -190,6 +193,9 @@ class ProcessorTask(BaseTask):
 
         if self.enable_debug:
             env_object["DEBUG"] = "1"
+
+        if self.disable_pernosco:
+            env_object["DISABLE_PERNOSCO"] = "1"
 
         if self.force_confirm:
             env_object["FORCE_CONFIRM"] = "1"
