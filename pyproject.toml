@@ -23,7 +23,7 @@ classifiers = [
   "Topic :: Software Development :: Testing",
 ]
 dependencies = [
-  "bugmon @ git+https://github.com/MozillaSecurity/bugmon.git@v5.4.0",
+  "bugmon @ git+https://github.com/MozillaSecurity/bugmon.git@v5.4.1",
   "taskcluster>=30",
 ]
 urls.Homepage = "https://github.com/MozillaSecurity/bugmon-tc"
