@@ -28,7 +28,7 @@ def full_diff():
         },
         "flags": [
             {
-                "is_multiplicable": True,
+                "new": True,
                 "name": "needinfo",
                 "requestee": "dev@example.com",
                 "status": "?",
@@ -117,7 +117,7 @@ def test_validate_bug_data_sanitizes_flags(full_diff):
 
     assert result["diff"]["flags"] == [
         {
-            "is_multiplicable": True,
+            "new": True,
             "name": "needinfo",
             "requestee": "dev@example.com",
             "status": "?",
