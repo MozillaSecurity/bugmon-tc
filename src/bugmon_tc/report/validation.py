@@ -105,7 +105,7 @@ def _sanitize_flags(value: Any) -> List[Dict[str, Any]]:
         ):
             sanitized.append(
                 {
-                    "is_multiplicable": True,
+                    "new": True,
                     "name": "needinfo",
                     "requestee": flag["requestee"],
                     "status": "?",
