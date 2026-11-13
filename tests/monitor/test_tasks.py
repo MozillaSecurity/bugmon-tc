@@ -390,3 +390,29 @@ def test_disabled_processor_ignores_recording_request(bug_data):
     assert processor.worker_type == "bugmon-processor"
     assert processor.env["DISABLE_PERNOSCO"] == "1"
     assert not any(scope.startswith("secrets:") for scope in processor.scopes)
+
+
+@pytest.mark.parametrize(
+    "root_url, branch",
+    [
+        ("https://community-tc.services.mozilla.com", "master"),
+        ("https://firefox-ci-tc.services.mozilla.com", "main"),
+    ],
+)
+@pytest.mark.parametrize("platform", ["Linux", "Windows"])
+def test_processor_task_image_namespace(
+    bug_data, mocker, monkeypatch, root_url, branch, platform
+):
+    """ProcessorTask uses the Orion images published to its own deployment"""
+    monkeypatch.setenv("TASKCLUSTER_ROOT_URL", root_url)
+    bug_data["op_sys"] = platform
+    mocker.patch("bugmon.bug.platform.system", return_value=platform)
+    bug = EnhancedBug(None, **bug_data)
+    payload = ProcessorTask(PARENT_ID, bug, MONITOR_ARTIFACT_PATH).task["payload"]
+
+    if platform == "Windows":
+        namespace = payload["mounts"][0]["content"]["namespace"]
+        assert namespace == f"project.fuzzing.orion.bugmon-win.{branch}"
+    else:
+        namespace = payload["image"]["namespace"]
+        assert namespace == f"project.fuzzing.orion.bugmon.{branch}"
