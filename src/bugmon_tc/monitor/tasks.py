@@ -17,6 +17,18 @@ from taskcluster.utils import stringDate
 from ..common import queue, in_taskcluster
 
 MAX_RUNTIME = 14400
+COMMUNITY_TC_ROOT_URL = "https://community-tc.services.mozilla.com"
+
+
+def _orion_image_namespace(service: str) -> str:
+    """Index namespace of an Orion image on this Taskcluster deployment.
+
+    Orion publishes its images to community-tc from its `master` branch, and to
+    Firefox CI from `main`.
+    """
+    root_url = os.environ.get("TASKCLUSTER_ROOT_URL")
+    branch = "master" if root_url == COMMUNITY_TC_ROOT_URL else "main"
+    return f"project.fuzzing.orion.{service}.{branch}"
 
 
 def _parse_tc_datetime(value: str) -> datetime:
@@ -107,7 +119,7 @@ class BaseTask(abc.ABC):
                     "image": {
                         "type": "indexed-image",
                         "path": "public/bugmon.tar.zst",
-                        "namespace": "project.fuzzing.orion.bugmon.master",
+                        "namespace": _orion_image_namespace("bugmon"),
                     },
                     "maxRunTime": max_run_time,
                 },
@@ -266,7 +278,7 @@ class ProcessorTask(BaseTask):
                         "format": "tar.bz2",
                         "content": {
                             "artifact": "public/msys2.tar.bz2",
-                            "namespace": "project.fuzzing.orion.bugmon-win.master",
+                            "namespace": _orion_image_namespace("bugmon-win"),
                         },
                         "directory": ".",
                     }
